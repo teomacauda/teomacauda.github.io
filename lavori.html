@@ -376,5 +376,53 @@
             });
         });
     </script>
+
+    <script>
+    /**
+     * TEOMACAUDA.IT - UNIFIED URL CLEANER & SMART SCROLL
+     * Gestisce la rimozione di .html/index.html e lo scorrimento alle sezioni
+     */
+    function handleNavigationFix() {
+        const path = window.location.pathname;
+        const hash = window.location.hash;
+        const origin = window.location.origin;
+
+        // 1. PULIZIA URL (Rimuove index.html o .html dalla barra indirizzi)
+        if (path.includes('.html')) {
+            // Se siamo in index.html, lo trasformiamo in /
+            // Altrimenti togliamo solo l'estensione .html
+            const newPath = path.replace('/index.html', '/').replace('.html', '');
+            
+            // Aggiorna l'URL visibile all'utente istantaneamente e senza ricaricare
+            window.history.replaceState(null, '', origin + newPath + hash);
+        }
+
+        // 2. GESTIONE SCROLL (Se arriviamo con l'ancora #servizi)
+        if (hash === '#servizi') {
+            const target = document.getElementById('servizi');
+            const nav = document.getElementById('navbar');
+
+            if (target) {
+                // Il ritardo di 400ms assicura che GSAP e immagini siano pronti
+                setTimeout(() => {
+                    const navHeight = nav ? nav.offsetHeight : 80;
+                    const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+                    window.scrollTo({
+                        top: targetPos,
+                        behavior: "smooth"
+                    });
+                }, 400);
+            }
+        }
+    }
+
+    // Esegue al caricamento della pagina
+    window.addEventListener('load', handleNavigationFix);
+
+    // Gestisce il click se l'utente è già nella home e clicca "Servizi"
+    window.addEventListener('hashchange', handleNavigationFix);
+</script>
+    
 </body>
 </html>
