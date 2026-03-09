@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lavori | Teo Macauda</title>
+    <title>Social Marketing | Teo Macauda</title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z' fill='rgb(255,122,0)'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z' fill='rgb(255,122,0)'/></svg>">
 
@@ -38,7 +38,7 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
         .work-overlay { background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
         .glass-card:hover .work-overlay { opacity: 1; }
-        .filter-btn.active { background: #FF7A00; color: white; border-color: #FF7A00; }
+        .filter-btn-active { background: #FF7A00; color: white; border-color: #FF7A00; }
         .chat-button { position: fixed; bottom: 2rem; right: 2rem; z-index: 130; display: flex; align-items: center; justify-content: center; background-color: #FF7A00; color: white; border-radius: 9999px; text-decoration: none; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s; white-space: nowrap; overflow: hidden; min-width: 4rem; height: 4rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); border: none; cursor: pointer; }
         .chat-button:hover { transform: scale(1.1); }
         #chat-text { max-width: 0; opacity: 0; font-size: 0px; transition: all 0.5s ease; font-family: 'Inter', sans-serif; font-weight: 600; }
@@ -71,7 +71,6 @@
                 <a href="/" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
                     Home
                 </a>
-                <!-- Tasto Lavori Attivo (Solid Orange) -->
                 <a href="/lavori.html" class="px-5 py-2.5 rounded-full bg-accent text-white shadow-[0_10px_20px_-5px_rgba(255,122,0,0.3)] transition-all duration-300">
                     Lavori
                 </a>
@@ -113,77 +112,53 @@
     <main class="pt-32 pb-24 px-6 min-h-screen overflow-x-hidden block">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 reveal">
-                <h2 class="text-4xl md:text-6xl font-bold mb-6 italic tracking-tight">Portfolio <span class="text-accent">Selezionato.</span></h2>
-                <p class="text-graytext text-lg max-w-2xl mx-auto font-light">Gli esempi sono solo alcuni dei lavori che ho prodotto per i miei clienti e non solo!</p>
+                <h2 class="text-4xl md:text-6xl font-bold mb-6 italic tracking-tight"><span class="text-accent">Social</span> Marketing.</h2>
+                <p class="text-graytext text-lg max-w-2xl mx-auto font-light">Contenuti ottimizzati per la crescita organica e l'engagement sui social media.</p>
             </div>
 
+            <!-- Filtri trasformati in Navigazione Pagine -->
             <div class="flex flex-wrap justify-center gap-3 mb-16 reveal">
-                <button onclick="filterPortfolio('social-marketing', this)" class="filter-btn active px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all hover:border-accent/50">Social Marketing</button>
-                <button onclick="filterPortfolio('cinematic', this)" class="filter-btn px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all hover:border-accent/50">Cinematic</button>
-                <button onclick="filterPortfolio('personal-projects', this)" class="filter-btn px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all hover:border-accent/50">Personal Projects</button>
+                <a href="social-marketing.html" class="filter-btn-active px-6 py-2 rounded-full border border-accent text-sm font-medium transition-all">Social Marketing</a>
+                <a href="cinematic.html" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext transition-all hover:border-accent/50 hover:text-white">Cinematic</a>
+                <a href="personali.html" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext transition-all hover:border-accent/50 hover:text-white">Personal Projects</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal" id="portfolio-grid">
                 
-                <div class="work-item group social-marketing relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DR9apqAjKQb/embed', 'MyField Ferrara - Reel', true)">
+                <div class="work-item group relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DR9apqAjKQb/embed', 'MyField Ferrara - Reel', true)">
                     <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield1.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
                     <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Social Marketing</span><h4 class="text-xl font-bold text-white">MyField Ferrara - Reel</h4></div>
                 </div>
 
-                <div class="work-item group social-marketing relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DUJA_MsCFVd/embed', 'Ally - Video 1', true)">
+                <div class="work-item group relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DUJA_MsCFVd/embed', 'Ally - Video 1', true)">
                     <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/ally1.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
                     <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Social Marketing</span><h4 class="text-xl font-bold text-white">Ally - Reel</h4></div>
                 </div>
 
-                <div class="work-item group social-marketing relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DPL010oDCoY/embed', 'MyField Ferrara - Strength & Conditioning', true)">
+                <div class="work-item group relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DPL010oDCoY/embed', 'MyField Ferrara - Strength & Conditioning', true)">
                     <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield2.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
                     <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Social Marketing</span><h4 class="text-xl font-bold text-white">MyField Ferrara - Reel</h4></div>
                 </div>
 
-                <div class="work-item group social-marketing relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DO0w_-nDDWM/embed', 'MyField Ferrara - Reels', true)">
+                <div class="work-item group relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DO0w_-nDDWM/embed', 'MyField Ferrara - Reels', true)">
                     <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield3.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
                     <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Social Marketing</span><h4 class="text-xl font-bold text-white">MyField Ferrara - Reel</h4></div>
                 </div>
 
-                <div class="work-item group personal-projects relative aspect-video rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.youtube.com/embed/ZYBKlJY46wA', 'Reel Instagram 2026', false)">
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/youtube1.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
-                    <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Personal Projects</span><h4 class="text-xl font-bold text-white">Reel Instagram 2026</h4></div>
-                </div>
-
-                <div class="work-item group cinematic relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DTao5EADGay/embed', 'Cinematic - Yamaha R7', true)">
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/elia2.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
-                    <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Cinematic</span><h4 class="text-xl font-bold text-white">Cinematic - Yamaha R7</h4></div>
-                </div>
-
-                <div class="work-item group cinematic relative aspect-[9/16] rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DNNndH_sLEB/embed', 'Cinematic - Yamaha R7 2', true)">
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/elia1.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
-                    <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Cinematic</span><h4 class="text-xl font-bold text-white">Cinematic - Yamaha R7</h4></div>
-                </div>
-
-                <div class="work-item group cinematic relative aspect-video rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.youtube.com/embed/DWQPP8C6h9E', 'ETNA - Cinematic Vlog', false)">
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/youtube2.webp" alt="Copertina" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i></div>
-                    <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20"><span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">Cinematic</span><h4 class="text-xl font-bold text-white">ETNA - Cinematic Vlog</h4></div>
-                </div>
-
             </div>
 
             <div class="mt-20 text-center reveal">
-                <a href="/" class="text-graytext hover:text-white transition-colors inline-flex items-center gap-2 mx-auto border-b border-transparent hover:border-accent">
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Torna alla Home
+                <a href="/lavori.html" class="text-graytext hover:text-white transition-colors inline-flex items-center gap-2 mx-auto border-b border-transparent hover:border-accent">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Torna a tutti i lavori
                 </a>
             </div>
         </div>
     </main>
 
-    <!-- Footer Sistemato come da Screenshot -->
     <footer class="py-12 text-center border-t border-white/5 relative z-10 px-6">
         <p class="text-white/90 text-sm md:text-base mb-4 font-medium">
             &copy; 2026 Matteo Maria Macauda. P.IVA 02153520891.
@@ -242,64 +217,25 @@
                     <div><div class="text-xs text-graytext font-bold">Instagram</div><div class="font-medium text-white">@teo.macauda</div></div>
                 </a>
             </div>
-            
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        function filterPortfolio(category, element) {
-            const items = document.querySelectorAll('.work-item');
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            if (element) {
-                element.classList.add('active');
-            } else {
-                buttons.forEach(btn => {
-                    if(btn.getAttribute('onclick').includes(`'${category}'`)) btn.classList.add('active');
-                });
-            }
-            items.forEach(item => {
-                if (item.classList.contains(category)) {
-                    item.style.display = 'block';
-                    setTimeout(() => item.style.opacity = '1', 10);
-                } else {
-                    item.style.opacity = '0';
-                    setTimeout(() => item.style.display = 'none', 300);
-                }
-            });
-        }
-
-        function openVideoModal(contentSource, title, isVertical = false, isRawHTML = false) {
+        function openVideoModal(contentSource, title, isVertical = false) {
             const modal = document.getElementById('videoModal');
             const content = document.getElementById('videoModalContent');
             const container = document.getElementById('videoContainer');
             const titleEl = document.getElementById('videoTitle');
             titleEl.innerText = title;
 
-            content.classList.remove('max-w-[450px]', 'h-[85vh]', 'max-w-5xl', 'aspect-video', 'max-w-[380px]', 'aspect-[9/16]');
+            content.classList.remove('max-w-[380px]', 'aspect-[9/16]', 'max-w-5xl', 'aspect-video');
 
-            if (isRawHTML) {
-                const template = document.getElementById(contentSource);
-                if(template) {
-                    container.innerHTML = `<div class="w-full h-full overflow-y-auto bg-white flex justify-center pt-4" style="-webkit-overflow-scrolling: touch;">${template.innerHTML}</div>`;
-                    if (window.instgrm) window.instgrm.Embeds.process();
-                    else {
-                        const script = document.createElement('script');
-                        script.src = "https://www.instagram.com/embed.js";
-                        script.async = true;
-                        document.body.appendChild(script);
-                    }
-                }
-            } else {
-                container.innerHTML = `<iframe src="${contentSource}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-            }
+            container.innerHTML = `<iframe src="${contentSource}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
             
             if (isVertical) {
-                const widthClass = isRawHTML ? 'max-w-[450px]' : 'max-w-[380px]';
-                content.classList.add(widthClass, 'w-full', 'aspect-[9/16]');
-                if(isRawHTML) content.classList.add('h-[85vh]');
+                content.classList.add('max-w-[380px]', 'w-full', 'aspect-[9/16]');
             } else {
                 content.classList.add('max-w-5xl', 'w-full', 'aspect-video');
             }
@@ -375,16 +311,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initScrollAnimations();
-            filterPortfolio('social-marketing'); // Avvia filtrando la prima categoria
-
-            // FIX MOBILE: Forza la comparsa immediata dei primi elementi su mobile
-            if (window.innerWidth <= 768) {
-                const reveals = document.querySelectorAll('.reveal');
-                reveals.forEach((el, index) => {
-                    // Attiviamo subito Titolo, Filtri e Griglia Video
-                    if (index < 3) el.classList.add('active');
-                });
-            }
 
             const pill = document.getElementById('chat-pill');
             if(pill) {
@@ -403,51 +329,16 @@
     </script>
 
     <script>
-    /**
-     * TEOMACAUDA.IT - UNIFIED URL CLEANER & SMART SCROLL
-     * Gestisce la rimozione di .html/index.html e lo scorrimento alle sezioni
-     */
     function handleNavigationFix() {
         const path = window.location.pathname;
         const hash = window.location.hash;
         const origin = window.location.origin;
-
-        // 1. PULIZIA URL (Rimuove index.html o .html dalla barra indirizzi)
         if (path.includes('.html')) {
-            // Se siamo in index.html, lo trasformiamo in /
-            // Altrimenti togliamo solo l'estensione .html
             const newPath = path.replace('/index.html', '/').replace('.html', '');
-            
-            // Aggiorna l'URL visibile all'utente istantaneamente e senza ricaricare
             window.history.replaceState(null, '', origin + newPath + hash);
         }
-
-        // 2. GESTIONE SCROLL (Se arriviamo con l'ancora #servizi)
-        if (hash === '#servizi') {
-            const target = document.getElementById('servizi');
-            const nav = document.getElementById('navbar');
-
-            if (target) {
-                // Il ritardo di 400ms assicura che GSAP e immagini siano pronti
-                setTimeout(() => {
-                    const navHeight = nav ? nav.offsetHeight : 80;
-                    const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
-
-                    window.scrollTo({
-                        top: targetPos,
-                        behavior: "smooth"
-                    });
-                }, 400);
-            }
-        }
     }
-
-    // Esegue al caricamento della pagina
     window.addEventListener('load', handleNavigationFix);
-
-    // Gestisce il click se l'utente è già nella home e clicca "Servizi"
-    window.addEventListener('hashchange', handleNavigationFix);
-</script>
-    
+    </script>
 </body>
 </html>
