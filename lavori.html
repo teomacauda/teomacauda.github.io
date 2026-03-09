@@ -380,7 +380,7 @@
     <script>
     /**
      * TEOMACAUDA.IT - UNIFIED URL CLEANER & SMART SCROLL
-     * Gestisce la rimozione di .html/index.html e lo scorrimento alle sezioni
+     * Versione Universale per tutte le pagine del sito.
      */
     function handleNavigationFix() {
         const path = window.location.pathname;
@@ -390,23 +390,24 @@
         // 1. PULIZIA URL (Rimuove index.html o .html dalla barra indirizzi)
         if (path.includes('.html')) {
             // Se siamo in index.html, lo trasformiamo in /
-            // Altrimenti togliamo solo l'estensione .html
+            // Se siamo in lavori.html, diventa /lavori
             const newPath = path.replace('/index.html', '/').replace('.html', '');
             
-            // Aggiorna l'URL visibile all'utente istantaneamente e senza ricaricare
+            // Aggiorna l'URL nella barra degli indirizzi senza ricaricare la pagina
             window.history.replaceState(null, '', origin + newPath + hash);
         }
 
-        // 2. GESTIONE SCROLL (Se arriviamo con l'ancora #servizi)
-        if (hash === '#servizi') {
-            const target = document.getElementById('servizi');
+        // 2. GESTIONE SCROLL (Se presente un'ancora, es. #servizi)
+        if (hash) {
+            const targetId = hash.substring(1);
+            const targetElement = document.getElementById(targetId);
             const nav = document.getElementById('navbar');
 
-            if (target) {
+            if (targetElement) {
                 // Il ritardo di 400ms assicura che GSAP e immagini siano pronti
                 setTimeout(() => {
                     const navHeight = nav ? nav.offsetHeight : 80;
-                    const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    const targetPos = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
 
                     window.scrollTo({
                         top: targetPos,
@@ -417,12 +418,12 @@
         }
     }
 
-    // Esegue al caricamento della pagina
+    // Avvia la funzione quando la pagina è caricata completamente
     window.addEventListener('load', handleNavigationFix);
 
-    // Gestisce il click se l'utente è già nella home e clicca "Servizi"
+    // Gestisce il click se l'utente cambia ancora restando nella stessa pagina
     window.addEventListener('hashchange', handleNavigationFix);
 </script>
-    
+  
 </body>
 </html>
