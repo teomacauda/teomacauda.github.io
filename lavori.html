@@ -377,52 +377,23 @@
         });
     </script>
 
-    <script>
-    /**
-     * TEOMACAUDA.IT - UNIFIED URL CLEANER & SMART SCROLL
-     * Versione Universale per tutte le pagine del sito.
-     */
-    function handleNavigationFix() {
-        const path = window.location.pathname;
-        const hash = window.location.hash;
-        const origin = window.location.origin;
-
-        // 1. PULIZIA URL (Rimuove index.html o .html dalla barra indirizzi)
-        if (path.includes('.html')) {
-            // Se siamo in index.html, lo trasformiamo in /
-            // Se siamo in lavori.html, diventa /lavori
-            const newPath = path.replace('/index.html', '/').replace('.html', '');
-            
-            // Aggiorna l'URL nella barra degli indirizzi senza ricaricare la pagina
-            window.history.replaceState(null, '', origin + newPath + hash);
-        }
-
-        // 2. GESTIONE SCROLL (Se presente un'ancora, es. #servizi)
-        if (hash) {
-            const targetId = hash.substring(1);
-            const targetElement = document.getElementById(targetId);
-            const nav = document.getElementById('navbar');
-
-            if (targetElement) {
-                // Il ritardo di 400ms assicura che GSAP e immagini siano pronti
-                setTimeout(() => {
-                    const navHeight = nav ? nav.offsetHeight : 80;
-                    const targetPos = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
-
-                    window.scrollTo({
-                        top: targetPos,
-                        behavior: "smooth"
-                    });
-                }, 400);
-            }
-        }
+<script>
+  // Pulisce l'URL appena la pagina viene caricata
+  (function() {
+    const currentPath = window.location.pathname;
+    if (currentPath.endsWith('.html')) {
+      const cleanPath = currentPath.substring(0, currentPath.lastIndexOf('.html'));
+      window.history.replaceState(null, '', cleanPath + window.location.hash);
     }
 
-    // Avvia la funzione quando la pagina è caricata completamente
-    window.addEventListener('load', handleNavigationFix);
-
-    // Gestisce il click se l'utente cambia ancora restando nella stessa pagina
-    window.addEventListener('hashchange', handleNavigationFix);
+    // Trasforma automaticamente tutti i link del menu e della pagina
+    document.querySelectorAll('a').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.endsWith('.html') && !href.startsWith('http')) {
+        link.setAttribute('href', href.replace('.html', ''));
+      }
+    });
+  })();
 </script>
   
 </body>
