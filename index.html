@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Teo Macauda | Videomaker</title>
     
-<link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,12 +36,12 @@
         .glass-card:hover { transform: translateY(-8px); border-color: rgba(255, 122, 0, 0.3); box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); }
         .glass-modal { background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
-        /* Gradiente: Semicerchio superiore saturo */
+        /* FIX LUCE: Gradiente molto lungo e morbido per evitare il taglio netto */
         .ambient-glow { 
             position: absolute; 
             width: 100%; 
-            height: 700px; 
-            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.45) 0%, rgba(255, 122, 0, 0.1) 40%, rgba(0, 0, 0, 0) 85%); 
+            height: 1200px; 
+            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.4) 0%, rgba(255, 122, 0, 0.1) 40%, rgba(0, 0, 0, 0) 85%); 
             top: 0; 
             left: 0; 
             z-index: 0; 
@@ -117,7 +117,8 @@
     </header>
 
     <main>
-        <section id="hero-section" class="relative min-h-[85vh] md:min-h-screen flex flex-col justify-center items-center px-6 pt-40 md:pt-24 pb-32 md:pb-20 text-center overflow-hidden">
+        <!-- FIX CERCHIO: Rimosso overflow-hidden e aggiunto padding extra per non tagliare la lente -->
+        <section id="hero-section" class="relative min-h-[90vh] md:min-h-screen flex flex-col justify-center items-center px-6 pt-40 md:pt-24 pb-48 md:pb-40 text-center">
             <div class="camera-bg-container" id="camera-container">
                 <svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g id="cam-body"><rect x="200" y="220" width="400" height="230" rx="12" stroke="white" stroke-width="3" stroke-opacity="0.5"/><line x1="200" y1="280" x2="600" y2="280" stroke="white" stroke-width="2" stroke-opacity="0.2"/></g>
@@ -171,11 +172,47 @@
         </section>
 
         <section class="py-20 md:py-32 px-6 relative" id="metodo">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-2xl md:text-5xl font-bold mb-8 md:mb-12 reveal">Dalla <span class="text-accent">Pratica</span> alla <span class="text-accent">Strategia</span></h2>
-                <div class="glass-card p-6 md:p-12 rounded-3xl reveal mb-12 md:mb-20 text-left">
-                    <p class="text-base md:text-xl text-gray-300 leading-relaxed mb-6 font-light">Ciao, sono Teo, videomaker specializzato in content marketing. Ho imparato questo mestiere nell'unico modo che conta davvero: facendolo. Ore passate a studiare format, dinamiche social e tecniche di montaggio per capire esattamente come si trasforma l'attenzione di un utente in un'azione concreta.</p>
-                    <p class="text-base md:text-xl text-gray-300 leading-relaxed font-light">Il mio lavoro è tradurre questa pratica in risultati per il tuo business. Che tu voglia posizionare il tuo brand, vendere un prodotto o far crescere la tua community, sviluppo i video e la strategia per farti raggiungere l'obiettivo.</p>
+            <div class="max-w-6xl mx-auto flex flex-col items-center">
+                <h2 class="text-2xl md:text-5xl font-bold mb-8 md:mb-12 reveal text-center">Dalla <span class="text-accent">Pratica</span> alla <span class="text-accent">Strategia</span></h2>
+                
+                <div class="glass-card p-6 md:p-12 rounded-[2.5rem] reveal mb-12 md:mb-20 w-full">
+                    <div class="flex flex-col md:flex-row gap-10 md:gap-16 items-center">
+                        
+                        <!-- Colonna Immagine Profilo -->
+                        <div class="relative group shrink-0 w-full md:w-auto flex justify-center">
+                            <!-- Glow di sfondo per la foto -->
+                            <div class="absolute inset-0 bg-accent/20 blur-[60px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-700"></div>
+                            
+                            <div class="relative w-56 h-56 md:w-80 md:h-80 rounded-3xl overflow-hidden border border-white/10 shadow-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-500">
+                                <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" 
+                                     alt="Teo Macauda" 
+                                     class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonna Testo -->
+                        <div class="text-left flex-1">
+                            <p class="text-lg md:text-2xl text-white font-semibold mb-6 flex items-center gap-3">
+                                <span class="w-8 h-[2px] bg-accent"></span> Ciao, sono Teo.
+                            </p>
+                            <p class="text-base md:text-xl text-gray-300 leading-relaxed mb-6 font-light">
+                                Videomaker specializzato in content marketing. Ho imparato questo mestiere nell'unico modo che conta davvero: <span class="text-white font-normal underline decoration-accent/40 decoration-2 underline-offset-4">facendolo</span>. 
+                            </p>
+                            <p class="text-base md:text-xl text-gray-300 leading-relaxed mb-6 font-light italic border-l-2 border-accent/30 pl-6">
+                                Ore passate a studiare format, dinamiche social e tecniche di montaggio per capire esattamente come si trasforma l'attenzione di un utente in un'azione concreta.
+                            </p>
+                            <p class="text-base md:text-xl text-gray-300 leading-relaxed font-light">
+                                Il mio lavoro è tradurre questa pratica in risultati per il tuo business. Che tu voglia posizionare il tuo brand, vendere un prodotto o far crescere la tua community, sviluppo i video e la strategia per farti raggiungere l'obiettivo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FIX ESPLORA: Aggiunto l'indicatore centrato con freccia arancione animata -->
+                <div class="reveal mt-12 md:mt-20 flex flex-col items-center gap-3 opacity-60">
+                    <span class="text-[10px] uppercase tracking-[0.3em] text-graytext font-semibold drop-shadow-md text-center">Esplora</span>
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-accent scroll-arrow-anim drop-shadow-md"></i>
                 </div>
             </div>
         </section>
@@ -337,15 +374,9 @@
 
         function initCameraAnimation() {
             if (typeof gsap === 'undefined' || !document.getElementById("hero-section")) return;
-
-            // 1. Ingresso: La fotocamera si scompone all'apertura
-            const entranceTl = gsap.timeline({
-                defaults: { duration: 2.2, ease: "power3.inOut" }
-            });
-
+            const entranceTl = gsap.timeline({ defaults: { duration: 2.2, ease: "power3.inOut" } });
             gsap.set("#camera-container", { opacity: 0 });
             gsap.set(["#cam-body", "#cam-grip", "#cam-viewfinder", "#cam-lens-back", "#cam-lens-mid", "#cam-lens-front", "#cam-rec"], { x: 0, y: 0, scale: 1 });
-
             entranceTl.to("#camera-container", { opacity: 0.35, duration: 1.2 }, 0)
                 .to("#cam-body", { y: 120 }, 0)
                 .to("#cam-grip", { x: 100 }, 0)
@@ -354,44 +385,29 @@
                 .to("#cam-lens-mid", { x: 120, scale: 1.2 }, 0)
                 .to("#cam-lens-front", { y: 150, scale: 1.6 }, 0)
                 .to("#cam-rec", { y: -150 }, 0);
-
-            // 2. Scroll: Chiusura QUASI ISTANTANEA (entro 150px)
             const scrollTl = gsap.timeline({
                 scrollTrigger: {
                     trigger: "#hero-section", 
                     start: "top top", 
-                    end: "+=150", // Molto più breve: si chiude quasi subito
+                    end: "+=150", 
                     scrub: 0.8, 
                 }
             });
-
-            // Ricomposizione rapida
             scrollTl.to(["#cam-body", "#cam-grip", "#cam-viewfinder", "#cam-lens-back", "#cam-lens-mid", "#cam-lens-front", "#cam-rec"], { 
-                x: 0, 
-                y: 0, 
-                scale: 1, 
-                duration: 1,
-                ease: "power2.out"
+                x: 0, y: 0, scale: 1, duration: 1, ease: "power2.out"
             }, 0);
-            
-            // LA FOTOCAMERA RESTA LÌ: Non aggiungiamo opacità 0
         }
 
         function initDesktopPinAnimation() {
             if (typeof gsap === 'undefined') return;
-
             let mm = gsap.matchMedia();
-
             mm.add("(min-width: 1024px)", () => {
                 const trustSection = document.getElementById('trust');
                 const trustText = trustSection.querySelector('p');
                 const trustLogos = trustSection.querySelectorAll('.logo-item');
-
                 if(!trustSection || !trustText || trustLogos.length === 0) return;
-
                 gsap.set("#metodo", { zIndex: 10, position: "relative" });
                 gsap.set(trustSection, { zIndex: 5 });
-
                 let tl = gsap.timeline({
                     scrollTrigger: {
                         trigger: trustSection,
@@ -402,7 +418,6 @@
                         scrub: 1.2, 
                     }
                 });
-
                 tl.to(trustText, { opacity: 0, scale: 0.95, y: -30, duration: 0.3 }, 0);
                 tl.to(trustSection, {
                     borderTopColor: "rgba(255, 255, 255, 0)",
@@ -410,13 +425,11 @@
                     backgroundColor: "rgba(255, 255, 255, 0)",
                     duration: 0.3
                 }, 0);
-
                 const mid = trustLogos.length / 2;
                 trustLogos.forEach((logo, i) => {
                     let isLeft = i < mid;
                     let distanceFromCenter = isLeft ? (mid - i) : (i - mid + 1);
                     let dir = isLeft ? -1 : 1;
-
                     tl.to(logo, {
                         x: () => dir * (window.innerWidth * 0.4 + (distanceFromCenter * 80)),
                         y: () => (Math.random() - 0.5) * 100, 
@@ -434,7 +447,6 @@
             const trustCarousel = document.getElementById('trust-carousel');
             const scrollLeftIndicator = document.getElementById('trust-scroll-left');
             const scrollRightIndicator = document.getElementById('trust-scroll-right');
-
             if (trustCarousel && scrollLeftIndicator && scrollRightIndicator) {
                 trustCarousel.addEventListener('scroll', () => {
                     if (trustCarousel.scrollLeft > 10) {
@@ -444,7 +456,6 @@
                         scrollLeftIndicator.classList.remove('opacity-100');
                         scrollLeftIndicator.classList.add('opacity-0');
                     }
-
                     if (trustCarousel.scrollLeft >= (trustCarousel.scrollWidth - trustCarousel.clientWidth - 10)) {
                         scrollRightIndicator.classList.remove('opacity-100');
                         scrollRightIndicator.classList.add('opacity-0');
@@ -478,85 +489,33 @@
         });
     </script>
 
-   <script>
-    window.addEventListener('load', function() {
-        // Se c'è un'ancora nell'URL (es. #servizi)
-        if (window.location.hash) {
-            const targetId = window.location.hash.substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            // 1. PULIZIA URL: Rimuove "index.html" dalla barra degli indirizzi
-            // così l'utente vede un URL pulito anche se il link originale era "brutto"
-            if (window.location.pathname.includes('index.html')) {
-                const newUrl = window.location.origin + '/' + window.location.hash;
-                window.history.replaceState(null, '', newUrl);
-            }
-
-            // 2. FORZA SCROLL CON OFFSET
-            if (targetElement) {
-                setTimeout(() => {
-                    // Calcola l'altezza della navbar per non finire sotto
-                    const nav = document.getElementById('navbar');
-                    const navHeight = nav ? nav.offsetHeight : 80; // 80px di fallback
-                    
-                    // Calcolo preciso della posizione
-                    const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
-                    const offsetPosition = elementPosition - navHeight;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
-                }, 400); // 400ms di ritardo per dare tempo a GSAP e immagini
-            }
-        }
-    });
-</script>
-
     <script>
     /**
      * TEOMACAUDA.IT - UNIFIED URL CLEANER & SMART SCROLL
-     * Gestisce la rimozione di .html/index.html e lo scorrimento alle sezioni
      */
     function handleNavigationFix() {
         const path = window.location.pathname;
         const hash = window.location.hash;
         const origin = window.location.origin;
 
-        // 1. PULIZIA URL (Rimuove index.html o .html dalla barra indirizzi)
         if (path.includes('.html')) {
-            // Se siamo in index.html, lo trasformiamo in /
-            // Altrimenti togliamo solo l'estensione .html
             const newPath = path.replace('/index.html', '/').replace('.html', '');
-            
-            // Aggiorna l'URL visibile all'utente istantaneamente e senza ricaricare
             window.history.replaceState(null, '', origin + newPath + hash);
         }
 
-        // 2. GESTIONE SCROLL (Se arriviamo con l'ancora #servizi)
         if (hash === '#servizi') {
             const target = document.getElementById('servizi');
             const nav = document.getElementById('navbar');
-
             if (target) {
-                // Il ritardo di 400ms assicura che GSAP e immagini siano pronti
                 setTimeout(() => {
                     const navHeight = nav ? nav.offsetHeight : 80;
                     const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
-
-                    window.scrollTo({
-                        top: targetPos,
-                        behavior: "smooth"
-                    });
+                    window.scrollTo({ top: targetPos, behavior: "smooth" });
                 }, 400);
             }
         }
     }
-
-    // Esegue al caricamento della pagina
     window.addEventListener('load', handleNavigationFix);
-
-    // Gestisce il click se l'utente è già nella home e clicca "Servizi"
     window.addEventListener('hashchange', handleNavigationFix);
 </script>
     
