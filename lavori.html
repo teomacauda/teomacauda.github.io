@@ -26,7 +26,6 @@
     </script>
 
     <style>
-        /* FIX: Prevenzione drastica dello scroll orizzontale */
         html, body { 
             background-color: #000000; 
             color: #ffffff; 
@@ -41,7 +40,6 @@
         .glass-card:hover { transform: translateY(-8px); border-color: rgba(255, 122, 0, 0.3); box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); }
         .glass-modal { background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); }
         
-        /* FIX Glow: Contenuto entro i limiti della viewport */
         .ambient-glow { 
             position: absolute; 
             width: 100vw; 
@@ -69,11 +67,6 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        @media (max-width: 640px) {
-            .reveal { transform: translateY(20px); }
-            .glass-card { border-radius: 1.25rem; }
-        }
     </style>
 </head>
 <body class="antialiased selection:bg-accent selection:text-white font-sans">
@@ -102,7 +95,6 @@
             </button>
         </div>
 
-        <!-- Mobile Menu -->
         <div id="mobileMenu" class="fixed inset-0 z-[140] opacity-0 pointer-events-none transition-all duration-300">
             <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="toggleMobileMenu()"></div>
             <div id="mobileMenuContent" class="absolute top-24 left-6 right-6 bg-[#0F0F0F] border border-white/10 p-8 rounded-3xl transform -translate-y-10 transition-transform duration-500 shadow-2xl">
@@ -116,7 +108,6 @@
         </div>
     </header>
 
-    <!-- Main con protezione overflow -->
     <main class="pt-32 pb-24 px-6 max-w-7xl mx-auto relative z-10 overflow-x-hidden w-full">
         <!-- Hero Section -->
         <div class="text-center mb-12 reveal">
@@ -261,7 +252,7 @@
         <div class="absolute inset-0 bg-black/95 backdrop-blur-xl" onclick="closeVideoModal()"></div>
         <div class="relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full" id="videoModalContent">
             <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-[210] text-white/50 hover:text-white bg-black/50 p-2 rounded-full backdrop-blur-md"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <div class="flex-1 bg-black" id="videoContainer"></div>
+            <div class="flex-1 bg-black flex items-center justify-center text-center p-8" id="videoContainer"></div>
             <div class="p-5 bg-black/60 backdrop-blur-md border-t border-white/5"><h5 id="videoTitle" class="text-base font-bold text-white uppercase tracking-wide"></h5></div>
         </div>
     </div>
@@ -278,7 +269,6 @@
         <div class="glass-modal w-full max-w-md p-8 rounded-3xl relative transform translate-y-10 transition-transform duration-500 shadow-2xl" id="contactModalContent">
             <button onclick="toggleContactModal()" class="absolute top-6 right-6 text-graytext hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             <h3 class="text-3xl font-bold mb-2 text-white">E adesso? <br/><span class="text-accent">Contattami!</span></h3>
-            
             <div class="space-y-3 mt-8">
                 <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all group">
                     <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
@@ -303,7 +293,7 @@
     <script>
         lucide.createIcons();
 
-        // Modal Video Logic
+        // --- COOKIE & VIDEO LOGIC GLOBALE ---
         function openVideoModal(source, title, isVertical = false) {
             const modal = document.getElementById('videoModal');
             const content = document.getElementById('videoModalContent');
@@ -311,17 +301,55 @@
             document.getElementById('videoTitle').innerText = title;
 
             content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full";
-            
             if (isVertical) {
                 content.classList.add('max-w-[380px]', 'aspect-[9/16]');
             } else {
                 content.classList.add('max-w-5xl', 'aspect-video');
             }
 
-            container.innerHTML = `<iframe src="${source}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+            const consentStatus = localStorage.getItem('video_consent_teo');
+
+            if (consentStatus === 'true') {
+                loadIframe(source, container);
+            } else {
+                // UI Cookie Minimale
+                container.innerHTML = `
+                    <div class="flex flex-col items-center gap-6 p-8">
+                        <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-2">
+                            <i data-lucide="eye-off" class="w-8 h-8"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <h4 class="text-lg md:text-xl font-bold tracking-tight text-white">Cookie di terze parti</h4>
+                            <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed">
+                                Per vedere questo contenuto devi accettare i cookie di YouTube/Instagram.
+                            </p>
+                        </div>
+                        <div class="flex flex-col w-full gap-3 mt-6">
+                            <button onclick="handleConsentDecision(true, '${source}')" class="w-full py-4 bg-accent hover:bg-accentHover text-white rounded-2xl font-bold transition-all shadow-lg shadow-accent/20 uppercase tracking-widest text-xs">Accetta e guarda</button>
+                            <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white transition-colors uppercase tracking-widest font-bold">No, grazie</button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
             modal.classList.remove('opacity-0', 'pointer-events-none');
             setTimeout(() => content.classList.replace('scale-95', 'scale-100'), 50);
             document.body.style.overflow = 'hidden';
+        }
+
+        function handleConsentDecision(isAccepted, source = null) {
+            if (isAccepted) {
+                localStorage.setItem('video_consent_teo', 'true');
+                if (source) loadIframe(source, document.getElementById('videoContainer'));
+            } else {
+                localStorage.setItem('video_consent_teo', 'false');
+                closeVideoModal();
+            }
+        }
+
+        function loadIframe(source, container) {
+            container.innerHTML = `<iframe src="${source}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         }
 
         function closeVideoModal() {
@@ -333,14 +361,13 @@
             setTimeout(() => { document.getElementById('videoContainer').innerHTML = ''; }, 300);
         }
 
-        // Mobile Menu Logic
+        // --- MOBILE MENU, CONTACTS & REVEAL ---
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             const menuContent = document.getElementById('mobileMenuContent');
             const iconMenu = document.getElementById('icon-menu');
             const iconX = document.getElementById('icon-x');
             const isOpen = !menu.classList.contains('opacity-0');
-
             if (!isOpen) {
                 menu.classList.remove('opacity-0', 'pointer-events-none');
                 menuContent.classList.replace('-translate-y-10', 'translate-y-0');
@@ -356,12 +383,10 @@
             }
         }
 
-        // Contact Modal Logic
         function toggleContactModal() {
             const modal = document.getElementById('contactModal');
             const content = document.getElementById('contactModalContent');
             const isOpen = !modal.classList.contains('opacity-0');
-
             if (!isOpen) {
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 content.classList.replace('translate-y-10', 'translate-y-0');
@@ -373,7 +398,6 @@
             }
         }
 
-        // Scroll and Reveal Logic
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver(entries => {
@@ -395,34 +419,15 @@
                 }
             });
         });
-    </script>
 
-    <script>
-(function() {
-    // 1. Pulisce l'URL attuale nella barra degli indirizzi
-    const path = window.location.pathname;
-    if (path.endsWith('.html')) {
-        const cleanPath = path.replace(/\.html$/, '');
-        window.history.replaceState(null, '', cleanPath + window.location.hash);
-    }
-
-    // 2. Intercetta i click sui link per evitare che riappaia .html
-    document.addEventListener('click', function(e) {
-        const link = e.target.closest('a');
-        if (link && link.getAttribute('href')) {
-            let href = link.getAttribute('href');
-            
-            // Se il link finisce con .html e non è un link esterno
-            if (href.endsWith('.html') && !href.startsWith('http')) {
-                e.preventDefault();
-                const cleanHref = href.replace(/\.html$/, '');
-                window.location.href = cleanHref;
+        // Clean URL logic
+        (function() {
+            const path = window.location.pathname;
+            if (path.endsWith('.html')) {
+                const cleanPath = path.replace(/\.html$/, '');
+                window.history.replaceState(null, '', cleanPath + window.location.hash);
             }
-        }
-    });
-})();
-</script>
-
-    
+        })();
+    </script>
 </body>
 </html>
