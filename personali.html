@@ -68,17 +68,16 @@
             </a>
             
             <nav class="hidden md:flex gap-4 text-sm font-medium text-graytext">
-                <a href="/" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
+                <a href="/" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
                     Home
                 </a>
-                <!-- Tasto Lavori Attivo -->
-                <a href="/lavori.html" class="px-5 py-2.5 rounded-full bg-accent text-white shadow-[0_10px_20px_-5px_rgba(255,122,0,0.3)] transition-all duration-300">
+                <a href="/lavori.html" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
                     Lavori
                 </a>
-                <a href="/index.html#servizi" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
+                <a href="/index.html#servizi" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
                     Servizi
                 </a>
-                <a href="/toolbox.html" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
+                <a href="/toolbox.html" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">
                     Toolbox
                 </a>
             </nav>
@@ -96,8 +95,8 @@
                     <a href="/" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group">
                         <i data-lucide="home" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Home
                     </a>
-                    <a href="/lavori.html" class="flex items-center gap-4 text-2xl font-bold text-accent transition-colors group">
-                        <i data-lucide="folder-kanban" class="w-6 h-6 text-accent group-hover:text-accent"></i> Lavori
+                    <a href="/lavori.html" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group">
+                        <i data-lucide="folder-kanban" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Lavori
                     </a>
                     <a href="/index.html#servizi" onclick="toggleMobileMenu()" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group">
                         <i data-lucide="layers" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Servizi
@@ -153,13 +152,13 @@
 
     <div id="videoModal" class="fixed inset-0 z-[150] flex items-center justify-center px-4 md:px-20 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="absolute inset-0 bg-black/95 backdrop-blur-xl" onclick="closeVideoModal()"></div>
-        <div class="relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col" id="videoModalContent">
+        <div class="relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col max-w-full w-full" id="videoModalContent">
             <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-[170] text-white/50 hover:text-white transition-colors bg-black/40 p-2 rounded-full backdrop-blur-md">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <div class="flex-1 bg-black" id="videoContainer"></div>
+            <div class="flex-1 bg-black overflow-hidden flex items-center justify-center text-center p-8" id="videoContainer"></div>
             <div class="p-5 bg-black/40 backdrop-blur-md border-t border-white/5">
-                <h5 id="videoTitle" class="text-lg font-bold text-white">Titolo</h5>
+                <h5 id="videoTitle" class="text-lg font-bold text-white uppercase tracking-wide">Titolo</h5>
             </div>
         </div>
     </div>
@@ -202,37 +201,72 @@
     <script>
         lucide.createIcons();
 
-        function openVideoModal(contentSource, title, isVertical = false) {
+        // --- COOKIE & VIDEO LOGIC GLOBALE ---
+        function openVideoModal(source, title, isVertical = false) {
             const modal = document.getElementById('videoModal');
             const content = document.getElementById('videoModalContent');
             const container = document.getElementById('videoContainer');
-            const titleEl = document.getElementById('videoTitle');
-            titleEl.innerText = title;
+            document.getElementById('videoTitle').innerText = title;
 
-            content.classList.remove('max-w-[380px]', 'aspect-[9/16]', 'max-w-5xl', 'aspect-video');
-            container.innerHTML = `<iframe src="${contentSource}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-            
+            content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col mx-auto w-full";
             if (isVertical) {
-                content.classList.add('max-w-[380px]', 'w-full', 'aspect-[9/16]');
+                content.classList.add('max-w-[380px]', 'aspect-[9/16]');
             } else {
-                content.classList.add('max-w-5xl', 'w-full', 'aspect-video');
+                content.classList.add('max-w-5xl', 'aspect-video');
             }
-            
+
+            const consentStatus = localStorage.getItem('video_consent_teo');
+
+            if (consentStatus === 'true') {
+                loadIframe(source, container);
+            } else {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center gap-6 p-8">
+                        <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-2">
+                            <i data-lucide="eye-off" class="w-8 h-8"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <h4 class="text-lg md:text-xl font-bold tracking-tight text-white">Cookie di terze parti</h4>
+                            <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed">
+                                Per vedere questo contenuto devi accettare i cookie di YouTube/Instagram.
+                            </p>
+                        </div>
+                        <div class="flex flex-col w-full gap-3 mt-6">
+                            <button onclick="handleConsentDecision(true, '${source}')" class="w-full py-4 bg-accent hover:bg-accentHover text-white rounded-2xl font-bold transition-all shadow-lg shadow-accent/20 uppercase tracking-widest text-xs">Accetta e guarda</button>
+                            <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white transition-colors uppercase tracking-widest font-bold">No, grazie</button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
             modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
+            setTimeout(() => content.classList.replace('scale-95', 'scale-100'), 10);
             document.body.style.overflow = 'hidden';
+        }
+
+        function handleConsentDecision(isAccepted, source = null) {
+            if (isAccepted) {
+                localStorage.setItem('video_consent_teo', 'true');
+                if (source) loadIframe(source, document.getElementById('videoContainer'));
+            } else {
+                localStorage.setItem('video_consent_teo', 'false');
+                closeVideoModal();
+            }
+        }
+
+        function loadIframe(source, container) {
+            container.innerHTML = `<iframe src="${source}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         }
 
         function closeVideoModal() {
             const modal = document.getElementById('videoModal');
             const content = document.getElementById('videoModalContent');
-            const container = document.getElementById('videoContainer');
             modal.classList.add('opacity-0', 'pointer-events-none');
             content.classList.remove('scale-100');
             content.classList.add('scale-95');
             document.body.style.overflow = '';
-            setTimeout(() => { container.innerHTML = ''; }, 300);
+            setTimeout(() => { document.getElementById('videoContainer').innerHTML = ''; }, 300);
         }
 
         function toggleMobileMenu() {
@@ -240,38 +274,32 @@
             const menuContent = document.getElementById('mobileMenuContent');
             const iconMenu = document.getElementById('icon-menu');
             const iconX = document.getElementById('icon-x');
-            const isOpen = menu.classList.contains('opacity-100');
+            const isOpen = !menu.classList.contains('opacity-0');
             if (!isOpen) {
                 menu.classList.remove('opacity-0', 'pointer-events-none');
-                menu.classList.add('opacity-100', 'pointer-events-auto');
-                menuContent.classList.remove('-translate-y-10');
-                menuContent.classList.add('translate-y-0');
-                document.body.style.overflow = 'hidden';
+                menuContent.classList.replace('-translate-y-10', 'translate-y-0');
                 iconMenu.classList.add('hidden');
                 iconX.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             } else {
                 menu.classList.add('opacity-0', 'pointer-events-none');
-                menu.classList.remove('opacity-100', 'pointer-events-auto');
-                menuContent.classList.remove('translate-y-0');
-                menuContent.classList.add('-translate-y-10');
-                document.body.style.overflow = '';
+                menuContent.classList.replace('translate-y-0', '-translate-y-10');
                 iconX.classList.add('hidden');
                 iconMenu.classList.remove('hidden');
+                document.body.style.overflow = '';
             }
         }
 
         function toggleContactModal() {
             const modal = document.getElementById('contactModal');
             const content = document.getElementById('contactModalContent');
-            const isOpen = modal.classList.contains('opacity-100');
+            const isOpen = !modal.classList.contains('opacity-0');
             if(!isOpen) {
                 modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.classList.add('opacity-100', 'pointer-events-auto');
                 content.classList.replace('translate-y-10', 'translate-y-0');
                 document.body.style.overflow = 'hidden';
             } else {
                 modal.classList.add('opacity-0', 'pointer-events-none');
-                modal.classList.remove('opacity-100', 'pointer-events-auto');
                 content.classList.replace('translate-y-0', 'translate-y-10');
                 document.body.style.overflow = '';
             }
@@ -279,12 +307,10 @@
 
         function initScrollAnimations() {
             const reveals = document.querySelectorAll('.reveal');
-            const revealOnScroll = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
             }, { threshold: 0.1 });
-            reveals.forEach(r => revealOnScroll.observe(r));
+            reveals.forEach(r => observer.observe(r));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -303,19 +329,21 @@
             const nav = document.getElementById('navbar');
             if(nav) nav.style.background = window.scrollY > 50 ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.6)';
         });
-    </script>
 
-    <script>
-    function handleNavigationFix() {
-        const path = window.location.pathname;
-        const hash = window.location.hash;
-        const origin = window.location.origin;
-        if (path.includes('.html')) {
-            const newPath = path.replace('/index.html', '/').replace('.html', '');
-            window.history.replaceState(null, '', origin + newPath + hash);
-        }
-    }
-    window.addEventListener('load', handleNavigationFix);
+        // Clean URL logic
+        (function() {
+            const currentPath = window.location.pathname;
+            if (currentPath.endsWith('.html')) {
+                const cleanPath = currentPath.substring(0, currentPath.lastIndexOf('.html'));
+                window.history.replaceState(null, '', window.location.origin + cleanPath + window.location.hash);
+            }
+            document.querySelectorAll('a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.endsWith('.html') && !href.startsWith('http')) {
+                    link.setAttribute('href', href.replace('.html', ''));
+                }
+            });
+        })();
     </script>
 </body>
 </html>
