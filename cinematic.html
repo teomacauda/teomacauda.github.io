@@ -85,12 +85,12 @@
             
             <nav class="hidden md:flex gap-4 text-sm font-medium">
                 <a href="/" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Home</a>
-                <a href="/lavori.html" class="px-5 py-2.5 rounded-full bg-accent text-white">Lavori</a>
+                <a href="/lavori.html" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Lavori</a>
                 <a href="/index.html#servizi" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Servizi</a>
                 <a href="/toolbox.html" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Toolbox</a>
             </nav>
 
-            <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-white"><i data-lucide="menu"></i></button>
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-white relative z-[150]"><i data-lucide="menu"></i></button>
         </div>
     </header>
 
@@ -108,7 +108,7 @@
                 <a href="personali.html" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext hover:text-white transition-all">Personal Projects</a>
             </div>
 
-            <!-- Griglia Video (2 colonne su mobile, 4 su desktop) -->
+            <!-- Griglia Video -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 reveal items-start">
                 
                 <!-- Video 1 (Reel 9:16) -->
@@ -137,7 +137,7 @@
                     </div>
                 </div>
 
-                <!-- Video 3 (YouTube Vlog 16:9 - Occupa 2 colonne) -->
+                <!-- Video 3 (YouTube Vlog 16:9) -->
                 <div class="work-item group relative aspect-video overflow-hidden glass-card cursor-pointer col-span-2 lg:col-span-2" onclick="openVideoModal('https://www.youtube.com/embed/DWQPP8C6h9E', 'ETNA - Cinematic Vlog', false)">
                     <div class="absolute top-4 left-4 z-30 views-badge">7.7k Views</div>
                     <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/youtube2.webp" alt="ETNA Vlog" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
@@ -171,13 +171,13 @@
 <!-- Modal Video -->
 <div id="videoModal" class="fixed inset-0 z-[150] flex items-center justify-center px-4 opacity-0 pointer-events-none transition-opacity duration-300">
     <div class="absolute inset-0 bg-black/95 backdrop-blur-xl" onclick="closeVideoModal()"></div>
-    <div class="relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col max-w-full" id="videoModalContent">
+    <div class="relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col max-w-full w-full" id="videoModalContent">
         <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-[170] text-white/50 hover:text-white bg-black/40 p-2 rounded-full backdrop-blur-md">
             <i data-lucide="x" class="w-5 h-5"></i>
         </button>
-        <div class="flex-1 bg-black overflow-hidden" id="videoContainer"></div>
+        <div class="flex-1 bg-black overflow-hidden flex items-center justify-center text-center p-8" id="videoContainer"></div>
         <div class="p-5 bg-black/40 border-t border-white/5">
-            <h5 id="videoTitle" class="text-lg font-bold text-white">Titolo</h5>
+            <h5 id="videoTitle" class="text-lg font-bold text-white uppercase tracking-wide">Titolo</h5>
         </div>
     </div>
 </div>
@@ -193,23 +193,19 @@
     <div class="glass-modal w-full max-w-md p-8 rounded-3xl relative transform translate-y-10 transition-transform duration-500 shadow-2xl" id="contactModalContent">
         <button onclick="toggleContactModal()" class="absolute top-6 right-6 text-graytext hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
         <h3 class="text-3xl font-bold mb-2 text-white">E adesso? <br/><span class="text-accent">Contattami!</span></h3>
-        
         <div class="space-y-4 mt-8">
             <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
                 <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
                 <div><div class="text-xs text-graytext font-bold">WhatsApp</div><div class="font-medium text-white">Scrivimi ora</div></div>
             </a>
-            
             <a href="tel:+393784142773" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
                 <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="phone" class="w-5 h-5"></i></div>
                 <div><div class="text-xs text-graytext font-bold">Chiamata</div><div class="font-medium text-white">+39 378 414 2773</div></div>
             </a>
-
             <a href="mailto:matteomacaudaprod@gmail.com" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
                 <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="mail" class="w-5 h-5"></i></div>
                 <div><div class="text-xs text-graytext font-bold">Email</div><div class="font-medium text-white break-all text-sm">matteomacaudaprod@gmail.com</div></div>
             </a>
-            
             <a href="https://www.instagram.com/teo.macauda" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
                 <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="instagram" class="w-5 h-5"></i></div>
                 <div><div class="text-xs text-graytext font-bold">Instagram</div><div class="font-medium text-white">@teo.macauda</div></div>
@@ -221,24 +217,62 @@
 <script>
     lucide.createIcons();
 
-    function openVideoModal(src, title, isVertical = false) {
+    // --- COOKIE & VIDEO LOGIC GLOBALE ---
+    function openVideoModal(source, title, isVertical = false) {
         const modal = document.getElementById('videoModal');
         const content = document.getElementById('videoModalContent');
         const container = document.getElementById('videoContainer');
         document.getElementById('videoTitle').innerText = title;
 
-        container.innerHTML = `<iframe src="${src}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        
-        content.className = "relative glass-modal rounded-3xl overflow-hidden transform transition-all duration-500 flex flex-col mx-auto";
+        content.className = "relative glass-modal rounded-3xl overflow-hidden transform transition-all duration-500 flex flex-col mx-auto w-full scale-95";
         if (isVertical) {
-            content.classList.add('max-w-[380px]', 'w-full', 'aspect-[9/16]');
+            content.classList.add('max-w-[380px]', 'aspect-[9/16]');
         } else {
-            content.classList.add('max-w-5xl', 'w-full', 'aspect-video');
+            content.classList.add('max-w-5xl', 'aspect-video');
         }
-        
+
+        const consentStatus = localStorage.getItem('video_consent_teo');
+
+        if (consentStatus === 'true') {
+            loadIframe(source, container);
+        } else {
+            container.innerHTML = `
+                <div class="flex flex-col items-center gap-6 p-8">
+                    <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-2">
+                        <i data-lucide="eye-off" class="w-8 h-8"></i>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="text-lg md:text-xl font-bold tracking-tight text-white">Cookie di terze parti</h4>
+                        <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed">
+                            Per vedere questo contenuto devi accettare i cookie di YouTube/Instagram.
+                        </p>
+                    </div>
+                    <div class="flex flex-col w-full gap-3 mt-6">
+                        <button onclick="handleConsentDecision(true, '${source}')" class="w-full py-4 bg-accent hover:bg-accentHover text-white rounded-2xl font-bold transition-all shadow-lg shadow-accent/20 uppercase tracking-widest text-xs">Accetta e guarda</button>
+                        <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white transition-colors uppercase tracking-widest font-bold">No, grazie</button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        setTimeout(() => content.classList.add('scale-100'), 10);
+        setTimeout(() => content.classList.replace('scale-95', 'scale-100'), 10);
         document.body.style.overflow = 'hidden';
+    }
+
+    function handleConsentDecision(isAccepted, source = null) {
+        if (isAccepted) {
+            localStorage.setItem('video_consent_teo', 'true');
+            if (source) loadIframe(source, document.getElementById('videoContainer'));
+        } else {
+            localStorage.setItem('video_consent_teo', 'false');
+            closeVideoModal();
+        }
+    }
+
+    function loadIframe(source, container) {
+        container.innerHTML = `<iframe src="${source}" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
     }
 
     function closeVideoModal() {
@@ -246,6 +280,7 @@
         const content = document.getElementById('videoModalContent');
         modal.classList.add('opacity-0', 'pointer-events-none');
         content.classList.remove('scale-100');
+        content.classList.add('scale-95');
         document.body.style.overflow = '';
         setTimeout(() => { document.getElementById('videoContainer').innerHTML = ''; }, 300);
     }
@@ -253,15 +288,13 @@
     function toggleContactModal() {
         const modal = document.getElementById('contactModal');
         const content = document.getElementById('contactModalContent');
-        const isOpen = modal.classList.contains('opacity-100');
+        const isOpen = !modal.classList.contains('opacity-0');
         if(!isOpen) {
             modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100', 'pointer-events-auto');
             content.classList.replace('translate-y-10', 'translate-y-0');
             document.body.style.overflow = 'hidden';
         } else {
             modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.classList.remove('opacity-100', 'pointer-events-auto');
             content.classList.replace('translate-y-0', 'translate-y-10');
             document.body.style.overflow = '';
         }
@@ -276,13 +309,9 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollAnimations();
-        
         const pill = document.getElementById('chat-pill');
         if(pill) {
-            // Espansione dopo 3 secondi
             setTimeout(() => { pill.classList.add('expanded'); }, 3000);
-            
-            // Logica scroll
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) pill.classList.remove('expanded');
                 else pill.classList.add('expanded');
@@ -294,26 +323,21 @@
         const nav = document.getElementById('navbar');
         if(nav) nav.style.background = window.scrollY > 50 ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.6)';
     });
-</script>
 
-    <script>
-  // Pulisce l'URL appena la pagina viene caricata
-  (function() {
-    const currentPath = window.location.pathname;
-    if (currentPath.endsWith('.html')) {
-      const cleanPath = currentPath.substring(0, currentPath.lastIndexOf('.html'));
-      window.history.replaceState(null, '', cleanPath + window.location.hash);
-    }
-
-    // Trasforma automaticamente tutti i link del menu e della pagina
-    document.querySelectorAll('a').forEach(link => {
-      const href = link.getAttribute('href');
-      if (href && href.endsWith('.html') && !href.startsWith('http')) {
-        link.setAttribute('href', href.replace('.html', ''));
-      }
-    });
-  })();
+    // Clean URL logic
+    (function() {
+        const currentPath = window.location.pathname;
+        if (currentPath.endsWith('.html')) {
+            const cleanPath = currentPath.substring(0, currentPath.lastIndexOf('.html'));
+            window.history.replaceState(null, '', cleanPath + window.location.hash);
+        }
+        document.querySelectorAll('a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.endsWith('.html') && !href.startsWith('http')) {
+                link.setAttribute('href', href.replace('.html', ''));
+            }
+        });
+    })();
 </script>
-    
 </body>
 </html>
