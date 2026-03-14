@@ -49,6 +49,7 @@
             color: #ffffff; 
             -webkit-tap-highlight-color: transparent; 
             min-height: 100vh;
+            min-height: 100dvh;
         }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .ambient-glow { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% -10%, rgba(255,122,0,0.15) 0%, rgba(0,0,0,0) 60%); pointer-events: none; z-index: 0; }
@@ -92,10 +93,12 @@
 <div class="ambient-glow"></div>
 
 <!-- SCHERMATA PASSWORD -->
-<div id="auth-screen" class="fixed inset-0 z-[1000] flex flex-col items-center bg-black transition-all duration-500 overflow-y-auto pt-[var(--sat)]">
-    <!-- Spacer Top per forzare la centratura del contenuto principale -->
-    <div class="flex-1 flex flex-col items-center justify-center w-full min-h-[500px] px-6">
-        <div id="lock-container" class="w-full max-w-xs flex flex-col items-center">
+<div id="auth-screen" class="fixed inset-0 z-[1000] bg-black transition-all duration-500 overflow-y-auto">
+    <!-- Wrapper che occupa almeno il 100% dell'altezza visibile -->
+    <div class="min-h-full flex flex-col items-center w-full px-6">
+        
+        <!-- Blocco PIN: margin-top auto e margin-bottom auto lo centrano verticalmente nel flex-col -->
+        <div id="lock-container" class="w-full max-w-xs flex flex-col items-center my-auto py-12">
             <div class="mb-10 text-center">
                 <svg class="h-14 w-auto mx-auto mb-6" viewBox="0 0 1018 723">
                     <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="#FF7A00"/>
@@ -128,6 +131,17 @@
                     <i data-lucide="delete"></i>
                 </button>
             </div>
+        </div>
+
+        <!-- Footer Login in fondo -->
+        <div class="w-full text-center pb-[calc(var(--sab)+2rem)] pt-4 mt-auto">
+            <p class="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] mb-1">
+                Matteo Maria Macauda | P.IVA 02153520891
+            </p>
+            <p class="text-[9px] text-white/10 uppercase tracking-widest leading-relaxed">
+                Strumento riservato ad uso interno professionale. <br/>
+                Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | <a href="#" class="underline hover:text-accent transition-colors">Privacy Policy</a>
+            </p>
         </div>
     </div>
 </div>
@@ -217,7 +231,7 @@
             </select>
         </div>
 
-        <!-- Footer dell'App (Spostato dentro il flusso dello scroll) -->
+        <!-- Footer dell'App -->
         <div class="text-center pb-8 opacity-40">
             <p class="text-[10px] text-white font-bold uppercase tracking-[0.2em] mb-1">
                 Matteo Maria Macauda | P.IVA 02153520891
@@ -377,8 +391,6 @@
 
     window.onload = () => {
         handleGearChange();
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
 </script>
 
