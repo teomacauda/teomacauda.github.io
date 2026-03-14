@@ -5,18 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pricing Tool | Teo Macauda</title>
     
-    <!-- PWA Meta per iPhone -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Teo Pricing">
     <meta name="theme-color" content="#000000">
     
-    <!-- Icona per Home Screen (Apple Touch Icon) -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723' fill='%23FF7A00'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z'/></svg>">
     
-    <!-- Favicon standard -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z' fill='rgb(255,122,0)'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z' fill='rgb(255,122,0)'/></svg>">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -30,9 +25,7 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], },
                     colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA' },
-                    animation: {
-                        'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
-                    },
+                    animation: { 'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both' },
                     keyframes: {
                         shake: {
                             '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
@@ -47,22 +40,38 @@
     </script>
 
     <style>
-        body { background-color: #000000; color: #ffffff; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            -webkit-tap-highlight-color: transparent; 
+            overscroll-behavior-y: none; /* Impedisce il bounce su iOS */
+        }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .ambient-glow { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% -10%, rgba(255,122,0,0.15) 0%, rgba(0,0,0,0) 60%); pointer-events: none; z-index: 0; }
-        .stepper-btn { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.06); border-radius: 20px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .stepper-btn:not(:disabled):active { transform: scale(0.9); background: rgba(255, 122, 0, 0.2); border-color: #FF7A00; }
-        .sticky-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: calc(env(safe-area-inset-bottom) + 1.5rem); z-index: 100; }
+        
+        /* FIX BOTTONI: aggiunta flex-shrink-0 e allineamento perfetto */
+        .stepper-btn { 
+            width: 54px; height: 54px; 
+            flex-shrink: 0; 
+            display: flex; align-items: center; justify-content: center; 
+            background: rgba(255, 255, 255, 0.06); border-radius: 18px; 
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            touch-action: manipulation; /* Previene lo zoom su doppio tap */
+        }
+        .stepper-btn:not(:disabled):active { transform: scale(0.92); background: rgba(255, 122, 0, 0.2); border-color: #FF7A00; }
+        
+        .sticky-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: calc(env(safe-area-inset-bottom) + 1rem); z-index: 100; }
+        
         select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FF7A00'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1.25rem; }
-        .num-display { font-variant-numeric: tabular-nums; width: 130px; text-align: center; }
-        .disabled-row { opacity: 0.15; pointer-events: none; filter: grayscale(1); transition: all 0.4s ease; }
+        
+        .num-display { font-variant-numeric: tabular-nums; user-select: none; pointer-events: none; }
+        .disabled-row { opacity: 0.15; pointer-events: none; filter: grayscale(1); }
         
         /* Password Specific */
-        #auth-screen { transition: opacity 0.5s ease, transform 0.5s ease; }
-        .dot-input { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,122,0,0.3); transition: all 0.2s; }
+        .dot-input { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,122,0,0.3); transition: all 0.2s; }
         .dot-filled { background: #FF7A00; border-color: #FF7A00; box-shadow: 0 0 15px rgba(255,122,0,0.5); }
-        .numpad-btn { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.05); transition: all 0.1s; }
-        .numpad-btn:active { background: rgba(255,122,0,0.2); transform: scale(0.9); border-color: #FF7A00; }
+        .numpad-btn { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.05); touch-action: manipulation; }
     </style>
 </head>
 <body class="antialiased font-sans overflow-x-hidden selection:bg-accent selection:text-white">
@@ -71,28 +80,23 @@
 
 <!-- SCHERMATA PASSWORD -->
 <div id="auth-screen" class="fixed inset-0 z-[1000] flex flex-col items-center justify-center px-6 bg-black">
-    <div class="ambient-glow"></div>
-    
     <div id="lock-container" class="w-full max-w-xs flex flex-col items-center">
-        <div class="mb-12 text-center">
-            <svg class="h-16 w-auto mx-auto mb-6" viewBox="0 0 1018 723">
+        <div class="mb-10 text-center">
+            <svg class="h-14 w-auto mx-auto mb-6" viewBox="0 0 1018 723">
                 <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="#FF7A00"/>
                 <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="#FF7A00"/>
             </svg>
             <h2 class="text-[12px] uppercase tracking-[0.5em] text-accent font-black">Secure Access</h2>
-            <p class="text-[10px] text-graytext mt-2 uppercase tracking-widest">Inserisci il PIN per sbloccare</p>
         </div>
 
-        <!-- Dots -->
-        <div class="flex gap-4 mb-16">
+        <div class="flex gap-4 mb-12">
             <div id="dot-0" class="dot-input"></div>
             <div id="dot-1" class="dot-input"></div>
             <div id="dot-2" class="dot-input"></div>
             <div id="dot-3" class="dot-input"></div>
         </div>
 
-        <!-- Numpad -->
-        <div class="grid grid-cols-3 gap-6">
+        <div class="grid grid-cols-3 gap-5">
             <button onclick="pressKey('1')" class="numpad-btn">1</button>
             <button onclick="pressKey('2')" class="numpad-btn">2</button>
             <button onclick="pressKey('3')" class="numpad-btn">3</button>
@@ -113,82 +117,82 @@
 
 <!-- CONTENUTO APP -->
 <div id="main-app" class="hidden opacity-0 transition-opacity duration-700">
-    <!-- Padding dinamico per notch/Island + 2.5rem di spazio extra -->
-    <div class="relative z-10 max-w-md mx-auto px-6 pt-[calc(env(safe-area-inset-top)+2.5rem)] pb-48">
+    <div class="relative z-10 max-w-md mx-auto px-5 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-40">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-10">
-            <svg class="h-10 w-auto" viewBox="0 0 1018 723">
+        <div class="flex items-center justify-between mb-8">
+            <svg class="h-9 w-auto" viewBox="0 0 1018 723">
                 <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="#FF7A00"/>
                 <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="#FF7A00"/>
             </svg>
             <div class="text-right">
-                <span class="text-[10px] uppercase tracking-[0.4em] text-accent font-black block">Pro Calculator</span>
-                <span class="text-[9px] uppercase tracking-[0.3em] text-white/30 block">v 4.6 SECURE</span>
+                <span class="text-[9px] uppercase tracking-[0.4em] text-accent font-black block">Pro Calculator</span>
+                <span class="text-[8px] uppercase tracking-[0.3em] text-white/30 block">v 4.7 SECURE</span>
             </div>
         </div>
 
         <!-- Volume Video -->
-        <div class="glass-card rounded-[2.5rem] p-7 mb-6">
-            <label class="block text-[11px] uppercase tracking-[0.3em] text-graytext font-bold mb-6 text-center">Volume Progetto</label>
-            <div class="flex items-center justify-between max-w-[280px] mx-auto">
-                <button onclick="step('qty', -1)" class="stepper-btn"><i data-lucide="minus" class="w-7 h-7 text-graytext"></i></button>
-                <div class="text-center">
-                    <input type="number" id="qty" value="4" readonly class="text-6xl font-black bg-transparent border-none w-28 text-center focus:ring-0 mb-1 text-white">
-                    <span class="text-[10px] text-accent block font-bold uppercase tracking-[0.3em]">Video Totali</span>
+        <div class="glass-card rounded-[2.5rem] p-6 mb-5">
+            <label class="block text-[10px] uppercase tracking-[0.3em] text-graytext font-bold mb-6 text-center">Volume Progetto</label>
+            <div class="flex items-center justify-between w-full">
+                <button onclick="step('qty', -1)" class="stepper-btn"><i data-lucide="minus" class="w-6 h-6 text-graytext"></i></button>
+                <div class="flex-1 text-center">
+                    <div id="qty_display" class="text-6xl font-black text-white leading-none mb-1">4</div>
+                    <span class="text-[9px] text-accent block font-bold uppercase tracking-[0.3em]">Video Totali</span>
                 </div>
-                <button onclick="step('qty', 1)" class="stepper-btn"><i data-lucide="plus" class="w-7 h-7 text-graytext"></i></button>
+                <button onclick="step('qty', 1)" class="stepper-btn"><i data-lucide="plus" class="w-6 h-6 text-graytext"></i></button>
+                <input type="hidden" id="qty" value="4">
             </div>
         </div>
 
         <!-- Ore di Lavoro -->
-        <div class="glass-card rounded-[2.5rem] p-7 mb-6 space-y-10">
+        <div class="glass-card rounded-[2.5rem] p-6 mb-5 space-y-8">
             <!-- RIPRESE -->
-            <div class="flex items-center justify-between transition-all duration-500" id="row-shoot">
-                <div class="flex flex-col">
-                    <span class="text-[14px] uppercase tracking-widest text-white font-black">Riprese</span>
-                    <span class="text-[10px] text-graytext uppercase tracking-tighter">h totali</span>
+            <div class="flex items-center justify-between gap-2 transition-all duration-500" id="row-shoot">
+                <div class="flex flex-col flex-shrink-0">
+                    <span class="text-[13px] uppercase tracking-widest text-white font-black">Riprese</span>
+                    <span class="text-[9px] text-graytext uppercase tracking-tighter">h totali</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="step('shoot', -0.5)" id="btn-shoot-minus" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
-                    <input type="text" id="shoot_display" value="4,0" readonly class="text-4xl font-black bg-transparent border-none num-display text-accent tracking-tighter">
+                <div class="flex items-center justify-end flex-1 gap-2">
+                    <button onclick="step('shoot', -0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
+                    <div id="shoot_display" class="text-3xl font-black text-accent w-16 text-center num-display">4,0</div>
                     <input type="hidden" id="shoot" value="4.0">
-                    <button onclick="step('shoot', 0.5)" id="btn-shoot-plus" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
+                    <button onclick="step('shoot', 0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
                 </div>
             </div>
 
             <!-- MONTAGGIO -->
-            <div class="flex items-center justify-between">
-                <div class="flex flex-col">
-                    <span class="text-[14px] uppercase tracking-widest text-white font-black">Montaggio</span>
-                    <span class="text-[10px] text-graytext uppercase tracking-tighter">h totali</span>
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex flex-col flex-shrink-0">
+                    <span class="text-[13px] uppercase tracking-widest text-white font-black">Montaggio</span>
+                    <span class="text-[9px] text-graytext uppercase tracking-tighter">h totali</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center justify-end flex-1 gap-2">
                     <button onclick="step('edit', -0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
-                    <input type="text" id="edit_display" value="4,0" readonly class="text-4xl font-black bg-transparent border-none num-display text-accent tracking-tighter">
+                    <div id="edit_display" class="text-3xl font-black text-accent w-16 text-center num-display">4,0</div>
                     <input type="hidden" id="edit" value="4.0">
                     <button onclick="step('edit', 0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
                 </div>
             </div>
 
             <!-- SCRITTURA -->
-            <div class="flex items-center justify-between">
-                <div class="flex flex-col">
-                    <span class="text-[14px] uppercase tracking-widest text-white font-black">Scrittura</span>
-                    <span class="text-[10px] text-graytext uppercase tracking-tighter">h totali</span>
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex flex-col flex-shrink-0">
+                    <span class="text-[13px] uppercase tracking-widest text-white font-black">Scrittura</span>
+                    <span class="text-[9px] text-graytext uppercase tracking-tighter">h totali</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center justify-end flex-1 gap-2">
                     <button onclick="step('write', -0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
-                    <input type="text" id="write_display" value="2,0" readonly class="text-4xl font-black bg-transparent border-none num-display text-accent tracking-tighter">
-                    <input type="hidden" id="write" value="2">
+                    <div id="write_display" class="text-3xl font-black text-accent w-16 text-center num-display">2,0</div>
+                    <input type="hidden" id="write" value="2.0">
                     <button onclick="step('write', 0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
                 </div>
             </div>
         </div>
 
         <!-- Hardware -->
-        <div class="glass-card rounded-[2.5rem] p-7 mb-6">
-            <label class="block text-[11px] uppercase tracking-[0.3em] text-graytext font-bold mb-5">Hardware Setup (Usura 5yr)</label>
-            <select id="gear" onchange="handleGearChange()" class="w-full py-5 px-6 text-sm font-bold transition-all shadow-inner">
+        <div class="glass-card rounded-[2.5rem] p-6">
+            <label class="block text-[10px] uppercase tracking-[0.3em] text-graytext font-bold mb-4">Hardware Setup (Usura 5yr)</label>
+            <select id="gear" onchange="handleGearChange()" class="w-full py-4 px-5 text-[13px] font-bold shadow-inner">
                 <option value="20" data-type="edit">Solo Editing (MBA M3 + Monitor) +€20</option>
                 <option value="40" data-type="full" selected>Kit Base (a6700 + Mic + MBA) +€40</option>
                 <option value="70" data-type="full">Kit Intermedio (+Gimbal + Luce) +€70</option>
@@ -198,17 +202,17 @@
     </div>
 
     <!-- Bottom Nav -->
-    <div class="sticky-bottom px-8 shadow-[0_-20px_50px_rgba(0,0,0,0.6)]">
-        <div class="max-w-md mx-auto flex items-center justify-between">
+    <div class="sticky-bottom px-6">
+        <div class="max-w-md mx-auto flex items-center justify-between py-2">
             <div class="flex flex-col">
                 <div class="flex items-baseline gap-2">
-                    <span class="text-[11px] uppercase tracking-[0.4em] text-accent font-black mb-1">TOTALE</span>
-                    <span id="per_video" class="text-[12px] text-white/40 font-bold"></span>
+                    <span class="text-[10px] uppercase tracking-[0.4em] text-accent font-black">TOTALE</span>
+                    <span id="per_video" class="text-[11px] text-white/40 font-bold"></span>
                 </div>
                 <div id="total" class="text-4xl font-black text-white tracking-tighter leading-none">€ 0,00</div>
             </div>
-            <button onclick="sendWA()" class="bg-accent hover:bg-accentHover text-white h-16 w-16 rounded-[1.5rem] flex items-center justify-center shadow-[0_15px_30px_-5px_rgba(255,122,0,0.6)] active:scale-90 transition-all">
-                <i data-lucide="send" class="w-7 h-7"></i>
+            <button onclick="sendWA()" class="bg-accent text-white h-14 w-14 rounded-2xl flex items-center justify-center shadow-[0_10px_25px_-5px_rgba(255,122,0,0.5)] active:scale-90 transition-all">
+                <i data-lucide="send" class="w-6 h-6"></i>
             </button>
         </div>
     </div>
@@ -217,7 +221,6 @@
 <script>
     lucide.createIcons();
 
-    // AUTH LOGIC
     let currentPin = "";
     const CORRECT_PIN = "2323";
 
@@ -225,10 +228,7 @@
         if (currentPin.length < 4) {
             currentPin += num;
             updateDots();
-            
-            if (currentPin.length === 4) {
-                setTimeout(validatePin, 200);
-            }
+            if (currentPin.length === 4) setTimeout(validatePin, 200);
         }
     }
 
@@ -240,11 +240,7 @@
     function updateDots() {
         for (let i = 0; i < 4; i++) {
             const dot = document.getElementById(`dot-${i}`);
-            if (i < currentPin.length) {
-                dot.classList.add('dot-filled');
-            } else {
-                dot.classList.remove('dot-filled');
-            }
+            dot.classList.toggle('dot-filled', i < currentPin.length);
         }
     }
 
@@ -264,28 +260,16 @@
     function unlockApp() {
         const auth = document.getElementById('auth-screen');
         const app = document.getElementById('main-app');
-        
         auth.style.opacity = "0";
-        auth.style.transform = "scale(1.1)";
-        
+        auth.style.transform = "scale(1.05)";
         setTimeout(() => {
             auth.classList.add('hidden');
             app.classList.remove('hidden');
-            setTimeout(() => {
-                app.style.opacity = "1";
-                calc();
-            }, 50);
+            setTimeout(() => { app.style.opacity = "1"; calc(); }, 50);
         }, 500);
     }
 
-    // CALCULATION LOGIC
-    const RATES = {
-        shooting: 60,
-        editing: 35,
-        writing: 25,
-        minPerVideo: 100 
-    };
-
+    const RATES = { shooting: 60, editing: 35, writing: 25, minPerVideo: 100 };
     let lastShootValue = 4.0;
 
     function handleGearChange() {
@@ -298,19 +282,22 @@
         if (type === 'edit') {
             if (parseFloat(shootInput.value) > 0) lastShootValue = parseFloat(shootInput.value);
             shootInput.value = 0;
-            shootDisplay.value = "0,0";
+            shootDisplay.innerText = "0,0";
             rowShoot.classList.add('disabled-row');
         } else {
             rowShoot.classList.remove('disabled-row');
             if (parseFloat(shootInput.value) === 0) {
                 shootInput.value = lastShootValue;
-                shootDisplay.value = lastShootValue.toFixed(1).replace('.', ',');
+                shootDisplay.innerText = lastShootValue.toFixed(1).replace('.', ',');
             }
         }
         calc();
     }
 
     function step(id, val) {
+        // Preveniamo lo scroll causato dal focus degli elementi cliccando bottoni velocemente
+        event.preventDefault(); 
+        
         const input = document.getElementById(id);
         const display = document.getElementById(id + '_display');
         if (id === 'shoot' && document.getElementById('row-shoot').classList.contains('disabled-row')) return;
@@ -318,7 +305,11 @@
         let current = parseFloat(input.value);
         current = Math.max(0, current + val);
         input.value = current;
-        if(display) display.value = current.toFixed(1).replace('.', ',');
+        
+        if(display) {
+            if(id === 'qty') display.innerText = current;
+            else display.innerText = current.toFixed(1).replace('.', ',');
+        }
         calc();
     }
 
@@ -332,8 +323,8 @@
         
         let laborTotal = (hS * RATES.shooting) + (hE * RATES.editing) + (hW * RATES.writing);
         
-        if (type === 'edit') {
-            if ((laborTotal / n) < RATES.minPerVideo) laborTotal = RATES.minPerVideo * n;
+        if (type === 'edit' && (laborTotal / n) < RATES.minPerVideo) {
+            laborTotal = RATES.minPerVideo * n;
         }
 
         const total = laborTotal + kitFee;
@@ -343,22 +334,14 @@
         document.getElementById('per_video').innerText = `(€ ${perVideo.toFixed(0)} / video)`;
     }
 
-    window.onload = function() {
-        document.getElementById('shoot').value = 4;
-        document.getElementById('shoot_display').value = "4,0";
-        document.getElementById('edit').value = 4;
-        document.getElementById('edit_display').value = "4,0";
-        document.getElementById('write').value = 2;
-        document.getElementById('write_display').value = "2,0";
-        handleGearChange();
-    }
-
     function sendWA() {
         const total = document.getElementById('total').innerText;
         const n = document.getElementById('qty').value;
-        const msg = encodeURIComponent(`Ciao Teo! Ho usato il tuo tool. Per ${n} video, il preventivo stimato è di ${total}.`);
+        const msg = encodeURIComponent(`Ciao Teo! Per ${n} video, il preventivo stimato è di ${total}.`);
         window.open(`https://wa.me/?text=${msg}`);
     }
+
+    window.onload = handleGearChange;
 </script>
 
 </body>
