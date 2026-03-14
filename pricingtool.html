@@ -94,51 +94,53 @@
 
 <!-- SCHERMATA PASSWORD -->
 <div id="auth-screen" class="fixed inset-0 z-[1000] bg-black transition-all duration-500 overflow-y-auto">
-    <!-- Wrapper che occupa almeno il 100% dell'altezza visibile -->
-    <div class="min-h-full flex flex-col items-center w-full px-6">
+    <!-- Contenitore flex a tutta altezza -->
+    <div class="min-h-screen flex flex-col pt-[var(--sat)]">
         
-        <!-- Blocco PIN: margin-top auto e margin-bottom auto lo centrano verticalmente nel flex-col -->
-        <div id="lock-container" class="w-full max-w-xs flex flex-col items-center my-auto py-12">
-            <div class="mb-10 text-center">
-                <svg class="h-14 w-auto mx-auto mb-6" viewBox="0 0 1018 723">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="#FF7A00"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="#FF7A00"/>
-                </svg>
-                <h2 class="text-[12px] uppercase tracking-[0.5em] text-accent font-black">Accesso Riservato</h2>
-                <p class="text-[9px] text-white/20 mt-2 uppercase tracking-widest italic">Strumento ad uso interno</p>
-            </div>
+        <!-- Blocco PIN: flex-1 e justify-center garantiscono la centratura verticale perfetta -->
+        <div class="flex-1 flex flex-col items-center justify-center px-6">
+            <div id="lock-container" class="w-full max-w-xs flex flex-col items-center">
+                <div class="mb-10 text-center">
+                    <svg class="h-14 w-auto mx-auto mb-6" viewBox="0 0 1018 723">
+                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="#FF7A00"/>
+                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="#FF7A00"/>
+                    </svg>
+                    <h2 class="text-[12px] uppercase tracking-[0.5em] text-accent font-black">Accesso Riservato</h2>
+                    <p class="text-[9px] text-white/20 mt-2 uppercase tracking-widest italic">Strumento ad uso interno</p>
+                </div>
 
-            <div class="flex gap-4 mb-12">
-                <div id="dot-0" class="dot-input"></div>
-                <div id="dot-1" class="dot-input"></div>
-                <div id="dot-2" class="dot-input"></div>
-                <div id="dot-3" class="dot-input"></div>
-            </div>
+                <div class="flex gap-4 mb-12">
+                    <div id="dot-0" class="dot-input"></div>
+                    <div id="dot-1" class="dot-input"></div>
+                    <div id="dot-2" class="dot-input"></div>
+                    <div id="dot-3" class="dot-input"></div>
+                </div>
 
-            <div class="grid grid-cols-3 gap-5">
-                <button onclick="pressKey('1')" class="numpad-btn">1</button>
-                <button onclick="pressKey('2')" class="numpad-btn">2</button>
-                <button onclick="pressKey('3')" class="numpad-btn">3</button>
-                <button onclick="pressKey('4')" class="numpad-btn">4</button>
-                <button onclick="pressKey('5')" class="numpad-btn">5</button>
-                <button onclick="pressKey('6')" class="numpad-btn">6</button>
-                <button onclick="pressKey('7')" class="numpad-btn">7</button>
-                <button onclick="pressKey('8')" class="numpad-btn">8</button>
-                <button onclick="pressKey('9')" class="numpad-btn">9</button>
-                <div class="w-[75px]"></div>
-                <button onclick="pressKey('0')" class="numpad-btn">0</button>
-                <button onclick="clearPin()" class="numpad-btn !bg-transparent !border-none text-accent">
-                    <i data-lucide="delete"></i>
-                </button>
+                <div class="grid grid-cols-3 gap-5">
+                    <button onclick="pressKey('1')" class="numpad-btn">1</button>
+                    <button onclick="pressKey('2')" class="numpad-btn">2</button>
+                    <button onclick="pressKey('3')" class="numpad-btn">3</button>
+                    <button onclick="pressKey('4')" class="numpad-btn">4</button>
+                    <button onclick="pressKey('5')" class="numpad-btn">5</button>
+                    <button onclick="pressKey('6')" class="numpad-btn">6</button>
+                    <button onclick="pressKey('7')" class="numpad-btn">7</button>
+                    <button onclick="pressKey('8')" class="numpad-btn">8</button>
+                    <button onclick="pressKey('9')" class="numpad-btn">9</button>
+                    <div class="w-[75px]"></div>
+                    <button onclick="pressKey('0')" class="numpad-btn">0</button>
+                    <button onclick="clearPin()" class="numpad-btn !bg-transparent !border-none text-accent">
+                        <i data-lucide="delete"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Footer Login in fondo -->
-        <div class="w-full text-center pb-[calc(var(--sab)+2rem)] pt-4 mt-auto">
-            <p class="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] mb-1">
+        <!-- Footer "Testo Normale" a fine pagina -->
+        <div class="w-full text-center opacity-20 px-6 pb-[calc(var(--sab)+1.5rem)] pt-4">
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
                 Matteo Maria Macauda | P.IVA 02153520891
             </p>
-            <p class="text-[9px] text-white/10 uppercase tracking-widest leading-relaxed">
+            <p class="text-[9px] uppercase tracking-widest leading-relaxed">
                 Strumento riservato ad uso interno professionale. <br/>
                 Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | <a href="#" class="underline hover:text-accent transition-colors">Privacy Policy</a>
             </p>
