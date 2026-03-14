@@ -9,10 +9,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Teo Pricing">
+    <meta name="theme-color" content="#000000">
     
-    <!-- Icona per Schermata Home (Risolve il problema della "T") -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><path d='M85,30 L85,75 L70,68 L70,85 L40,85 L43,78 L65,78 L65,22 L50,22 L35,50 L20,22 L10,22 L10,78 L25,78 L28,85 L5,85 L5,15 L25,15 L35,40 L45,15 L70,15 L70,35 L85,30 Z' fill='%23FF7A00'/></svg>">
+    <!-- Icona per Home Screen (Apple Touch Icon) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723' fill='%23FF7A00'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z'/></svg>">
     
+    <!-- Favicon standard -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z' fill='rgb(255,122,0)'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z' fill='rgb(255,122,0)'/></svg>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,11 +50,11 @@
         body { background-color: #000000; color: #ffffff; -webkit-tap-highlight-color: transparent; }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .ambient-glow { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% -10%, rgba(255,122,0,0.15) 0%, rgba(0,0,0,0) 60%); pointer-events: none; z-index: 0; }
-        .stepper-btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .stepper-btn { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.06); border-radius: 20px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255, 255, 255, 0.05); }
         .stepper-btn:not(:disabled):active { transform: scale(0.9); background: rgba(255, 122, 0, 0.2); border-color: #FF7A00; }
         .sticky-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: calc(env(safe-area-inset-bottom) + 1.5rem); z-index: 100; }
-        select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FF7A00'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1rem; }
-        .num-display { font-variant-numeric: tabular-nums; width: 100px; text-align: center; }
+        select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FF7A00'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1.25rem; }
+        .num-display { font-variant-numeric: tabular-nums; width: 130px; text-align: center; }
         .disabled-row { opacity: 0.15; pointer-events: none; filter: grayscale(1); transition: all 0.4s ease; }
         
         /* Password Specific */
@@ -109,9 +111,10 @@
     </div>
 </div>
 
-<!-- CONTENUTO APP (Nascosto inizialmente) -->
+<!-- CONTENUTO APP -->
 <div id="main-app" class="hidden opacity-0 transition-opacity duration-700">
-    <div class="relative z-10 max-w-md mx-auto px-6 pt-10 pb-48">
+    <!-- Padding dinamico per notch/Island + 2.5rem di spazio extra -->
+    <div class="relative z-10 max-w-md mx-auto px-6 pt-[calc(env(safe-area-inset-top)+2.5rem)] pb-48">
         <!-- Header -->
         <div class="flex items-center justify-between mb-10">
             <svg class="h-10 w-auto" viewBox="0 0 1018 723">
@@ -127,13 +130,13 @@
         <!-- Volume Video -->
         <div class="glass-card rounded-[2.5rem] p-7 mb-6">
             <label class="block text-[11px] uppercase tracking-[0.3em] text-graytext font-bold mb-6 text-center">Volume Progetto</label>
-            <div class="flex items-center justify-center gap-8 mx-auto">
-                <button onclick="step('qty', -1)" class="stepper-btn"><i data-lucide="minus" class="w-6 h-6 text-graytext"></i></button>
-                <div class="text-center min-w-[100px]">
-                    <input type="number" id="qty" value="4" readonly class="text-6xl font-black bg-transparent border-none w-24 text-center focus:ring-0 mb-1 text-white">
+            <div class="flex items-center justify-between max-w-[280px] mx-auto">
+                <button onclick="step('qty', -1)" class="stepper-btn"><i data-lucide="minus" class="w-7 h-7 text-graytext"></i></button>
+                <div class="text-center">
+                    <input type="number" id="qty" value="4" readonly class="text-6xl font-black bg-transparent border-none w-28 text-center focus:ring-0 mb-1 text-white">
                     <span class="text-[10px] text-accent block font-bold uppercase tracking-[0.3em]">Video Totali</span>
                 </div>
-                <button onclick="step('qty', 1)" class="stepper-btn"><i data-lucide="plus" class="w-6 h-6 text-graytext"></i></button>
+                <button onclick="step('qty', 1)" class="stepper-btn"><i data-lucide="plus" class="w-7 h-7 text-graytext"></i></button>
             </div>
         </div>
 
@@ -142,42 +145,42 @@
             <!-- RIPRESE -->
             <div class="flex items-center justify-between transition-all duration-500" id="row-shoot">
                 <div class="flex flex-col">
-                    <span class="text-[13px] uppercase tracking-widest text-white font-black">Riprese</span>
-                    <span class="text-[9px] text-graytext uppercase tracking-tighter">h totali</span>
+                    <span class="text-[14px] uppercase tracking-widest text-white font-black">Riprese</span>
+                    <span class="text-[10px] text-graytext uppercase tracking-tighter">h totali</span>
                 </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="step('shoot', -0.5)" id="btn-shoot-minus" class="stepper-btn !w-10 !h-10"><i data-lucide="minus" class="w-4 h-4 text-graytext"></i></button>
+                <div class="flex items-center gap-2">
+                    <button onclick="step('shoot', -0.5)" id="btn-shoot-minus" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
                     <input type="text" id="shoot_display" value="4,0" readonly class="text-4xl font-black bg-transparent border-none num-display text-accent tracking-tighter">
                     <input type="hidden" id="shoot" value="4.0">
-                    <button onclick="step('shoot', 0.5)" id="btn-shoot-plus" class="stepper-btn !w-10 !h-10"><i data-lucide="plus" class="w-4 h-4 text-graytext"></i></button>
+                    <button onclick="step('shoot', 0.5)" id="btn-shoot-plus" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
                 </div>
             </div>
 
             <!-- MONTAGGIO -->
             <div class="flex items-center justify-between">
                 <div class="flex flex-col">
-                    <span class="text-[13px] uppercase tracking-widest text-white font-black">Montaggio</span>
-                    <span class="text-[9px] text-graytext uppercase tracking-tighter">h totali</span>
+                    <span class="text-[14px] uppercase tracking-widest text-white font-black">Montaggio</span>
+                    <span class="text-[10px] text-graytext uppercase tracking-tighter">h totali</span>
                 </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="step('edit', -0.5)" class="stepper-btn !w-10 !h-10"><i data-lucide="minus" class="w-4 h-4 text-graytext"></i></button>
+                <div class="flex items-center gap-2">
+                    <button onclick="step('edit', -0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
                     <input type="text" id="edit_display" value="4,0" readonly class="text-4xl font-black bg-transparent border-none num-display text-accent tracking-tighter">
                     <input type="hidden" id="edit" value="4.0">
-                    <button onclick="step('edit', 0.5)" class="stepper-btn !w-10 !h-10"><i data-lucide="plus" class="w-4 h-4 text-graytext"></i></button>
+                    <button onclick="step('edit', 0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
                 </div>
             </div>
 
             <!-- SCRITTURA -->
             <div class="flex items-center justify-between">
                 <div class="flex flex-col">
-                    <span class="text-[13px] uppercase tracking-widest text-white font-black">Scrittura</span>
-                    <span class="text-[9px] text-graytext uppercase tracking-tighter">h totali</span>
+                    <span class="text-[14px] uppercase tracking-widest text-white font-black">Scrittura</span>
+                    <span class="text-[10px] text-graytext uppercase tracking-tighter">h totali</span>
                 </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="step('write', -0.5)" class="stepper-btn !w-10 !h-10"><i data-lucide="minus" class="w-4 h-4 text-graytext"></i></button>
+                <div class="flex items-center gap-2">
+                    <button onclick="step('write', -0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="minus" class="w-5 h-5 text-graytext"></i></button>
                     <input type="text" id="write_display" value="2,0" readonly class="text-4xl font-black bg-transparent border-none num-display text-accent tracking-tighter">
                     <input type="hidden" id="write" value="2">
-                    <button onclick="step('write', 0.5)" class="stepper-btn !w-10 !h-10"><i data-lucide="plus" class="w-4 h-4 text-graytext"></i></button>
+                    <button onclick="step('write', 0.5)" class="stepper-btn !w-12 !h-12"><i data-lucide="plus" class="w-5 h-5 text-graytext"></i></button>
                 </div>
             </div>
         </div>
@@ -185,27 +188,27 @@
         <!-- Hardware -->
         <div class="glass-card rounded-[2.5rem] p-7 mb-6">
             <label class="block text-[11px] uppercase tracking-[0.3em] text-graytext font-bold mb-5">Hardware Setup (Usura 5yr)</label>
-            <select id="gear" onchange="handleGearChange()" class="w-full py-4 px-4 text-[13px] font-bold transition-all shadow-inner overflow-hidden text-ellipsis whitespace-nowrap">
-                <option value="20" data-type="edit">Solo Editing (MBA + Monitor) +€20</option>
-                <option value="40" data-type="full" selected>Kit Base (a6700 + Mic) +€40</option>
-                <option value="70" data-type="full">Kit Intermedio (+Gimbal) +€70</option>
+            <select id="gear" onchange="handleGearChange()" class="w-full py-5 px-6 text-sm font-bold transition-all shadow-inner">
+                <option value="20" data-type="edit">Solo Editing (MBA M3 + Monitor) +€20</option>
+                <option value="40" data-type="full" selected>Kit Base (a6700 + Mic + MBA) +€40</option>
+                <option value="70" data-type="full">Kit Intermedio (+Gimbal + Luce) +€70</option>
                 <option value="110" data-type="full">Kit Massimo (Full Station) +€110</option>
             </select>
         </div>
     </div>
 
     <!-- Bottom Nav -->
-    <div class="sticky-bottom px-8 pt-6 pb-10 shadow-[0_-20px_50px_rgba(0,0,0,0.6)]">
+    <div class="sticky-bottom px-8 shadow-[0_-20px_50px_rgba(0,0,0,0.6)]">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex flex-col">
                 <div class="flex items-baseline gap-2">
                     <span class="text-[11px] uppercase tracking-[0.4em] text-accent font-black mb-1">TOTALE</span>
-                    <span id="per_video" class="text-[11px] text-white/40 font-bold"></span>
+                    <span id="per_video" class="text-[12px] text-white/40 font-bold"></span>
                 </div>
                 <div id="total" class="text-4xl font-black text-white tracking-tighter leading-none">€ 0,00</div>
             </div>
-            <button onclick="sendWA()" class="bg-accent hover:bg-accentHover text-white h-14 w-14 rounded-[1.2rem] flex items-center justify-center shadow-[0_15px_30px_-5px_rgba(255,122,0,0.6)] active:scale-90 transition-all">
-                <i data-lucide="send" class="w-6 h-6"></i>
+            <button onclick="sendWA()" class="bg-accent hover:bg-accentHover text-white h-16 w-16 rounded-[1.5rem] flex items-center justify-center shadow-[0_15px_30px_-5px_rgba(255,122,0,0.6)] active:scale-90 transition-all">
+                <i data-lucide="send" class="w-7 h-7"></i>
             </button>
         </div>
     </div>
@@ -340,7 +343,6 @@
         document.getElementById('per_video').innerText = `(€ ${perVideo.toFixed(0)} / video)`;
     }
 
-    // Inizializzazione
     window.onload = function() {
         document.getElementById('shoot').value = 4;
         document.getElementById('shoot_display').value = "4,0";
@@ -351,7 +353,6 @@
         handleGearChange();
     }
 
-    // WA Sender
     function sendWA() {
         const total = document.getElementById('total').innerText;
         const n = document.getElementById('qty').value;
