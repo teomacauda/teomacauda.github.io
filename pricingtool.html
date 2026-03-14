@@ -40,16 +40,20 @@
     </script>
 
     <style>
+        :root {
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
         body { 
             background-color: #000000; 
             color: #ffffff; 
             -webkit-tap-highlight-color: transparent; 
-            overscroll-behavior-y: none; /* Impedisce il bounce su iOS */
+            min-height: 100vh;
+            /* Rimosso overscroll-behavior-y per evitare bug di scroll su iOS */
         }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .ambient-glow { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% -10%, rgba(255,122,0,0.15) 0%, rgba(0,0,0,0) 60%); pointer-events: none; z-index: 0; }
         
-        /* FIX BOTTONI: aggiunta flex-shrink-0 e allineamento perfetto */
         .stepper-btn { 
             width: 54px; height: 54px; 
             flex-shrink: 0; 
@@ -57,11 +61,21 @@
             background: rgba(255, 255, 255, 0.06); border-radius: 18px; 
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
             border: 1px solid rgba(255, 255, 255, 0.05);
-            touch-action: manipulation; /* Previene lo zoom su doppio tap */
+            touch-action: manipulation;
         }
         .stepper-btn:not(:disabled):active { transform: scale(0.92); background: rgba(255, 122, 0, 0.2); border-color: #FF7A00; }
         
-        .sticky-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: calc(env(safe-area-inset-bottom) + 1rem); z-index: 100; }
+        .sticky-bottom { 
+            position: fixed; 
+            bottom: 0; left: 0; right: 0; 
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            padding-bottom: calc(var(--sab) + 0.75rem); 
+            padding-top: 0.75rem;
+            z-index: 100; 
+        }
         
         select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FF7A00'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1.25rem; }
         
@@ -79,7 +93,7 @@
 <div class="ambient-glow"></div>
 
 <!-- SCHERMATA PASSWORD -->
-<div id="auth-screen" class="fixed inset-0 z-[1000] flex flex-col items-center justify-start sm:justify-center overflow-y-auto py-10 px-6 bg-black">
+<div id="auth-screen" class="fixed inset-0 z-[1000] flex flex-col items-center justify-center overflow-y-auto px-6 bg-black transition-all duration-500">
     <div id="lock-container" class="w-full max-w-xs flex flex-col items-center">
         <div class="mb-10 text-center">
             <svg class="h-14 w-auto mx-auto mb-6" viewBox="0 0 1018 723">
@@ -115,23 +129,21 @@
         </div>
     </div>
 
-<!-- Footer Login -->
-        <div class="mt-12 text-center pb-10">
-            <p class="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] mb-1">
-                Matteo Maria Macauda | P.IVA 02153520891
-            </p>
-            <p class="text-[9px] text-white/10 uppercase tracking-widest leading-relaxed">
-                Strumento riservato ad uso interno professionale. <br/>
-                Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | <a href="/privacy" class="underline hover:text-accent transition-colors">Privacy Policy</a>
-            </p>
-        </div>
+    <!-- Footer Login -->
+    <div class="mt-16 text-center pb-8">
+        <p class="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] mb-1">
+            Matteo Maria Macauda | P.IVA 02153520891
+        </p>
+        <p class="text-[9px] text-white/10 uppercase tracking-widest leading-relaxed">
+            Strumento riservato ad uso interno professionale. <br/>
+            Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | <a href="#" class="underline hover:text-accent transition-colors">Privacy Policy</a>
+        </p>
     </div>
-    
 </div>
 
 <!-- CONTENUTO APP -->
-<div id="main-app" class="hidden opacity-0 transition-opacity duration-700">
-    <div class="relative z-10 max-w-md mx-auto px-5 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-40">
+<div id="main-app" class="hidden opacity-0 transition-opacity duration-700 min-h-screen flex flex-col">
+    <div class="relative z-10 max-w-md mx-auto px-5 pt-[calc(var(--sat)+1.5rem)] pb-[180px] w-full flex-1">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <svg class="h-9 w-auto" viewBox="0 0 1018 723">
@@ -204,7 +216,7 @@
         </div>
 
         <!-- Hardware -->
-        <div class="glass-card rounded-[2.5rem] p-6">
+        <div class="glass-card rounded-[2.5rem] p-6 mb-12">
             <label class="block text-[10px] uppercase tracking-[0.3em] text-graytext font-bold mb-4">Hardware Setup (Usura 5yr)</label>
             <select id="gear" onchange="handleGearChange()" class="w-full py-4 px-5 text-[13px] font-bold shadow-inner">
                 <option value="20" data-type="edit">Solo Editing (MBA M3 + Monitor) +€20</option>
@@ -213,24 +225,22 @@
                 <option value="110" data-type="full">Kit Massimo (Full Station) +€110</option>
             </select>
         </div>
-    </div>
 
-    <!-- Footer dell'App -->
-        <div class="mt-12 text-center pb-10">
-            <p class="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] mb-1">
+        <!-- Footer dell'App (Spostato dentro il flusso dello scroll) -->
+        <div class="text-center pb-8 opacity-40">
+            <p class="text-[10px] text-white font-bold uppercase tracking-[0.2em] mb-1">
                 Matteo Maria Macauda | P.IVA 02153520891
             </p>
-            <p class="text-[9px] text-white/10 uppercase tracking-widest leading-relaxed">
+            <p class="text-[9px] text-white uppercase tracking-widest leading-relaxed">
                 Strumento riservato ad uso interno professionale. <br/>
-                Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | <a href="/privacy" class="underline hover:text-accent transition-colors">Privacy Policy</a>
+                Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | <a href="#" class="underline">Privacy Policy</a>
             </p>
         </div>
     </div>
 
-    
     <!-- Bottom Nav -->
     <div class="sticky-bottom px-6">
-        <div class="max-w-md mx-auto flex items-center justify-between py-2">
+        <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex flex-col">
                 <div class="flex items-baseline gap-2">
                     <span class="text-[10px] uppercase tracking-[0.4em] text-accent font-black">TOTALE</span>
@@ -260,8 +270,10 @@
     }
 
     function clearPin() {
-        currentPin = "";
-        updateDots();
+        if(currentPin.length > 0) {
+            currentPin = currentPin.slice(0, -1);
+            updateDots();
+        }
     }
 
     function updateDots() {
@@ -279,7 +291,8 @@
             container.classList.add('animate-shake');
             setTimeout(() => {
                 container.classList.remove('animate-shake');
-                clearPin();
+                currentPin = "";
+                updateDots();
             }, 500);
         }
     }
@@ -288,11 +301,15 @@
         const auth = document.getElementById('auth-screen');
         const app = document.getElementById('main-app');
         auth.style.opacity = "0";
-        auth.style.transform = "scale(1.05)";
+        auth.style.transform = "scale(1.1)";
         setTimeout(() => {
             auth.classList.add('hidden');
             app.classList.remove('hidden');
-            setTimeout(() => { app.style.opacity = "1"; calc(); }, 50);
+            setTimeout(() => { 
+                app.style.opacity = "1"; 
+                calc(); 
+                window.scrollTo(0, 0); // Reset scroll dopo il login
+            }, 50);
         }, 500);
     }
 
@@ -322,7 +339,6 @@
     }
 
     function step(id, val) {
-        // Preveniamo lo scroll causato dal focus degli elementi cliccando bottoni velocemente
         event.preventDefault(); 
         
         const input = document.getElementById(id);
@@ -368,7 +384,12 @@
         window.open(`https://wa.me/?text=${msg}`);
     }
 
-    window.onload = handleGearChange;
+    window.onload = () => {
+        handleGearChange();
+        // Forza altezza corretta su mobile
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
 </script>
 
 </body>
