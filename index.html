@@ -36,21 +36,22 @@
         .glass-card:hover { transform: translateY(-8px); border-color: rgba(255, 122, 0, 0.3); box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); }
         .glass-modal { background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
+        /* FIX LUCE: Gradiente molto lungo e morbido per evitare il taglio netto */
         .ambient-glow { 
             position: absolute; 
             width: 100%; 
-            height: 100vh; 
-            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.3) 0%, rgba(255, 122, 0, 0.05) 50%, rgba(0, 0, 0, 0) 90%); 
+            height: 1200px; 
+            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.4) 0%, rgba(255, 122, 0, 0.1) 40%, rgba(0, 0, 0, 0) 85%); 
             top: 0; 
             left: 0; 
             z-index: 0; 
             pointer-events: none; 
         }
 
-        .camera-bg-container { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 140%; max-width: 1100px; opacity: 0; z-index: 0; pointer-events: none; }
+        .camera-bg-container { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); width: 130%; max-width: 1100px; opacity: 0; z-index: 0; pointer-events: none; }
         @media (min-width: 768px) { .camera-bg-container { width: 85%; top: 50%; } }
         main, footer { position: relative; z-index: 10; }
-        .reveal { opacity: 0; transform: translateY(30px); will-change: transform, opacity; }
+        .reveal { opacity: 0; transform: translateY(50px); will-change: transform, opacity; }
         
         .reveal.immediate-show {
             opacity: 0.6 !important;
@@ -61,41 +62,19 @@
         .scroll-arrow-anim { animation: scroll-arrow-down 2s ease-in-out infinite; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
         .chat-button { position: fixed; bottom: 2rem; right: 2rem; z-index: 130; display: flex; align-items: center; justify-content: center; background-color: #FF7A00; color: white; border-radius: 9999px; text-decoration: none; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s; white-space: nowrap; overflow: hidden; min-width: 4rem; height: 4rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); border: none; cursor: pointer; }
         @media (max-width: 768px) {
             .chat-button { bottom: 1.5rem; right: 1.5rem; height: 3.5rem; min-width: 3.5rem; }
+            .chat-button.expanded { max-width: 220px; }
         }
         .chat-button:hover { transform: scale(1.1); }
         #chat-text { max-width: 0; opacity: 0; font-size: 0px; transition: all 0.5s ease; font-family: 'Inter', sans-serif; font-weight: 600; }
         .chat-button.expanded { padding: 0 1.5rem; max-width: 350px; }
         .chat-button.expanded #chat-text { max-width: 250px; opacity: 1; font-size: 16px; margin-left: 12px; }
-        @media (max-width: 768px) { 
-            .chat-button.expanded { max-width: 220px; }
-            .chat-button.expanded #chat-text { font-size: 12px; } 
-        }
-
-        /* DOCK LOGO STYLES */
-        .trust-item-container { perspective: 1000px; position: relative; will-change: transform; transform: translateZ(0); }
-        .trust-item-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; height: 100%; width: 100%; }
-        
-        @media (min-width: 1024px) {
-            .trust-item-container:hover .trust-item-inner { transform: rotateY(180deg); }
-        }
-
-        .trust-item-front, .trust-item-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 1rem; overflow: hidden; }
-        .trust-item-back { transform: rotateY(180deg); background: rgba(255, 122, 0, 0.1); border: 1px solid rgba(255, 122, 0, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0.5rem; }
-
-        @media (max-width: 1023px) {
-            #trust-carousel { 
-                padding: 60px 0; 
-                scroll-padding: 0 50%; /* Aiuta lo snap al centro */
-            }
-            .logo-item { 
-                will-change: transform, filter; 
-                transform: translateZ(0);
-            }
-        }
+        @media (max-width: 768px) { .chat-button.expanded #chat-text { font-size: 12px; } }
+        .carousel-btn { background: rgba(255, 122, 0, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 122, 0, 0.3); color: #FF7A00; transition: all 0.3s ease; }
+        .carousel-btn:hover { background: rgba(255, 122, 0, 0.3); transform: scale(1.1); }
+        .carousel-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body class="antialiased selection:bg-accent selection:text-white">
@@ -113,9 +92,9 @@
             </a>
             
             <nav class="hidden md:flex gap-4 text-sm font-medium text-graytext">
-                <a href="/lavori" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">Lavori</a>
+                <a href="/lavori.html" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">Lavori</a>
                 <a href="/#servizi" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">Servizi</a>
-                <a href="/toolbox" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">Toolbox</a>
+                <a href="/toolbox.html" class="px-5 py-2.5 rounded-full border border-accent hover:border-accent/30 hover:bg-accent/10 hover:text-white transition-all duration-300">Toolbox</a>
             </nav>
 
             <button onclick="toggleMobileMenu()" class="md:hidden text-graytext hover:text-white transition-colors p-2 focus:outline-none relative z-[120]">
@@ -129,16 +108,17 @@
             <div id="mobileMenuContent" class="bg-[#0F0F0F] border border-white/10 w-full max-sm p-8 rounded-3xl relative transform -translate-y-10 transition-transform duration-500 shadow-[0_30px_60px_rgba(0,0,0,0.9)]">
                 <nav class="flex flex-col gap-8 text-left">
                     <a href="/" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="home" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Home</a>
-                    <a href="/lavori" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="folder-kanban" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Lavori</a>
+                    <a href="/lavori.html" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="folder-kanban" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Lavori</a>
                     <a href="/#servizi" onclick="toggleMobileMenu()" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="layers" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Servizi</a>
-                    <a href="/toolbox" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="package" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Toolbox</a>
+                    <a href="/toolbox.html" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="package" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Toolbox</a>
                 </nav>
             </div>
         </div>
     </header>
 
     <main>
-        <section id="hero-section" class="relative min-h-[100svh] flex flex-col justify-center items-center px-6 pt-28 md:pt-24 pb-48 md:pb-40 text-center overflow-hidden">
+        <!-- FIX CERCHIO: Rimosso overflow-hidden e aggiunto padding extra per non tagliare la lente -->
+        <section id="hero-section" class="relative min-h-[90vh] md:min-h-screen flex flex-col justify-center items-center px-6 pt-40 md:pt-24 pb-48 md:pb-40 text-center">
             <div class="camera-bg-container" id="camera-container">
                 <svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g id="cam-body"><rect x="200" y="220" width="400" height="230" rx="12" stroke="white" stroke-width="3" stroke-opacity="0.5"/><line x1="200" y1="280" x2="600" y2="280" stroke="white" stroke-width="2" stroke-opacity="0.2"/></g>
@@ -155,54 +135,55 @@
                 <h1 class="text-3xl md:text-7xl font-bold tracking-tight mb-8 md:mb-8 reveal leading-tight drop-shadow-lg">Videomaking e Content Marketing<br/><span class="text-accent">per Aziende e Creator.</span></h1>
                 <p class="text-base md:text-xl text-graytext mb-12 md:mb-12 max-w-3xl mx-auto reveal font-light leading-relaxed drop-shadow-md px-4">Affianco brand e creator nella loro comunicazione online. Non mi limito a girare e montare: studio la strategia visiva più adatta per farti raggiungere il tuo pubblico, aumentare la tua visibilità e valorizzare concretamente ciò che offri.</p>
                 
-                <div class="reveal mb-12 md:mb-16">
-                    <a href="/lavori" class="inline-flex items-center gap-2 bg-accent hover:bg-accentHover text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">Guarda i miei lavori <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+                <div class="reveal mb-20 md:mb-16">
+                    <a href="/lavori.html" class="inline-flex items-center gap-2 bg-accent hover:bg-accentHover text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">Guarda i miei lavori <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
                 </div>
 
-                <div class="flex flex-col items-center gap-3 reveal immediate-show opacity-60 w-full md:absolute md:bottom-12 md:inset-x-0">
+                <div class="flex flex-col items-center gap-3 reveal immediate-show opacity-60 w-full md:absolute md:bottom-12 md:inset-x-0 md:flex md:flex-col md:items-center">
                     <span class="text-[10px] uppercase tracking-[0.3em] text-graytext font-semibold drop-shadow-md">Esplora</span>
                     <i data-lucide="chevron-down" class="w-6 h-6 text-accent scroll-arrow-anim drop-shadow-md"></i>
                 </div>
             </div>
         </section>
 
-        <!-- SEZIONE TRUST -->
-        <section class="py-12 md:py-24 border-y border-white/5 bg-white/[0.01] relative overflow-hidden" id="trust">
+        <section class="py-12 md:py-24 border-y border-white/5 bg-white/[0.01] relative" id="trust">
             <div class="max-w-7xl mx-auto px-6 relative">
                 <p class="text-center text-base md:text-xl font-bold text-white uppercase tracking-widest mb-10 md:mb-16 reveal">Brand, aziende e creator che hanno <span class="text-accent">scelto me</span></p>
                 
-                <div class="relative group reveal mb-12 md:mb-20">
-                    <!-- Su mobile usiamo un gap-12 abbondante per evitare sovrapposizioni durante lo scale -->
-                    <div id="trust-carousel" class="flex md:flex-wrap justify-start md:justify-center items-center gap-12 md:gap-8 overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory">
-                        <!-- JS Content -->
-                    </div>
+                <div class="relative group reveal mb-12 md:mb-20 px-2 overflow-hidden md:overflow-visible">
                     
-                    <div id="trust-scroll-left" class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black to-transparent z-10 flex items-center justify-start md:hidden pointer-events-none opacity-0"><i data-lucide="chevron-left" class="w-8 h-8 text-white/40 ml-2"></i></div>
-                    <div id="trust-scroll-right" class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black to-transparent z-10 flex items-center justify-end md:hidden pointer-events-none opacity-100"><i data-lucide="chevron-right" class="w-8 h-8 text-white/40 mr-2 animate-pulse"></i></div>
-                </div>
-            </div>
+                    <div id="trust-scroll-left" class="absolute left-0 top-0 bottom-0 w-12 md:w-16 bg-gradient-to-r from-black via-black/80 to-transparent z-10 flex items-center justify-start pl-1 md:hidden pointer-events-none opacity-0 transition-opacity duration-300">
+                        <i data-lucide="chevron-left" class="w-8 h-8 text-white/70"></i>
+                    </div>
+                    <div id="trust-scroll-right" class="absolute right-0 top-0 bottom-0 w-12 md:w-16 bg-gradient-to-l from-black via-black/80 to-transparent z-10 flex items-center justify-end pr-1 md:hidden pointer-events-none opacity-100 transition-opacity duration-300">
+                        <i data-lucide="chevron-right" class="w-8 h-8 text-white/70 animate-pulse"></i>
+                    </div>
 
-            <!-- Mobile Info Overlay -->
-            <div id="mobileInfoCard" class="fixed inset-0 z-[150] flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-500">
-                <div class="absolute inset-0 bg-black/80 backdrop-blur-xl" onclick="closeMobileInfo()"></div>
-                <div id="infoContent" class="glass-modal w-full max-w-sm p-8 rounded-[2.5rem] relative transform scale-90 transition-transform duration-500 border border-accent/20">
-                    <button onclick="closeMobileInfo()" class="absolute top-6 right-6 text-graytext"><i data-lucide="x" class="w-6 h-6"></i></button>
-                    <div id="infoDetails" class="text-center space-y-4">
-                        <!-- JS Content -->
+                    <div id="trust-carousel" class="flex md:flex-wrap justify-start md:justify-center items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory px-4">
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://listhen.it/" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/listhen.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://www.instagram.com/gl_personalcoaching" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/glpersonal.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://www.instagram.com/myfield_ferrara" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/myfield.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://www.youtube.com/@AstroViktor97" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/astroviktor.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://www.youtube.com/@matteomarzolla" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/marzolla.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://www.youtube.com/@microfonodelcestista" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/basket.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
+                        <div class="logo-item snap-center shrink-0 w-[calc((100vw-100px)/3)] md:w-36 aspect-square"><a href="https://www.instagram.com/allylabkids" target="_blank" class="glass-card flex items-center justify-center p-2 w-full h-full rounded-xl overflow-hidden shadow-sm"><img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/ally.webp" alt="Logo" class="w-full h-full object-cover rounded-lg"></a></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEZIONE METODO -->
         <section class="py-20 md:py-32 px-6 relative" id="metodo">
             <div class="max-w-6xl mx-auto flex flex-col items-center">
                 <h2 class="text-2xl md:text-5xl font-bold mb-8 md:mb-12 reveal text-center">Dalla <span class="text-accent">Pratica</span> alla <span class="text-accent">Strategia</span></h2>
                 
                 <div class="glass-card p-6 md:p-12 rounded-[2.5rem] reveal mb-12 md:mb-20 w-full">
                     <div class="flex flex-col md:flex-row gap-10 md:gap-16 items-center">
+                        
+                        <!-- Colonna Immagine Profilo -->
                         <div class="relative group shrink-0 w-full md:w-auto flex justify-center">
+                            <!-- Glow di sfondo per la foto -->
                             <div class="absolute inset-0 bg-accent/20 blur-[60px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-700"></div>
+                            
                             <div class="relative w-56 h-56 md:w-80 md:h-80 rounded-3xl overflow-hidden border border-white/10 shadow-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-500">
                                 <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" 
                                      alt="Teo Macauda" 
@@ -210,6 +191,8 @@
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                             </div>
                         </div>
+                        
+                        <!-- Colonna Testo -->
                         <div class="text-left flex-1">
                             <p class="text-lg md:text-2xl text-white font-semibold mb-6 flex items-center gap-3">
                                 <span class="w-8 h-[2px] bg-accent"></span> Ciao, sono Teo.
@@ -227,6 +210,7 @@
                     </div>
                 </div>
 
+                <!-- FIX ESPLORA: Aggiunto l'indicatore centrato con freccia arancione animata -->
                 <div class="reveal mt-12 md:mt-20 flex flex-col items-center gap-3 opacity-60">
                     <span class="text-[10px] uppercase tracking-[0.3em] text-graytext font-semibold drop-shadow-md text-center">Esplora</span>
                     <i data-lucide="chevron-down" class="w-6 h-6 text-accent scroll-arrow-anim drop-shadow-md"></i>
@@ -234,7 +218,6 @@
             </div>
         </section>
 
-        <!-- SEZIONE SERVIZI -->
         <section class="py-20 md:py-32 px-6 bg-white/[0.01] relative" id="servizi">
             <div class="max-w-7xl mx-auto">
                 <div class="text-center mb-12 md:mb-20 reveal">
@@ -262,11 +245,11 @@
         </section>
     </main>
 
-    <footer class="py-12 text-center border-t border-white/5 relative z-10">
+<footer class="py-12 text-center border-t border-white/5 relative z-10">
         <p class="text-graytext text-sm mb-4">
             &copy; <script>document.write(new Date().getFullYear())</script> 
             Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-            <a href="/privacy" class="underline hover:text-white transition-colors">Privacy Policy</a>
+            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
         </p>
         <div class="px-6">
             <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
@@ -308,140 +291,7 @@
     </div>
 
     <script>
-        const clientsData = [
-            { name: "Listhen", logo: "listhen.webp", platform: "Attività", info: "Fitness", recensioni: "100+", link: "https://listhen.it/" },
-            { name: "GL Personal Coaching", logo: "glpersonal.webp", platform: "Instagram", info: "Fitness Coaching", followers: "4.5k+", link: "https://www.instagram.com/gl_personalcoaching" },
-            { name: "MyField Ferrara", logo: "myfield.webp", platform: "Attività", info: "Centro Sportivo", followers: "2.8k+", link: "https://www.instagram.com/myfield_ferrara" },
-            { name: "Astro Viktor", logo: "astroviktor.webp", platform: "YouTube", info: "Astronomia & Scienza", followers: "110k+", link: "https://www.youtube.com/@AstroViktor97" },
-            { name: "Matteo Marzolla", logo: "marzolla.webp", platform: "YouTube", info: "Fitness e Powerlifting", followers: "35k+", link: "https://www.youtube.com/@matteomarzolla" },
-            { name: "Basket Community", logo: "basket.webp", platform: "YouTube", info: "Basket Influencer", followers: "24k+", link: "https://www.youtube.com/@microfonodelcestista" },
-            { name: "AllyLab Kids", logo: "ally.webp", platform: "Instagram", info: "Kids Creator", followers: "3k+", link: "https://www.instagram.com/allylabkids" }
-        ];
-
-        function renderClients() {
-            const container = document.getElementById('trust-carousel');
-            container.innerHTML = clientsData.map((c, index) => `
-                <div class="logo-item snap-center shrink-0 w-32 md:w-44 aspect-square trust-item-container" onclick="showMobileInfo(${index})">
-                    <div class="trust-item-inner w-full h-full">
-                        <div class="trust-item-front glass-card flex items-center justify-center p-3">
-                            <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/${c.logo}" alt="${c.name}" class="w-full h-full object-cover rounded-xl">
-                        </div>
-                        <div class="trust-item-back">
-                            <div class="text-[10px] text-accent font-bold uppercase tracking-tighter mb-1">${c.platform}</div>
-                            <div class="text-xs font-bold text-white mb-1">${c.name}</div>
-                            <div class="text-[9px] text-graytext mb-3">${c.followers || c.recensioni} ${c.followers ? 'Follower' : 'Clienti'}</div>
-                            <a href="${c.link}" target="_blank" class="bg-accent text-white px-3 py-1 rounded-full text-[10px] font-bold hover:scale-105 transition-transform" onclick="event.stopPropagation()">Visita</a>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            // Impostiamo il padding dinamico per permettere al primo e ultimo logo di centrarsi
-            const updatePadding = () => {
-                if (window.innerWidth < 1024) {
-                    const padding = (window.innerWidth / 2) - 64; // 64 è metà di w-32 (128px)
-                    container.style.paddingLeft = `${padding}px`;
-                    container.style.paddingRight = `${padding}px`;
-                } else {
-                    container.style.paddingLeft = '0px';
-                    container.style.paddingRight = '0px';
-                }
-            };
-            updatePadding();
-            window.addEventListener('resize', updatePadding);
-            lucide.createIcons();
-        }
-
-        function showMobileInfo(index) {
-            if (window.innerWidth >= 1024) return;
-            const client = clientsData[index];
-            const modal = document.getElementById('mobileInfoCard');
-            const content = document.getElementById('infoContent');
-            const details = document.getElementById('infoDetails');
-
-            details.innerHTML = `
-                <div class="w-24 h-24 mx-auto mb-6 rounded-2xl overflow-hidden border-2 border-accent/30 shadow-xl">
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/clienti/${client.logo}" class="w-full h-full object-cover">
-                </div>
-                <div class="text-accent text-xs font-bold uppercase tracking-widest">${client.platform}</div>
-                <h4 class="text-2xl font-bold text-white">${client.name}</h4>
-                <p class="text-graytext text-sm font-light">${client.info}</p>
-                <div class="py-2 inline-block px-4 rounded-full bg-white/5 border border-white/10 text-white font-bold text-sm">
-                    ${client.followers || client.recensioni} <span class="text-accent font-medium">${client.followers ? 'Follower' : 'Recensioni'}</span>
-                </div>
-                <div class="pt-6">
-                    <a href="${client.link}" target="_blank" class="w-full inline-flex justify-center items-center gap-2 bg-accent text-white py-4 rounded-2xl font-bold">
-                        Vedi Profilo <i data-lucide="external-link" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            `;
-            
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100', 'pointer-events-auto');
-            content.classList.replace('scale-90', 'scale-100');
-            document.body.style.overflow = 'hidden';
-            lucide.createIcons();
-        }
-
-        function closeMobileInfo() {
-            const modal = document.getElementById('mobileInfoCard');
-            const content = document.getElementById('infoContent');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.classList.remove('opacity-100', 'pointer-events-auto');
-            content.classList.replace('scale-100', 'scale-90');
-            document.body.style.overflow = '';
-        }
-
-        // Funzione Dock Ottimizzata per Mobile per prevenire overlap
-        function updateDockEffect() {
-            const carousel = document.getElementById('trust-carousel');
-            if (!carousel || window.innerWidth >= 1024) return;
-
-            const items = carousel.querySelectorAll('.logo-item');
-            const center = carousel.scrollLeft + (carousel.offsetWidth / 2);
-
-            items.forEach(item => {
-                const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
-                const distance = Math.abs(center - itemCenter);
-                const maxDist = 180; // Leggermente ridotto per focus più stretto
-                
-                if (distance < maxDist) {
-                    // Ridotto lo scale da 1.35 a 1.25 per prevenire sovrapposizioni visive
-                    const scale = 1 + (1 - distance / maxDist) * 0.25;
-                    item.style.transform = `scale(${scale})`;
-                    item.style.filter = `brightness(${1 + (1 - distance/maxDist) * 0.3})`;
-                    item.style.zIndex = "20";
-                } else {
-                    item.style.transform = 'scale(1)';
-                    item.style.filter = 'brightness(0.6)';
-                    item.style.zIndex = "1";
-                }
-            });
-        }
-
-        function initAutoScroll() {
-            const carousel = document.getElementById('trust-carousel');
-            if (!carousel) return;
-            
-            let scrollSpeed = 0.8;
-            let active = true;
-
-            function step() {
-                if (active && window.innerWidth < 1024) {
-                    carousel.scrollLeft += scrollSpeed;
-                    if (carousel.scrollLeft >= (carousel.scrollWidth - carousel.offsetWidth)) {
-                        carousel.scrollLeft = 0;
-                    }
-                    updateDockEffect();
-                }
-                requestAnimationFrame(step);
-            }
-
-            carousel.addEventListener('touchstart', () => active = false);
-            carousel.addEventListener('touchend', () => setTimeout(() => active = true, 2500));
-            
-            requestAnimationFrame(step);
-        }
+        lucide.createIcons();
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
@@ -487,7 +337,7 @@
 
         function initScrollAnimations() {
             gsap.registerPlugin(ScrollTrigger);
-            const reveals = document.querySelectorAll('.reveal:not(.service-card)');
+            const reveals = document.querySelectorAll('.reveal:not(.logo-item):not(.service-card)');
             reveals.forEach((el) => {
                 gsap.to(el, {
                     scrollTrigger: {
@@ -497,9 +347,20 @@
                     },
                     opacity: 1,
                     y: 0,
-                    duration: 1.5,
+                    duration: 1.8,
                     ease: "power3.out"
                 });
+            });
+            gsap.to(".logo-item", {
+                scrollTrigger: {
+                    trigger: "#trust-carousel",
+                    start: "top 85%"
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                stagger: 0.25,
+                ease: "power2.out"
             });
             gsap.to(".service-card", {
                 scrollTrigger: {
@@ -508,8 +369,8 @@
                 },
                 opacity: 1,
                 y: 0,
-                duration: 1.2,
-                stagger: 0.2,
+                duration: 1.8,
+                stagger: 0.3,
                 ease: "power3.out"
             });
         }
@@ -527,13 +388,12 @@
                 .to("#cam-lens-mid", { x: 120, scale: 1.2 }, 0)
                 .to("#cam-lens-front", { y: 150, scale: 1.6 }, 0)
                 .to("#cam-rec", { y: -150 }, 0);
-            
             const scrollTl = gsap.timeline({
                 scrollTrigger: {
                     trigger: "#hero-section", 
                     start: "top top", 
-                    end: "+=200", 
-                    scrub: 1, 
+                    end: "+=150", 
+                    scrub: 0.8, 
                 }
             });
             scrollTl.to(["#cam-body", "#cam-grip", "#cam-viewfinder", "#cam-lens-back", "#cam-lens-mid", "#cam-lens-front", "#cam-rec"], { 
@@ -541,11 +401,80 @@
             }, 0);
         }
 
+        function initDesktopPinAnimation() {
+            if (typeof gsap === 'undefined') return;
+            let mm = gsap.matchMedia();
+            mm.add("(min-width: 1024px)", () => {
+                const trustSection = document.getElementById('trust');
+                const trustText = trustSection.querySelector('p');
+                const trustLogos = trustSection.querySelectorAll('.logo-item');
+                if(!trustSection || !trustText || trustLogos.length === 0) return;
+                gsap.set("#metodo", { zIndex: 10, position: "relative" });
+                gsap.set(trustSection, { zIndex: 5 });
+                let tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: trustSection,
+                        start: "top 25%", 
+                        end: () => "+=" + (trustSection.offsetHeight + 150), 
+                        pin: true,
+                        pinSpacing: false, 
+                        scrub: 1.2, 
+                    }
+                });
+                tl.to(trustText, { opacity: 0, scale: 0.95, y: -30, duration: 0.3 }, 0);
+                tl.to(trustSection, {
+                    borderTopColor: "rgba(255, 255, 255, 0)",
+                    borderBottomColor: "rgba(255, 255, 255, 0)",
+                    backgroundColor: "rgba(255, 255, 255, 0)",
+                    duration: 0.3
+                }, 0);
+                const mid = trustLogos.length / 2;
+                trustLogos.forEach((logo, i) => {
+                    let isLeft = i < mid;
+                    let distanceFromCenter = isLeft ? (mid - i) : (i - mid + 1);
+                    let dir = isLeft ? -1 : 1;
+                    tl.to(logo, {
+                        x: () => dir * (window.innerWidth * 0.4 + (distanceFromCenter * 80)),
+                        y: () => (Math.random() - 0.5) * 100, 
+                        rotation: dir * (10 + distanceFromCenter * 15), 
+                        scale: 0.6, 
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power2.inOut"
+                    }, 0);
+                });
+            });
+        }
+
+        function initMobileCarouselIndicators() {
+            const trustCarousel = document.getElementById('trust-carousel');
+            const scrollLeftIndicator = document.getElementById('trust-scroll-left');
+            const scrollRightIndicator = document.getElementById('trust-scroll-right');
+            if (trustCarousel && scrollLeftIndicator && scrollRightIndicator) {
+                trustCarousel.addEventListener('scroll', () => {
+                    if (trustCarousel.scrollLeft > 10) {
+                        scrollLeftIndicator.classList.remove('opacity-0');
+                        scrollLeftIndicator.classList.add('opacity-100');
+                    } else {
+                        scrollLeftIndicator.classList.remove('opacity-100');
+                        scrollLeftIndicator.classList.add('opacity-0');
+                    }
+                    if (trustCarousel.scrollLeft >= (trustCarousel.scrollWidth - trustCarousel.clientWidth - 10)) {
+                        scrollRightIndicator.classList.remove('opacity-100');
+                        scrollRightIndicator.classList.add('opacity-0');
+                    } else {
+                        scrollRightIndicator.classList.remove('opacity-0');
+                        scrollRightIndicator.classList.add('opacity-100');
+                    }
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            renderClients();
             initScrollAnimations();
             initCameraAnimation(); 
-            initAutoScroll();
+            initDesktopPinAnimation(); 
+            initMobileCarouselIndicators(); 
             
             const pill = document.getElementById('chat-pill');
             if(pill) {
@@ -555,16 +484,6 @@
                     else pill.classList.add('expanded');
                 });
             }
-
-            const carousel = document.getElementById('trust-carousel');
-            const scrollLeftIndicator = document.getElementById('trust-scroll-left');
-            const scrollRightIndicator = document.getElementById('trust-scroll-right');
-            if (carousel) {
-                carousel.addEventListener('scroll', () => {
-                    scrollLeftIndicator.style.opacity = carousel.scrollLeft > 20 ? "1" : "0";
-                    scrollRightIndicator.style.opacity = carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth - 20) ? "0" : "1";
-                });
-            }
         });
 
         window.addEventListener('scroll', () => {
@@ -572,5 +491,36 @@
             if(nav) nav.style.background = window.scrollY > 50 ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.6)';
         });
     </script>
+
+    <script>
+    /**
+     * TEOMACAUDA.IT - UNIFIED URL CLEANER & SMART SCROLL
+     */
+    function handleNavigationFix() {
+        const path = window.location.pathname;
+        const hash = window.location.hash;
+        const origin = window.location.origin;
+
+        if (path.includes('.html')) {
+            const newPath = path.replace('/index.html', '/').replace('.html', '');
+            window.history.replaceState(null, '', origin + newPath + hash);
+        }
+
+        if (hash === '#servizi') {
+            const target = document.getElementById('servizi');
+            const nav = document.getElementById('navbar');
+            if (target) {
+                setTimeout(() => {
+                    const navHeight = nav ? nav.offsetHeight : 80;
+                    const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    window.scrollTo({ top: targetPos, behavior: "smooth" });
+                }, 400);
+            }
+        }
+    }
+    window.addEventListener('load', handleNavigationFix);
+    window.addEventListener('hashchange', handleNavigationFix);
+</script>
+    
 </body>
 </html>
