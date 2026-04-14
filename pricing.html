@@ -101,6 +101,22 @@
             background: linear-gradient(to right, rgba(255, 122, 0, 0.05), transparent);
             border-radius: 0 0.5rem 0.5rem 0;
         }
+
+        /* Correzione allineamento liste */
+        .feature-item {
+            display: flex;
+            align-items: center; /* Centratura verticale perfetta per icone */
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Se il testo va a capo, manteniamo l'icona allineata alla prima riga */
+        .feature-item.items-start {
+            align-items: flex-start;
+        }
+        .feature-item.items-start i {
+            margin-top: 0.15rem; /* Micro-aggiustamento per la prima riga */
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-accent selection:text-white font-sans">
@@ -178,20 +194,20 @@
                     </p>
 
                     <div class="space-y-4 mb-8 flex-1">
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="video" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="video" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>4 Video</strong> (Reel/TikTok/Shorts)</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="pen-tool" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="pen-tool" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90 italic">Scrittura script completa</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="camera" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>5 Foto Pro<strong> ottimizzate</span>
+                        <div class="feature-item">
+                            <i data-lucide="camera" class="w-4 h-4 text-accent shrink-0"></i>
+                            <span class="text-[12px] text-white/90"><strong>5 Foto Pro</strong> ottimizzate</span>
                         </div>
-                        <div class="flex gap-3 items-start text-accent/90">
-                            <i data-lucide="hand-metal" class="w-4 h-4 mt-1 shrink-0"></i>
+                        <div class="feature-item text-accent/90">
+                            <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
                             <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
                         </div>
                     </div>
@@ -227,24 +243,24 @@
                     </p>
 
                     <div class="space-y-4 mb-8 flex-1">
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="trending-up" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>8 Video</strong> (2 contenuti a settimana)</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="camera" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="camera" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>10 Foto Pro</strong> (Post/Caroselli)</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="target" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="target" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>Strategia e script</strong> orientati alla vendita</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="search" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="search" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>Analisi</strong> della concorrenza</span>
                         </div>
-                        <div class="flex gap-3 items-start text-accent/90">
-                            <i data-lucide="hand-metal" class="w-4 h-4 mt-1 shrink-0"></i>
+                        <div class="feature-item text-accent/90">
+                            <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
                             <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
                         </div>
                     </div>
@@ -277,24 +293,24 @@
                     </p>
 
                     <div class="space-y-4 mb-8 flex-1">
-                        <div class="flex gap-3 items-start text-accent">
-                            <i data-lucide="check-circle" class="w-4 h-4 mt-1 shrink-0"></i>
+                        <div class="feature-item text-accent">
+                            <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
                             <span class="text-[12px] font-bold">Include tutto il pacchetto PRO</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="zap" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item">
+                            <i data-lucide="zap" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>12 Video + 10 Foto</strong> al mese</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>Extreme Page Makeover</strong> , restyling della pagina</span>
+                        <div class="feature-item items-start">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-accent shrink-0"></i>
+                            <span class="text-[12px] text-white/90"><strong>Extreme Page Makeover</strong>, restyling della pagina</span>
                         </div>
-                        <div class="flex gap-3 items-start">
-                            <i data-lucide="check-check" class="w-4 h-4 text-accent mt-1 shrink-0"></i>
+                        <div class="feature-item items-start">
+                            <i data-lucide="check-check" class="w-4 h-4 text-accent shrink-0"></i>
                             <span class="text-[12px] text-white/90"><strong>Gestione Full</strong> (mi occuperò anche della pubblicazione)</span>
                         </div>
-                        <div class="flex gap-3 items-start text-accent/90">
-                            <i data-lucide="hand-metal" class="w-4 h-4 mt-1 shrink-0"></i>
+                        <div class="feature-item text-accent/90">
+                            <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
                             <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
                         </div>
                     </div>
