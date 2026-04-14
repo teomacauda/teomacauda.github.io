@@ -63,20 +63,19 @@
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        @media (max-width: 768px) {
-            .mobile-carousel {
-                display: flex;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                gap: 1rem;
-                padding: 1rem 1.5rem 3rem 1.5rem;
-                margin: 0 -1.5rem;
-                -webkit-overflow-scrolling: touch;
-            }
-            .mobile-carousel::-webkit-scrollbar { display: none; }
-            .carousel-item {
-                min-width: 85vw;
-                scroll-snap-align: center;
+        /* Rimossa logica carousel orizzontale per mobile */
+        .packages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .packages-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
             }
         }
 
@@ -102,21 +101,26 @@
             border-radius: 0 0.5rem 0.5rem 0;
         }
 
-        /* Correzione allineamento liste */
         .feature-item {
             display: flex;
-            align-items: center; /* Centratura verticale perfetta per icone */
+            align-items: center; 
             gap: 0.75rem;
             margin-bottom: 1rem;
         }
         
-        /* Se il testo va a capo, manteniamo l'icona allineata alla prima riga */
         .feature-item.items-start {
             align-items: flex-start;
         }
         .feature-item.items-start i {
-            margin-top: 0.15rem; /* Micro-aggiustamento per la prima riga */
+            margin-top: 0.15rem; 
         }
+
+        /* Animazione freccia giù */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 2s infinite ease-in-out; }
     </style>
 </head>
 <body class="antialiased selection:bg-accent selection:text-white font-sans">
@@ -171,162 +175,156 @@
             <p class="text-graytext text-lg md:text-xl font-light max-w-2xl leading-relaxed mx-auto md:mx-0">
                 Trasformo la tua visione in un sistema di contenuti <span class="text-white font-bold italic">premium</span>. Nessun compromesso, solo risultati.
             </p>
-            <div class="md:hidden flex items-center justify-center gap-2 mt-8 text-accent/50">
-                <i data-lucide="chevron-left" class="w-4 h-4 animate-pulse"></i>
-                <span class="text-[9px] font-black uppercase tracking-[0.4em]">Swipe per scoprire</span>
-                <i data-lucide="chevron-right" class="w-4 h-4 animate-pulse"></i>
+            <!-- Aggiornato indicatore per mobile: scroll verticale -->
+            <div class="md:hidden flex flex-col items-center justify-center gap-2 mt-12 text-accent/60">
+                <span class="text-[9px] font-black uppercase tracking-[0.4em]">Scorri per scoprire</span>
+                <i data-lucide="chevron-down" class="w-5 h-5 animate-bounce-slow"></i>
             </div>
         </div>
 
-        <!-- Grid Wrapper -->
-        <div class="mobile-carousel md:grid md:grid-cols-3 md:gap-6 mb-20">
+        <!-- Pacchetti: Verticali su Mobile, Griglia su Desktop -->
+        <div class="packages-container mb-20">
             
             <!-- 01 START -->
-            <div class="carousel-item">
-                <div class="package-card rounded-[2.5rem] p-8 reveal">
-                    <div class="mb-6">
-                        <div class="text-accent text-[10px] font-black uppercase tracking-widest mb-2">Pacchetto Start</div>
-                        <h2 class="text-3xl font-black uppercase tracking-tighter text-white">Digital Core</h2>
-                    </div>
-                    
-                    <p class="text-graytext text-[13px] md:text-sm mb-6 leading-relaxed">
-                        L’essenziale per una presenza professionale e costante. Elimini il "cosa pubblicare" e garantisci al tuo brand un'immagine curata.
-                    </p>
+            <div class="package-card rounded-[2.5rem] p-8 reveal">
+                <div class="mb-6">
+                    <div class="text-accent text-[10px] font-black uppercase tracking-widest mb-2">Pacchetto Start</div>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter text-white">Digital Core</h2>
+                </div>
+                
+                <p class="text-graytext text-[13px] md:text-sm mb-6 leading-relaxed">
+                    L’essenziale per una presenza professionale e costante. Elimini il "cosa pubblicare" e garantisci al tuo brand un'immagine curata.
+                </p>
 
-                    <div class="space-y-4 mb-8 flex-1">
-                        <div class="feature-item">
-                            <i data-lucide="video" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>4 Video</strong> (Reel/TikTok/Shorts)</span>
-                        </div>
-                        <div class="feature-item">
-                            <i data-lucide="pen-tool" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90 italic">Scrittura script completa</span>
-                        </div>
-                        <div class="feature-item">
-                            <i data-lucide="camera" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>5 Foto Pro</strong> ottimizzate</span>
-                        </div>
-                        <div class="feature-item text-accent/90">
-                            <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
-                        </div>
+                <div class="space-y-4 mb-8 flex-1">
+                    <div class="feature-item">
+                        <i data-lucide="video" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>4 Video</strong> (Reel/TikTok/Shorts)</span>
                     </div>
+                    <div class="feature-item">
+                        <i data-lucide="pen-tool" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90 italic">Scrittura script completa</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="camera" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>5 Foto Pro</strong> ottimizzate</span>
+                    </div>
+                    <div class="feature-item text-accent/90">
+                        <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
+                    </div>
+                </div>
 
-                    <div class="value-tag mb-8">
-                        <p class="text-[9px] font-black uppercase text-accent tracking-widest mb-1">Il valore per te</p>
-                        <p class="text-[11px] text-white/70 italic leading-relaxed">Elimini il blocco creativo e deleghi la qualità visiva di alto livello.</p>
-                    </div>
+                <div class="value-tag mb-8">
+                    <p class="text-[9px] font-black uppercase text-accent tracking-widest mb-1">Il valore per te</p>
+                    <p class="text-[11px] text-white/70 italic leading-relaxed">Elimini il blocco creativo e deleghi la qualità visiva di alto livello.</p>
+                </div>
 
-                    <div class="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
-                        <div class="price-badge">
-                            <span class="text-[8px] font-black uppercase tracking-widest text-accent/60 mb-1">Investimento</span>
-                            <span class="text-xl font-black text-white">€450 — €600</span>
-                        </div>
-                        <button onclick="toggleContactModal()" class="w-full py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-accent hover:text-white transition-all">Richiedi Core</button>
+                <div class="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
+                    <div class="price-badge">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-accent/60 mb-1">Investimento</span>
+                        <span class="text-xl font-black text-white">€450 — €600</span>
                     </div>
+                    <button onclick="toggleContactModal()" class="w-full py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-accent hover:text-white transition-all">Richiedi Core</button>
                 </div>
             </div>
 
             <!-- 02 PRO -->
-            <div class="carousel-item">
-                <div class="package-card rounded-[2.5rem] p-8 reveal border-accent/60 md:scale-[1.03] shadow-2xl shadow-accent/10" style="background: rgba(255, 122, 0, 0.08);">
-                    <div class="absolute top-6 right-8">
-                        <span class="bg-accent text-white text-[10px] font-black uppercase px-5 py-2 rounded-full shadow-lg">Più Scelto</span>
-                    </div>
-                    <div class="mb-6">
-                        <div class="text-accent text-[10px] font-black uppercase tracking-widest mb-2">Pacchetto Pro</div>
-                        <h2 class="text-3xl font-black uppercase tracking-tighter text-white">Conversion Strategy</h2>
-                    </div>
-                    
-                    <p class="text-graytext text-[13px] md:text-sm mb-6 leading-relaxed">
-                        Il sistema strategico per generare contatti. Perfetto per chi vuole scalare e usare i social per vendere ed acquisire clienti.
-                    </p>
+            <div class="package-card rounded-[2.5rem] p-8 reveal border-accent/60 md:scale-[1.03] shadow-2xl shadow-accent/10" style="background: rgba(255, 122, 0, 0.08);">
+                <div class="absolute top-6 right-8">
+                    <span class="bg-accent text-white text-[10px] font-black uppercase px-5 py-2 rounded-full shadow-lg">Più Scelto</span>
+                </div>
+                <div class="mb-6">
+                    <div class="text-accent text-[10px] font-black uppercase tracking-widest mb-2">Pacchetto Pro</div>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter text-white">Conversion Strategy</h2>
+                </div>
+                
+                <p class="text-graytext text-[13px] md:text-sm mb-6 leading-relaxed">
+                    Il sistema strategico per generare contatti. Perfetto per chi vuole scalare e usare i social per vendere ed acquisire clienti.
+                </p>
 
-                    <div class="space-y-4 mb-8 flex-1">
-                        <div class="feature-item">
-                            <i data-lucide="trending-up" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>8 Video</strong> (2 contenuti a settimana)</span>
-                        </div>
-                        <div class="feature-item">
-                            <i data-lucide="camera" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>10 Foto Pro</strong> (Post/Caroselli)</span>
-                        </div>
-                        <div class="feature-item">
-                            <i data-lucide="target" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>Strategia e script</strong> orientati alla vendita</span>
-                        </div>
-                        <div class="feature-item">
-                            <i data-lucide="search" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>Analisi</strong> della concorrenza</span>
-                        </div>
-                        <div class="feature-item text-accent/90">
-                            <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
-                        </div>
+                <div class="space-y-4 mb-8 flex-1">
+                    <div class="feature-item">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>8 Video</strong> (2 contenuti a settimana)</span>
                     </div>
+                    <div class="feature-item">
+                        <i data-lucide="camera" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>10 Foto Pro</strong> (Post/Caroselli)</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="target" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>Strategia e script</strong> orientati alla vendita</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="search" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>Analisi</strong> della concorrenza</span>
+                    </div>
+                    <div class="feature-item text-accent/90">
+                        <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
+                    </div>
+                </div>
 
-                    <div class="value-tag mb-8 border-accent">
-                        <p class="text-[9px] font-black uppercase text-accent tracking-widest mb-1">Il valore per te</p>
-                        <p class="text-[11px] text-white/70 italic leading-relaxed">Domini l'algoritmo e differenzi nettamente il tuo brand sul mercato.</p>
-                    </div>
+                <div class="value-tag mb-8 border-accent">
+                    <p class="text-[9px] font-black uppercase text-accent tracking-widest mb-1">Il valore per te</p>
+                    <p class="text-[11px] text-white/70 italic leading-relaxed">Domini l'algoritmo e differenzi nettamente il tuo brand sul mercato.</p>
+                </div>
 
-                    <div class="mt-auto pt-6 border-t border-accent/20 flex flex-col gap-4">
-                        <div class="price-badge bg-accent/20 border-accent/40">
-                            <span class="text-[8px] font-black uppercase tracking-widest text-accent mb-1 font-bold">Investimento</span>
-                            <span class="text-xl font-black text-white">€850 — €1.000</span>
-                        </div>
-                        <button onclick="toggleContactModal()" class="w-full py-4 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-accent/20 hover:scale-[1.02] transition-all">Attiva Strategia</button>
+                <div class="mt-auto pt-6 border-t border-accent/20 flex flex-col gap-4">
+                    <div class="price-badge bg-accent/20 border-accent/40">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-accent mb-1 font-bold">Investimento</span>
+                        <span class="text-xl font-black text-white">€850 — €1.000</span>
                     </div>
+                    <button onclick="toggleContactModal()" class="w-full py-4 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-accent/20 hover:scale-[1.02] transition-all">Attiva Strategia</button>
                 </div>
             </div>
 
             <!-- 03 ELITE -->
-            <div class="carousel-item">
-                <div class="package-card rounded-[2.5rem] p-8 reveal">
-                    <div class="mb-6">
-                        <div class="text-accent text-[10px] font-black uppercase tracking-widest mb-2">Pacchetto Elite</div>
-                        <h2 class="text-3xl font-black uppercase tracking-tighter text-white">All-in Authority</h2>
-                    </div>
-                    
-                    <p class="text-graytext text-[13px] md:text-sm mb-6 leading-relaxed">
-                        Delega totale per una leadership assoluta. Trasformo la tua pagina in un punto di riferimento estetico e strategico.
-                    </p>
+            <div class="package-card rounded-[2.5rem] p-8 reveal">
+                <div class="mb-6">
+                    <div class="text-accent text-[10px] font-black uppercase tracking-widest mb-2">Pacchetto Elite</div>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter text-white">All-in Authority</h2>
+                </div>
+                
+                <p class="text-graytext text-[13px] md:text-sm mb-6 leading-relaxed">
+                    Delega totale per una leadership assoluta. Trasformo la tua pagina in un punto di riferimento estetico e strategico.
+                </p>
 
-                    <div class="space-y-4 mb-8 flex-1">
-                        <div class="feature-item text-accent">
-                            <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
-                            <span class="text-[12px] font-bold">Include tutto il pacchetto PRO</span>
-                        </div>
-                        <div class="feature-item">
-                            <i data-lucide="zap" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>12 Video + 10 Foto</strong> al mese</span>
-                        </div>
-                        <div class="feature-item items-start">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>Extreme Page Makeover</strong>, restyling della pagina</span>
-                        </div>
-                        <div class="feature-item items-start">
-                            <i data-lucide="check-check" class="w-4 h-4 text-accent shrink-0"></i>
-                            <span class="text-[12px] text-white/90"><strong>Gestione Full</strong> (mi occuperò anche della pubblicazione)</span>
-                        </div>
-                        <div class="feature-item text-accent/90">
-                            <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
-                        </div>
+                <div class="space-y-4 mb-8 flex-1">
+                    <div class="feature-item text-accent">
+                        <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+                        <span class="text-[12px] font-bold">Include tutto il pacchetto PRO</span>
                     </div>
+                    <div class="feature-item">
+                        <i data-lucide="zap" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>12 Video + 10 Foto</strong> al mese</span>
+                    </div>
+                    <div class="feature-item items-start">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>Extreme Page Makeover</strong>, restyling della pagina</span>
+                    </div>
+                    <div class="feature-item items-start">
+                        <i data-lucide="check-check" class="w-4 h-4 text-accent shrink-0"></i>
+                        <span class="text-[12px] text-white/90"><strong>Gestione Full</strong> (mi occuperò anche della pubblicazione)</span>
+                    </div>
+                    <div class="feature-item text-accent/90">
+                        <i data-lucide="hand-metal" class="w-4 h-4 shrink-0"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-tighter">Artigianalità Pura (No AI)</span>
+                    </div>
+                </div>
 
-                    <div class="value-tag mb-8">
-                        <p class="text-[9px] font-black uppercase text-accent tracking-widest mb-1">Il valore per te</p>
-                        <p class="text-[11px] text-white/70 italic leading-relaxed">Libertà totale. Tu pensi al lavoro, io ti rendo un'autorità premium.</p>
-                    </div>
+                <div class="value-tag mb-8">
+                    <p class="text-[9px] font-black uppercase text-accent tracking-widest mb-1">Il valore per te</p>
+                    <p class="text-[11px] text-white/70 italic leading-relaxed">Libertà totale. Tu pensi al lavoro, io ti rendo un'autorità premium.</p>
+                </div>
 
-                    <div class="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
-                        <div class="price-badge">
-                            <span class="text-[8px] font-black uppercase tracking-widest text-accent/60 mb-1">Investimento</span>
-                            <span class="text-xl font-black text-white">€1.350 — €1.500</span>
-                        </div>
-                        <button onclick="toggleContactModal()" class="w-full py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-accent hover:text-white transition-all">Domina il Mercato</button>
+                <div class="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
+                    <div class="price-badge">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-accent/60 mb-1">Investimento</span>
+                        <span class="text-xl font-black text-white">€1.350 — €1.500</span>
                     </div>
+                    <button onclick="toggleContactModal()" class="w-full py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-accent hover:text-white transition-all">Domina il Mercato</button>
                 </div>
             </div>
         </div>
