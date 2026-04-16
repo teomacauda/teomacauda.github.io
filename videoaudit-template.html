@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- IMPORTANTISSIMO: Evita che Google indicizzi questa pagina privata -->
+    <meta name="robots" content="noindex, nofollow">
+    
+    <title>Video Audit Personalizzato | Teo Macauda</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z' fill='rgb(255,122,0)'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z' fill='rgb(255,122,0)'/></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; }
+        #page-wrapper { overflow-x: hidden; width: 100%; position: relative; }
+        .glass-nav { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
+        .glass-card:hover { border-color: rgba(255, 122, 0, 0.3); box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); }
+        .ambient-glow { position: absolute; width: 200%; max-width: 1000px; aspect-ratio: 1/1; background: radial-gradient(circle, rgba(255,122,0,0.15) 0%, rgba(0,0,0,0) 70%); top: -20vh; left: 50%; transform: translateX(-50%); z-index: 0; pointer-events: none; }
+        main, footer { position: relative; z-index: 10; }
+        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        /* Cookie Modal Styling - Black style from screenshot */
+        #cookie-modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 20px; }
+        #cookie-modal.visible { opacity: 1; pointer-events: auto; }
+        .modal-content { max-width: 400px; text-align: center; background: #0a0a0a; padding: 40px 30px; border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        /* Video Placeholder */
+        .video-placeholder { cursor: pointer; position: relative; transition: all 0.3s ease; }
+        .video-placeholder:hover .play-btn { transform: scale(1.1); background: #FF7A00; }
+        .play-btn { background: rgba(255, 122, 0, 0.8); backdrop-filter: blur(5px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @media (max-width: 640px) {
+            .shorts-container { max-width: 100%; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-accent selection:text-white">
+
+<div id="page-wrapper">
+    <div class="ambient-glow"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-[135] glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
+                <svg class="h-10 md:h-12 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+            </a>
+            
+            <div class="hidden md:flex gap-4">
+                <span class="text-xs text-accent font-bold uppercase tracking-widest px-4 py-2 border border-accent/20 rounded-full bg-accent/5">Documento Riservato</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24 px-6 min-h-screen overflow-x-hidden block">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Intestazione -->
+            <div class="mb-12 reveal text-center md:text-left">
+                <span class="text-accent text-sm font-bold uppercase tracking-widest mb-2 block">Analisi Tecnica Gratuita</span>
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">Audit per <span class="italic text-accent">[Nome Azienda]</span></h1>
+                <p class="text-graytext text-lg md:text-xl font-light max-w-2xl">
+                    Ciao [Nome], come promesso ho analizzato i tuoi contenuti. Ecco i 3 punti tecnici su cui possiamo intervenire subito per scalare i tuoi risultati.
+                </p>
+            </div>
+
+            <!-- Griglia Video + Punti Chiave -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                
+                <!-- Video Audit (Shorts Format 9:16) -->
+                <div class="lg:col-span-5 reveal">
+                    <div id="video-container" class="shorts-container mx-auto w-full max-w-[350px] aspect-[9/16] rounded-[2.5rem] overflow-hidden bg-[#0A0A0A] relative border-[6px] border-white/10 shadow-2xl">
+                        
+                        <!-- Placeholder visibile prima del consenso -->
+                        <div id="video-placeholder" class="video-placeholder absolute inset-0 flex items-center justify-center bg-zinc-900 group" onclick="handlePlayAttempt()">
+                            <!-- Immagine di anteprima finta (opzionale, qui metto un gradiente) -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
+                            
+                            <!-- Icona Play Centrale -->
+                            <div class="play-btn w-20 h-20 rounded-full flex items-center justify-center z-10 shadow-2xl">
+                                <i data-lucide="play" class="w-8 h-8 text-white fill-white ml-1"></i>
+                            </div>
+
+                            <div class="absolute bottom-10 left-0 w-full text-center px-6 z-10">
+                                <p class="text-white font-bold text-lg leading-tight uppercase tracking-tighter">Guarda il tuo Video Audit</p>
+                                <p class="text-accent text-xs mt-1 font-semibold uppercase tracking-widest">Analisi 1-to-1</p>
+                            </div>
+                        </div>
+
+                        <!-- Iframe (Caricato solo dopo consenso) -->
+                        <div id="video-iframe-wrapper" class="hidden absolute inset-0">
+                            <!-- L'iframe verrà inserito via JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analisi e CTA -->
+                <div class="lg:col-span-7 space-y-8 reveal">
+                    <div class="glass-card rounded-3xl p-8 space-y-6">
+                        <h3 class="text-2xl font-bold flex items-center gap-3">
+                            <i data-lucide="zap" class="text-accent"></i> Cosa abbiamo trovato:
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 font-bold text-accent">1</div>
+                                <div>
+                                    <h4 class="font-bold text-white uppercase text-sm tracking-wider">Hook Iniziale</h4>
+                                    <p class="text-graytext text-sm">Nei primi 3 secondi mancano elementi visivi dinamici per fermare lo scroll.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 font-bold text-accent">2</div>
+                                <div>
+                                    <h4 class="font-bold text-white uppercase text-sm tracking-wider">Ritmo dell'editing</h4>
+                                    <p class="text-graytext text-sm">Ci sono tempi morti che abbassano la "Retention Rate" del video.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 font-bold text-accent">3</div>
+                                <div>
+                                    <h4 class="font-bold text-white uppercase text-sm tracking-wider">Call to Action</h4>
+                                    <p class="text-graytext text-sm">La chiusura è troppo brusca e non indirizza l'utente verso il lead magnet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call to Action -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold text-center md:text-left">Ti interessa capire come implementare questo sistema?</h3>
+                        <a href="https://wa.me/393784142773?text=Ciao%20Matteo.%20Ho%20visto%20il%20video%20che%20hai%20realizzato%20per%20la%20mia/nostra%20attivit%C3%A0%20e%20vorrei%20saperne%20di%20pi%C3%B9!" target="_blank" class="w-full bg-accent hover:bg-accentHover text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] shadow-xl">
+                            <i data-lucide="message-circle" class="w-6 h-6"></i> Parliamone su WhatsApp
+                        </a>
+                        <p class="text-center md:text-left text-xs text-graytext italic">Consulenza gratuita di 15 minuti per definire la strategia.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center border-t border-white/5 relative z-10">
+        <p class="text-graytext text-sm mb-4">
+            &copy; <script>document.write(new Date().getFullYear())</script> 
+            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+        </p>
+        <div class="px-6">
+            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
+                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
+            </p>
+        </div>
+    </footer>
+</div> 
+
+<!-- Cookie Modal (Stile Screenshot richiesto) -->
+<div id="cookie-modal">
+    <div class="modal-content relative">
+        <button onclick="closeModal()" class="absolute top-6 right-6 text-graytext hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+        
+        <div class="flex justify-center mb-8">
+            <div class="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center">
+                <i data-lucide="eye-off" class="w-8 h-8 text-accent"></i>
+            </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-white mb-4 leading-tight">Cookie di terze parti</h3>
+        
+        <p class="text-graytext text-sm leading-relaxed mb-8">
+            Per vedere questo contenuto devi accettare i cookie di Instagram e YouTube. Leggi i dettagli nella nostra <a href="/privacy.html" class="underline hover:text-white">Privacy Policy</a>.
+        </p>
+
+        <button onclick="acceptAndPlay()" class="w-full bg-accent hover:bg-accentHover text-white py-4 rounded-full font-bold text-base mb-6 transition-all shadow-[0_10px_30px_rgba(255,122,0,0.3)] uppercase tracking-wider">
+            Accetta e guarda
+        </button>
+
+        <button onclick="closeModal()" class="text-graytext hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+            No, grazie
+        </button>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    const videoID = "dQw4w9WgXcQ"; // SOSTITUISCI CON IL TUO ID VIDEO YOUTUBE
+
+    function initScrollAnimations() {
+        const reveals = document.querySelectorAll('.reveal');
+        const revealOnScroll = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        reveals.forEach(r => revealOnScroll.observe(r));
+    }
+
+    // Gestione Play
+    function handlePlayAttempt() {
+        if (localStorage.getItem('videoConsent') === 'true') {
+            loadVideo();
+        } else {
+            document.getElementById('cookie-modal').classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('cookie-modal').classList.remove('visible');
+        document.body.style.overflow = '';
+    }
+
+    function acceptAndPlay() {
+        localStorage.setItem('videoConsent', 'true');
+        closeModal();
+        loadVideo();
+    }
+
+    function loadVideo() {
+        const placeholder = document.getElementById('video-placeholder');
+        const wrapper = document.getElementById('video-iframe-wrapper');
+        
+        placeholder.style.display = 'none';
+        wrapper.classList.remove('hidden');
+        
+        // Creazione Iframe
+        wrapper.innerHTML = `
+            <iframe 
+                src="https://www.youtube.com/embed/${videoID}?rel=0&modestbranding=1&autoplay=1" 
+                class="w-full h-full" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        `;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initScrollAnimations();
+        
+        // Se ha già accettato, carica il video (opzionale, o aspetta il click)
+        if (localStorage.getItem('videoConsent') === 'true') {
+            // Se vuoi che appaia subito l'iframe commenta handlePlayAttempt() e usa loadVideo()
+        }
+    });
+
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        if(nav) nav.style.background = window.scrollY > 50 ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.6)';
+    });
+</script>
+</body>
+</html>
