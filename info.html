@@ -2,32 +2,38 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Teo | Videomaker & Content Marketing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent: #ff7a00;
-            --bg-dark: #0a0a0a;
+            --bg-dark: #050505;
             --card-bg: rgba(15, 15, 15, 0.9);
         }
 
+        /* Utilizziamo dvh (dynamic viewport height) per gestire correttamente le barre dei browser mobile */
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-dark);
             color: #fff;
-            overflow: hidden;
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100dvh; 
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 0;
+            padding: 20px 16px; /* Padding per evitare che tocchi i bordi su schermi piccoli */
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         .glass {
             background: var(--card-bg);
             backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 122, 0, 0.1);
             border-radius: 32px;
             box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
@@ -91,15 +97,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(40px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- Nuova Animazione Fluttuante --- */
         @keyframes float {
-            0% { transform: translateY(0px) rotate(2deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-            100% { transform: translateY(0px) rotate(2deg); }
+            0%, 100% { transform: translateY(0px) rotate(2deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
         }
 
         .status-dot {
@@ -120,20 +124,19 @@
         }
 
         .orange-glow {
-            position: absolute;
-            width: 200px;
-            height: 200px;
+            position: fixed;
+            width: 300px;
+            height: 300px;
             background: var(--accent);
             filter: blur(120px);
-            opacity: 0.12;
+            opacity: 0.08;
             z-index: -1;
+            pointer-events: none;
         }
 
         .logo-container {
             width: 112px;
             height: 112px;
-            overflow: hidden;
-            /* Applichiamo l'animazione qui */
             animation: float 4s ease-in-out infinite;
         }
         
@@ -144,39 +147,37 @@
             border-radius: 24px;
         }
 
+        /* Modificato per essere relativo al container se lo spazio è poco */
         .brand-logo-top-left {
-            height: 42px;
+            height: 32px;
             width: auto;
             object-fit: contain;
-            filter: drop-shadow(0 0 12px rgba(255, 122, 0, 0.3));
-            position: absolute;
-            top: 24px;
-            left: 24px;
+            filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.3));
         }
     </style>
 </head>
-<body class="p-6">
+<body>
 
-    <!-- Sfondo con bagliori dinamici -->
-    <div class="fixed inset-0 -z-10 bg-[#050505]">
-        <div class="orange-glow top-0 -left-10"></div>
-        <div class="orange-glow bottom-0 -right-10"></div>
-    </div>
+    <!-- Sfondo con bagliori dinamici fissi -->
+    <div class="orange-glow top-0 left-0"></div>
+    <div class="orange-glow bottom-0 right-0"></div>
 
-    <main class="w-full max-w-sm glass p-8 relative fade-in">
+    <main class="w-full max-w-sm glass p-6 sm:p-8 relative fade-in">
         
-        <!-- Brand Logo Arancione in alto a sinistra -->
-        <img 
-            src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/logoarancione.png" 
-            alt="Matteo Macauda Logo" 
-            class="brand-logo-top-left"
-        >
+        <!-- Brand Logo Arancione integrato nel flusso del container per evitare tagli -->
+        <div class="absolute top-6 left-6">
+            <img 
+                src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/logoarancione.png" 
+                alt="Matteo Macauda Logo" 
+                class="brand-logo-top-left"
+            >
+        </div>
 
         <!-- Header Section -->
-        <div class="flex flex-col items-center text-center mb-8 mt-10">
+        <div class="flex flex-col items-center text-center mb-8 mt-12">
             <div class="relative mb-6">
-                <!-- Foto Profilo con animazione fluttuante -->
-                <div class="logo-container rounded-[28px] border border-white/10 p-1.5 flex items-center justify-center bg-gradient-to-br from-neutral-800 to-black shadow-2xl transition-transform hover:pause">
+                <!-- Foto Profilo -->
+                <div class="logo-container rounded-[28px] border border-white/10 p-1.5 flex items-center justify-center bg-gradient-to-br from-neutral-800 to-black shadow-2xl">
                     <img 
                         src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" 
                         alt="Teo Profile" 
@@ -202,7 +203,9 @@
         <!-- Valore Unico -->
         <div class="mb-8 text-center px-2">
             <p class="text-sm leading-relaxed text-neutral-400 italic">
-                <span class="text-white font-semibold text-xs">"Non creo solo video. Sviluppo sistemi che trasformano gli spettatori in potenziali clienti."</span>
+                <span class="text-white font-semibold text-xs leading-normal">
+                    "Non creo solo video. Sviluppo sistemi che trasformano gli spettatori in potenziali clienti."
+                </span>
             </p>
         </div>
 
