@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teo | Videomaker & Strategist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-orange: #ff7a00;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        .premium-border {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .orange-glow {
+            box-shadow: 0 0 30px rgba(255, 122, 0, 0.25);
+        }
+        .dot-glow {
+            box-shadow: 0 0 8px rgba(255, 122, 0, 0.6);
+        }
+        .btn-primary {
+            background-color: var(--brand-orange);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-primary:active {
+            transform: scale(0.96);
+            filter: brightness(0.9);
+        }
+        .btn-secondary {
+            background-color: #0f0f0f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:active {
+            transform: scale(0.96);
+            background-color: #1a1a1a;
+        }
+        /* Nascondi scrollbar per un look più pulito */
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+    </style>
+</head>
+<body class="flex justify-center">
+
+    <!-- Contenitore principale con altezza dinamica per mobile -->
+    <main class="w-full max-w-md min-h-[100dvh] px-6 flex flex-col">
+        
+        <!-- Top Section: Logo allineato a sinistra -->
+        <header class="w-full pt-10 pb-6">
+            <div class="flex justify-start">
+                <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/logoarancione.png" alt="Teo Logo" class="h-10 w-auto sm:h-12">
+            </div>
+        </header>
+
+        <!-- Middle Section: Contenuto centrale perfettamente bilanciato -->
+        <section class="flex-1 flex flex-col items-center justify-center py-8">
+            
+            <!-- Profilo -->
+            <div class="relative mb-8">
+                <div class="w-32 h-32 rounded-full p-[2px] bg-gradient-to-tr from-[#ff7a00] via-[#ff7a00] to-[#ffb347] orange-glow">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-black border-[5px] border-black">
+                        <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" alt="Teo" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Titoli -->
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-bold tracking-tighter mb-1 uppercase italic">Teo</h1>
+                <p class="text-[#ff7a00] font-bold text-xs tracking-[0.3em] uppercase mb-5">Videomaker & Content Strategist</p>
+                
+                <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase">
+                    <span class="w-2 h-2 rounded-full bg-[#ff7a00] dot-glow"></span>
+                    <span>Disponibile ora</span>
+                </div>
+            </div>
+
+            <!-- Bio / Manifesto -->
+            <div class="premium-border bg-gradient-to-b from-[#0a0a0a] to-black rounded-3xl p-7 mb-10 w-full text-center">
+                <p class="text-zinc-400 text-sm leading-relaxed italic">
+                    "Non creo solo video. Sviluppo sistemi che trasformano gli spettatori in potenziali clienti"<br> 
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="w-full space-y-4">
+                <a href="https://wa.me/393784142773" class="w-full btn-primary py-5 rounded-2xl font-black text-black flex items-center justify-center gap-3 shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-black"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.897-5.335 11.9-11.894a11.83 11.83 0 00-3.422-8.413z"/></svg>
+                    SCRIVIMI SU WHATSAPP
+                </a>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="https://www.instagram.com/teo.macauda/" class="btn-secondary py-5 rounded-2xl flex flex-row items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        <span class="text-[10px] font-bold tracking-[0.2em] text-zinc-400 uppercase">Instagram</span>
+                    </a>
+                    <a href="/" class="btn-secondary py-5 rounded-2xl flex flex-row items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        <span class="text-[10px] font-bold tracking-[0.2em] text-zinc-400 uppercase">Portfolio</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Section: Footer -->
+        <footer class="w-full pt-8 pb-10">
+            <div class="text-center space-y-1 mb-6">
+                <p class="text-white text-[11px] font-bold tracking-wider uppercase">Matteo Maria Macauda</p>
+                <p class="text-zinc-500 text-[10px] font-medium uppercase tracking-widest">P.IVA: 02153520891</p>
+                <p class="text-zinc-600 text-[9px] leading-tight">Via Teofane, 2 – 96100 Siracusa (SR)</p>
+            </div>
+            
+            <div class="flex items-center justify-center gap-3 pt-6 border-t border-zinc-900 text-[9px] font-bold tracking-[0.3em] uppercase">
+                <span class="text-zinc-500">Ferrara | IT</span>
+                <span class="w-1 h-1 rounded-full bg-zinc-800"></span>
+                <span class="text-[#ff7a00]">© 2026</span>
+            </div>
+        </footer>
+
+    </main>
+
+</body>
+</html>
