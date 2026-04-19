@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Teo Macauda | Digital Black Card</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { 
+                        dark: '#000000', 
+                        accent: '#FF7A00', 
+                        graytext: '#AAAAAA', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .ambient-glow { 
+            position: absolute; 
+            width: 150%; 
+            height: 150%; 
+            background: radial-gradient(circle at 50% 50%, rgba(255, 122, 0, 0.15) 0%, rgba(0, 0, 0, 0) 70%); 
+            z-index: 0; 
+            pointer-events: none; 
+        }
+
+        .corner { position: absolute; width: 24px; height: 24px; border-color: rgba(255, 122, 0, 0.4); border-width: 2px; z-index: 20; }
+        .corner-tl { top: 24px; left: 24px; border-bottom: 0; border-right: 0; }
+        .corner-tr { top: 24px; right: 24px; border-bottom: 0; border-left: 0; }
+        .corner-bl { bottom: 24px; left: 24px; border-top: 0; border-right: 0; }
+        .corner-br { bottom: 24px; right: 24px; border-top: 0; border-left: 0; }
+
+        /* Animated Action Button */
+        .btn-main {
+            background: #FF7A00;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+        
+        @keyframes pulse-accent {
+            0% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.5); }
+            70% { box-shadow: 0 0 0 18px rgba(255, 122, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
+        }
+        .animate-pulse-accent {
+            animation: pulse-accent 2.5s infinite;
+        }
+
+        /* Dot Glow Animation */
+        @keyframes dot-glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.7); opacity: 1; }
+            70% { box-shadow: 0 0 0 8px rgba(255, 122, 0, 0); opacity: 0.8; }
+            100% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); opacity: 1; }
+        }
+        .animate-dot-glow {
+            animation: dot-glow 2s infinite ease-in-out;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 122, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-outline:active { background: rgba(255, 122, 0, 0.1); border-color: #FF7A00; transform: scale(0.97); }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .profile-ring {
+            position: relative;
+            padding: 3px;
+            background: linear-gradient(45deg, #FF7A00, #000000, #FF7A00);
+            border-radius: 9999px;
+        }
+
+        #brand-logo {
+            max-height: 42px;
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.3));
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-accent selection:text-white">
+
+    <div class="ambient-glow"></div>
+    <div class="noise"></div>
+
+    <!-- Main Container -->
+    <div id="card-container" class="relative z-10 w-[94%] max-w-[400px] opacity-0 translate-y-8">
+        
+        <!-- The Card -->
+        <div class="glass-card rounded-[3rem] p-8 md:p-10 relative overflow-hidden">
+            
+            <!-- Viewfinder details -->
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+
+            <!-- Profile Info -->
+            <div class="flex flex-col items-center text-center mb-10">
+                <!-- Brand Logo Added Here -->
+                <div class="mb-8" id="logo-wrapper">
+                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/logoarancione.png" alt="Teo Macauda Logo" id="brand-logo">
+                </div>
+
+                <div class="profile-ring mb-6" id="profile-wrapper">
+                    <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-black bg-dark">
+                        <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" alt="Teo Macauda" class="w-full h-full object-cover grayscale-[0.1]">
+                    </div>
+                </div>
+                
+                <h1 class="text-3xl font-extrabold tracking-tighter mb-1 uppercase">TEO MACAUDA</h1>
+                <p class="text-accent text-[10px] font-bold uppercase tracking-[0.4em] mb-6">Videomaker & Strategist</p>
+                
+                <!-- Availability Badge -->
+                <div class="mb-8 flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-accent animate-dot-glow"></span>
+                    <span class="text-[9px] font-bold uppercase tracking-[0.3em] text-white/90">Disponibile Ora</span>
+                </div>
+                
+                <p class="text-graytext text-sm leading-relaxed font-light px-2">
+                    Non creo solo video. Sviluppo <span class="text-white font-medium italic underline decoration-accent/30 decoration-2 underline-offset-4">sistemi</span> che trasformano gli spettatori in potenziali clienti.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-4">
+                
+                <!-- Main WhatsApp Button (Orange) -->
+                <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="btn-main animate-pulse-accent w-full py-5 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-transform active:scale-95 text-base tracking-wide">
+                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                    SCRIVIMI ORA
+                </a>
+
+                <!-- Grid: Portfolio & Instagram -->
+                <div class="flex gap-4">
+                    <a href="https://teomacauda.it/lavori" target="_blank" class="btn-outline flex-1 py-5 rounded-2xl font-bold flex flex-col items-center justify-center gap-2 text-[11px] uppercase tracking-widest text-white">
+                        <i data-lucide="video" class="w-6 h-6 text-accent fill-accent"></i>
+                        Portfolio
+                    </a>
+                    <a href="https://www.instagram.com/teo.macauda" target="_blank" class="btn-outline flex-1 py-5 rounded-2xl font-bold flex flex-col items-center justify-center gap-2 text-[11px] uppercase tracking-widest text-white">
+                        <svg class="w-6 h-6 fill-accent" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.058-1.69-.072-4.949-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                        Instagram
+                    </a>
+                </div>
+            </div>
+
+            <!-- Legal Footer -->
+            <div class="mt-12 pt-8 border-t border-white/5 text-center flex flex-col gap-1.5">
+                <p class="text-[9px] text-white/40 uppercase tracking-[0.2em] font-bold">
+                    P.IVA 02153520891
+                </p>
+                <p class="text-[9px] text-white/30 uppercase tracking-[0.15em] leading-relaxed">
+                    Sede Legale: Via Teofane, 2 <br> 96100 Siracusa (SR)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Entrance Animation
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline({
+                defaults: { ease: "expo.out" }
+            });
+
+            tl.to("#card-container", {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                delay: 0.2
+            });
+
+            tl.from(".corner", {
+                scale: 0.7,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.1,
+                ease: "back.out(2)"
+            }, "-=1");
+
+            tl.from("#brand-logo", {
+                y: -10,
+                opacity: 0,
+                duration: 1
+            }, "-=0.8");
+        });
+
+        // Mobile Fixes
+        document.addEventListener('touchstart', function (e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
