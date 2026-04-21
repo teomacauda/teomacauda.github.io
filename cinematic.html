@@ -27,7 +27,62 @@
 
     <style>
         html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; }
-        .glass-nav { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Header Seamless */
+        .glass-nav { 
+            background: transparent; 
+            backdrop-filter: blur(0px); 
+            -webkit-backdrop-filter: blur(0px); 
+            border-bottom: none; 
+            transition: all 0.4s ease;
+        }
+        .glass-nav.scrolled {
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+        }
+
+        /* Nav Link Style */
+        .nav-link { 
+            padding: 0.6rem 1.4rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #AAAAAA;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 122, 0, 0.1);
+            color: #FF7A00;
+            border-color: rgba(255, 122, 0, 0.4);
+            box-shadow: 0 0 20px -5px rgba(255, 122, 0, 0.2);
+            font-weight: 600;
+        }
+
+        /* Effetto riflesso "Shine" */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-link:hover::after {
+            left: 100%;
+        }
         
         .glass-card { 
             background: rgba(255, 255, 255, 0.03); 
@@ -67,32 +122,60 @@
         .chat-button { position: fixed; bottom: 2rem; right: 2rem; z-index: 130; display: flex; align-items: center; justify-content: center; background-color: #FF7A00; color: white; border-radius: 9999px; text-decoration: none; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); white-space: nowrap; overflow: hidden; min-width: 4rem; height: 4rem; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3); border: none; cursor: pointer; }
         .chat-button:hover { transform: scale(1.05); }
         #chat-text { max-width: 0; opacity: 0; font-size: 0px; transition: all 0.5s ease; font-weight: 600; }
-        .chat-button.expanded { padding: 0 1.5rem; max-width: 350px; }
+        .chat-button.expanded { padding: 0 1.5rem; max-width: 380px; }
         .chat-button.expanded #chat-text { max-width: 250px; opacity: 1; font-size: 16px; margin-left: 12px; }
     </style>
 </head>
 <body class="antialiased selection:bg-accent selection:text-white">
 
 <div id="page-wrapper">
-    <header class="fixed top-0 w-full z-[135] glass-nav transition-all duration-300" id="navbar">
+    <header class="fixed top-0 w-full z-[135] glass-nav" id="navbar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
-                <svg class="h-10 md:h-12 w-auto" viewBox="0 0 1018 723" fill="white">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/>
+            <!-- Logo con micro-interazione al passaggio -->
+            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
+                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
                 </svg>
             </a>
             
-            <nav class="hidden md:flex gap-4 text-sm font-medium">
-                <a href="/" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Home</a>
-                <a href="/lavori.html" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Lavori</a>
-                <a href="/index.html#servizi" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Servizi</a>
-                <a href="/toolbox.html" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-accent/30 hover:bg-accent/10 transition-all">Toolbox</a>
+            <!-- Desktop Navigation: Look "Segmented Control" -->
+            <nav class="hidden md:flex gap-1 items-center bg-white/5 p-1.5 rounded-full border border-white/5">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/lavori" class="nav-link active">Lavori</a>
+                <a href="/#servizi" class="nav-link">Servizi</a>
+                <a href="/toolbox" class="nav-link">Toolbox</a>
             </nav>
 
-            <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-white relative z-[150]"><i data-lucide="menu"></i></button>
+            <!-- Mobile Hamburger Button -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-graytext hover:text-white transition-colors p-2 focus:outline-none relative z-[120]">
+                <i data-lucide="menu" id="icon-menu" class="w-7 h-7 block"></i>
+                <i data-lucide="x" id="icon-x" class="w-7 h-7 hidden"></i>
+            </button>
         </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 z-[110] flex items-start justify-center px-6 pt-24 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="absolute inset-0 bg-black/85 backdrop-blur-2xl" onclick="toggleMobileMenu()"></div>
+        
+        <div id="mobileMenuContent" class="bg-[#0F0F0F] border border-white/10 w-full max-w-sm p-8 rounded-3xl relative transform -translate-y-10 transition-transform duration-500 shadow-[0_30px_60px_rgba(0,0,0,0.9)]">
+            <nav class="flex flex-col gap-8 text-left">
+                <a href="/" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group">
+                    <i data-lucide="home" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Home
+                </a>
+                <a href="/lavori" class="flex items-center gap-4 text-2xl font-bold text-accent transition-colors group">
+                    <i data-lucide="folder-kanban" class="w-6 h-6 text-accent group-hover:text-accent"></i> Lavori
+                </a>
+                <a href="/#servizi" onclick="toggleMobileMenu()" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group">
+                    <i data-lucide="layers" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Servizi
+                </a>
+                <a href="/toolbox" class="flex items-center gap-4 text-2xl font-bold text-white hover:text-accent transition-colors group">
+                    <i data-lucide="package" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Toolbox
+                </a>
+            </nav>
+        </div>
+    </div>
 
     <main class="pt-32 pb-24 px-6 min-h-screen">
         <div class="max-w-6xl mx-auto">
@@ -103,9 +186,9 @@
 
             <!-- Filtri -->
             <div class="flex flex-wrap justify-center gap-3 mb-16 reveal">
-                <a href="lavori.html" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext hover:text-white transition-all">Social Marketing</a>
-                <a href="cinematic.html" class="bg-accent text-white px-6 py-2 rounded-full text-sm font-medium shadow-[0_10px_20px_-5px_rgba(255,122,0,0.3)]">Cinematic</a>
-                <a href="personali.html" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext hover:text-white transition-all">Personal Projects</a>
+                <a href="lavori" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext hover:text-white transition-all">Social Marketing</a>
+                <a href="cinematic" class="bg-accent text-white px-6 py-2 rounded-full text-sm font-medium shadow-[0_10px_20px_-5px_rgba(255,122,0,0.3)]">Cinematic</a>
+                <a href="personali" class="px-6 py-2 rounded-full border border-white/10 text-sm font-medium text-graytext hover:text-white transition-all">Personal Projects</a>
             </div>
 
             <!-- Griglia Video -->
@@ -114,7 +197,7 @@
                 <!-- Video 1 (Reel 9:16) -->
                 <div class="work-item group relative aspect-[9/16] overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DTao5EADGay/embed', 'Cinematic - Yamaha R7', true)">
                     <div class="absolute top-4 left-4 z-30 views-badge">31.8k Views</div>
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/elia2.webp" alt="Yamaha R7" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/elia2.webp" alt="Yamaha R7" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10">
                         <i data-lucide="play-circle" class="w-10 h-10 md:w-12 md:h-12 text-white/90 group-hover:text-accent transition-all"></i>
                     </div>
@@ -127,7 +210,7 @@
                 <!-- Video 2 (Reel 9:16) -->
                 <div class="work-item group relative aspect-[9/16] overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DNNndH_sLEB/embed', 'Cinematic - Yamaha R7 2', true)">
                     <div class="absolute top-4 left-4 z-30 views-badge">20.2k Views</div>
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/elia1.webp" alt="Yamaha R7 2" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/elia1.webp" alt="Yamaha R7 2" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10">
                         <i data-lucide="play-circle" class="w-10 h-10 md:w-12 md:h-12 text-white/90 group-hover:text-accent transition-all"></i>
                     </div>
@@ -140,7 +223,7 @@
                 <!-- Video 3 (YouTube Vlog 16:9) -->
                 <div class="work-item group relative aspect-video overflow-hidden glass-card cursor-pointer col-span-2 lg:col-span-2" onclick="openVideoModal('https://www.youtube.com/embed/DWQPP8C6h9E', 'ETNA - Cinematic Vlog', false)">
                     <div class="absolute top-4 left-4 z-30 views-badge">7.7k Views</div>
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/youtube2.webp" alt="ETNA Vlog" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/youtube2.webp" alt="ETNA Vlog" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 flex items-center justify-center z-10">
                         <i data-lucide="play-circle" class="w-10 h-10 md:w-12 md:h-12 text-white/90 group-hover:text-accent transition-all"></i>
                     </div>
@@ -158,7 +241,7 @@
         <p class="text-graytext text-sm mb-4">
             &copy; <script>document.write(new Date().getFullYear())</script> 
             Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+            <a href="/privacy" class="underline hover:text-white transition-colors">Privacy Policy</a>
         </p>
         <div class="px-6">
             <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
@@ -184,7 +267,10 @@
 
 <!-- Chat Button & Contact Modal -->
 <button id="chat-pill" onclick="toggleContactModal()" class="chat-button">
-    <i data-lucide="message-square" class="w-7 h-7 shrink-0"></i>
+    <!-- Solo Icona WhatsApp nella pillola chiusa -->
+    <svg class="w-7 h-7 shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.895-5.335 11.898-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
     <span id="chat-text">Parliamo del tuo progetto?</span>
 </button>
 
@@ -195,7 +281,11 @@
         <h3 class="text-3xl font-bold mb-2 text-white">E adesso? <br/><span class="text-accent">Contattami!</span></h3>
         <div class="space-y-4 mt-8">
             <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
-                <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
+                <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.895-5.335 11.898-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                </div>
                 <div><div class="text-xs text-graytext font-bold">WhatsApp</div><div class="font-medium text-white">Scrivimi ora</div></div>
             </a>
             <a href="tel:+393784142773" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
@@ -207,7 +297,11 @@
                 <div><div class="text-xs text-graytext font-bold">Email</div><div class="font-medium text-white break-all text-sm">matteomacaudaprod@gmail.com</div></div>
             </a>
             <a href="https://www.instagram.com/teo.macauda" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
-                <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="instagram" class="w-5 h-5"></i></div>
+                <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </div>
                 <div><div class="text-xs text-graytext font-bold">Instagram</div><div class="font-medium text-white">@teo.macauda</div></div>
             </a>
         </div>
@@ -216,6 +310,34 @@
 
 <script>
     lucide.createIcons();
+
+    // --- MOBILE MENU LOGIC ---
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const menuContent = document.getElementById('mobileMenuContent');
+        const iconMenu = document.getElementById('icon-menu');
+        const iconX = document.getElementById('icon-x');
+        
+        const isOpen = menu.classList.contains('opacity-100');
+
+        if (!isOpen) {
+            menu.classList.remove('opacity-0', 'pointer-events-none');
+            menu.classList.add('opacity-100', 'pointer-events-auto');
+            menuContent.classList.remove('-translate-y-10');
+            menuContent.classList.add('translate-y-0');
+            document.body.style.overflow = 'hidden';
+            iconMenu.classList.add('hidden');
+            iconX.classList.remove('hidden');
+        } else {
+            menu.classList.add('opacity-0', 'pointer-events-none');
+            menu.classList.remove('opacity-100', 'pointer-events-auto');
+            menuContent.classList.remove('translate-y-0');
+            menuContent.classList.add('-translate-y-10');
+            document.body.style.overflow = '';
+            iconX.classList.add('hidden');
+            iconMenu.classList.remove('hidden');
+        }
+    }
 
     // --- COOKIE & VIDEO LOGIC GLOBALE ---
     function openVideoModal(source, title, isVertical = false) {
@@ -244,7 +366,7 @@
                     <div class="space-y-3">
                         <h4 class="text-lg md:text-xl font-bold tracking-tight text-white">Cookie di terze parti</h4>
                        <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed">
-    Per vedere questo contenuto devi accettare i cookie di YouTube e Instagram. Leggi i dettagli nella nostra <a href="/privacy.html" class="underline text-white hover:text-accent transition-colors">Privacy Policy</a>.
+    Per vedere questo contenuto devi accettare i cookie di YouTube e Instagram. Leggi i dettagli nella nostra <a href="/privacy" class="underline text-white hover:text-accent transition-colors">Privacy Policy</a>.
 </p>
                     </div>
                     <div class="flex flex-col w-full gap-3 mt-6">
@@ -310,18 +432,36 @@
     document.addEventListener('DOMContentLoaded', () => {
         initScrollAnimations();
         const pill = document.getElementById('chat-pill');
+        
+        // --- LOGICA ESPANSIONE PILLOLA (SOLO DESKTOP > 1024px) ---
+        const handlePillExpansion = () => {
+            if (!pill) return;
+            const isDesktop = window.innerWidth >= 1024;
+            
+            if (isDesktop && window.scrollY <= 50) {
+                pill.classList.add('expanded');
+            } else {
+                pill.classList.remove('expanded');
+            }
+        };
+
         if(pill) {
-            setTimeout(() => { pill.classList.add('expanded'); }, 3000);
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) pill.classList.remove('expanded');
-                else pill.classList.add('expanded');
-            });
+            setTimeout(() => { 
+                if (window.innerWidth >= 1024) pill.classList.add('expanded'); 
+            }, 3000);
+
+            window.addEventListener('scroll', handlePillExpansion);
+            window.addEventListener('resize', handlePillExpansion);
         }
     });
 
     window.addEventListener('scroll', () => {
         const nav = document.getElementById('navbar');
-        if(nav) nav.style.background = window.scrollY > 50 ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.6)';
+        if(window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
     });
 
     // Clean URL logic
