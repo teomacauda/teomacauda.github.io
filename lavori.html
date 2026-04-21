@@ -35,7 +35,8 @@
             position: relative;
         }
 
-        .glass-nav { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        /* Header seamless: rimosso sfondo e bordo */
+        .glass-nav { background: transparent; border-bottom: none; transition: all 0.4s ease; }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .glass-card:hover { transform: translateY(-8px); border-color: rgba(255, 122, 0, 0.3); box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); }
         .glass-modal { background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); }
@@ -49,6 +50,46 @@
             left: 0; 
             z-index: 0; 
             pointer-events: none; 
+        }
+
+        .nav-link { 
+            padding: 0.6rem 1.4rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #AAAAAA;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 122, 0, 0.1);
+            color: #FF7A00;
+            border-color: rgba(255, 122, 0, 0.4);
+            box-shadow: 0 0 20px -5px rgba(255, 122, 0, 0.2);
+            font-weight: 600;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-link:hover::after {
+            left: 100%;
         }
 
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -73,20 +114,20 @@
 
     <div class="ambient-glow"></div>
 
-    <header class="fixed top-0 w-full z-[135] glass-nav transition-all duration-300" id="navbar">
+    <header class="fixed top-0 w-full z-[135] glass-nav" id="navbar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
-                <svg class="h-10 md:h-12 w-auto" viewBox="0 0 1018 723" fill="white">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" />
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" />
+            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
+                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
                 </svg>
             </a>
             
-            <nav class="hidden md:flex gap-4 text-sm font-medium">
-                <a href="/" class="px-5 py-2.5 rounded-full border border-accent/20 hover:border-accent hover:bg-accent/10 transition-all">Home</a>
-                <a href="/lavori.html" class="px-5 py-2.5 rounded-full bg-accent text-white shadow-lg shadow-accent/20 transition-all">Lavori</a>
-                <a href="/index.html#servizi" class="px-5 py-2.5 rounded-full border border-accent/20 hover:border-accent hover:bg-accent/10 transition-all">Servizi</a>
-                <a href="/toolbox.html" class="px-5 py-2.5 rounded-full border border-accent/20 hover:border-accent hover:bg-accent/10 transition-all">Toolbox</a>
+            <nav class="hidden md:flex gap-1 items-center bg-white/5 p-1.5 rounded-full border border-white/5">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/lavori.html" class="nav-link active">Lavori</a>
+                <a href="/#servizi" class="nav-link">Servizi</a>
+                <a href="/toolbox.html" class="nav-link">Toolbox</a>
             </nav>
 
             <button onclick="toggleMobileMenu()" class="md:hidden text-white p-2 relative z-[150]">
@@ -101,7 +142,7 @@
                 <nav class="flex flex-col gap-8">
                     <a href="/" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="home"></i> Home</a>
                     <a href="/lavori.html" class="flex items-center gap-4 text-2xl font-bold text-accent"><i data-lucide="folder-kanban"></i> Lavori</a>
-                    <a href="/index.html#servizi" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="layers"></i> Servizi</a>
+                    <a href="/#servizi" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="layers"></i> Servizi</a>
                     <a href="/toolbox.html" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="package"></i> Toolbox</a>
                 </nav>
             </div>
@@ -153,7 +194,6 @@
                         </div>
                     </div>
                     
-                    <!-- Stats Comparison Container -->
                     <div class="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto">
                         <div class="flex flex-1 items-center gap-4 bg-black/40 p-4 pr-6 rounded-xl border border-white/5 min-w-0">
                             <div class="text-[8px] font-bold text-graytext uppercase rotate-[-90deg] border-b border-white/20 pb-0.5 whitespace-nowrap">Prima</div>
@@ -188,10 +228,9 @@
 
         <!-- Portfolio Grid -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 reveal">
-            <!-- Video 1 -->
             <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DQWuo57jOl-/embed', 'MyField Ferrara - Performance', true)">
                 <div class="view-badge border border-accent/30">61.0k Views</div>
-                <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield1.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield1.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
                 <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
                     <span class="text-accent text-[8px] font-black uppercase tracking-widest mb-1">Attività locale</span>
@@ -199,10 +238,9 @@
                 </div>
             </div>
 
-            <!-- Video 2 -->
             <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DPq0Bo5DEBc/embed', 'MyField Ferrara - Performance', true)">
                 <div class="view-badge border border-white/10">63.0k Views</div>
-                <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield2.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield2.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
                 <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
                     <span class="text-accent text-[8px] font-bold uppercase tracking-widest mb-1">Attività locale</span>
@@ -210,10 +248,9 @@
                 </div>
             </div>
 
-            <!-- Video 3 -->
             <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DO0w_-nDDWM/embed', 'MyField Ferrara - Performance', true)">
                 <div class="view-badge border border-white/10">32.2k Views</div>
-                <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield3.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield3.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
                 <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
                     <span class="text-accent text-[8px] font-bold uppercase tracking-widest mb-1">Attività locale</span>
@@ -221,10 +258,9 @@
                 </div>
             </div>
 
-            <!-- Video 4 -->
             <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DSIPZUnDJ9y/embed', 'MyField Ferrara - Performance', true)">
                 <div class="view-badge border border-white/10">41.4k Views</div>
-                <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/video/myfield4.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield4.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
                 <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
                     <span class="text-accent text-[8px] font-bold uppercase tracking-widest mb-1">Attività locale</span>
@@ -257,9 +293,12 @@
         </div>
     </div>
 
-    <!-- Chat Pill -->
+    <!-- Chat Button (Badge WhatsApp) -->
     <button id="chat-pill" onclick="toggleContactModal()" class="chat-button">
-        <i data-lucide="message-square" class="w-7 h-7 shrink-0"></i>
+        <!-- Icona WhatsApp -->
+        <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 shrink-0">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .018 5.393 0 12.03c0 2.123.554 4.197 1.604 6.023L0 24l6.163-1.617a11.782 11.782 0 005.883 1.565h.005c6.635 0 12.031-5.394 12.035-12.031a11.77 11.77 0 00-3.483-8.511z"/>
+        </svg>
         <span id="chat-text">Parliamo del tuo progetto?</span>
     </button>
 
@@ -271,7 +310,9 @@
             <h3 class="text-3xl font-bold mb-2 text-white">E adesso? <br/><span class="text-accent">Contattami!</span></h3>
             <div class="space-y-3 mt-8">
                 <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
+                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .018 5.393 0 12.03c0 2.123.554 4.197 1.604 6.023L0 24l6.163-1.617a11.782 11.782 0 005.883 1.565h.005c6.635 0 12.031-5.394 12.035-12.031a11.77 11.77 0 00-3.483-8.511z"/></svg>
+                    </div>
                     <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">WhatsApp</div><div class="font-medium text-white">Scrivimi ora</div></div>
                 </a>
                 <a href="tel:+393784142773" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all">
@@ -282,8 +323,10 @@
                     <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="mail" class="w-5 h-5"></i></div>
                     <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">Email</div><div class="text-xs font-medium text-white">matteomacaudaprod@gmail.com</div></div>
                 </a>
-                <a href="https://www.instagram.com/teo.macauda" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="instagram" class="w-5 h-5"></i></div>
+                <a href="https://www.instagram.com/teo.macauda/" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </div>
                     <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">Instagram</div><div class="font-medium text-white">@teo.macauda</div></div>
                 </a>
             </div>
@@ -293,7 +336,6 @@
     <script>
         lucide.createIcons();
 
-        // --- COOKIE & VIDEO LOGIC GLOBALE ---
         function openVideoModal(source, title, isVertical = false) {
             const modal = document.getElementById('videoModal');
             const content = document.getElementById('videoModalContent');
@@ -308,25 +350,19 @@
             }
 
             const consentStatus = localStorage.getItem('video_consent_teo');
-
             if (consentStatus === 'true') {
                 loadIframe(source, container);
             } else {
-                // UI Cookie Minimale
                 container.innerHTML = `
                     <div class="flex flex-col items-center gap-6 p-8">
-                        <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-2">
-                            <i data-lucide="eye-off" class="w-8 h-8"></i>
-                        </div>
+                        <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-2"><i data-lucide="eye-off" class="w-8 h-8"></i></div>
                         <div class="space-y-3">
                             <h4 class="text-lg md:text-xl font-bold tracking-tight text-white">Cookie di terze parti</h4>
-                                <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed">
-                Per vedere questo contenuto devi accettare i cookie di Instagram e YouTube. Leggi i dettagli nella nostra <a href="/privacy.html" class="underline text-white hover:text-accent">Privacy Policy</a>.
-                                </p>
+                            <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed">Per vedere questo contenuto devi accettare i cookie. <a href="/privacy.html" class="underline text-white">Privacy Policy</a>.</p>
                         </div>
                         <div class="flex flex-col w-full gap-3 mt-6">
-                            <button onclick="handleConsentDecision(true, '${source}')" class="w-full py-4 bg-accent hover:bg-accentHover text-white rounded-2xl font-bold transition-all shadow-lg shadow-accent/20 uppercase tracking-widest text-xs">Accetta e guarda</button>
-                            <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white transition-colors uppercase tracking-widest font-bold">No, grazie</button>
+                            <button onclick="handleConsentDecision(true, '${source}')" class="w-full py-4 bg-accent hover:bg-accentHover text-white rounded-2xl font-bold transition-all text-xs uppercase tracking-widest">Accetta e guarda</button>
+                            <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white uppercase tracking-widest font-bold">No, grazie</button>
                         </div>
                     </div>
                 `;
@@ -361,7 +397,6 @@
             setTimeout(() => { document.getElementById('videoContainer').innerHTML = ''; }, 300);
         }
 
-        // --- MOBILE MENU, CONTACTS & REVEAL ---
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             const menuContent = document.getElementById('mobileMenuContent');
@@ -406,28 +441,27 @@
             reveals.forEach(r => observer.observe(r));
 
             const pill = document.getElementById('chat-pill');
-            setTimeout(() => pill.classList.add('expanded'), 2000);
+            
+            if (window.innerWidth >= 768) {
+                setTimeout(() => pill.classList.add('expanded'), 2000);
+            }
 
             window.addEventListener('scroll', () => {
                 const nav = document.getElementById('navbar');
                 if (window.scrollY > 50) {
-                    nav.style.background = 'rgba(0, 0, 0, 0.9)';
+                    // Sfondo solo dopo lo scroll per leggibilità, ma seamless in cima
+                    nav.style.background = 'rgba(0, 0, 0, 0.8)';
+                    nav.style.backdropFilter = 'blur(12px)';
                     pill.classList.remove('expanded');
                 } else {
-                    nav.style.background = 'rgba(0, 0, 0, 0.6)';
-                    pill.classList.add('expanded');
+                    nav.style.background = 'transparent';
+                    nav.style.backdropFilter = 'none';
+                    if (window.innerWidth >= 768) {
+                        pill.classList.add('expanded');
+                    }
                 }
             });
         });
-
-        // Clean URL logic
-        (function() {
-            const path = window.location.pathname;
-            if (path.endsWith('.html')) {
-                const cleanPath = path.replace(/\.html$/, '');
-                window.history.replaceState(null, '', cleanPath + window.location.hash);
-            }
-        })();
     </script>
 </body>
-</html>
+</html>tml>
