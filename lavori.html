@@ -463,5 +463,24 @@
             });
         });
     </script>
+
+    <script>
+  // Pulisce l'URL appena la pagina viene caricata
+  (function() {
+    const currentPath = window.location.pathname;
+    if (currentPath.endsWith('.html')) {
+      const cleanPath = currentPath.substring(0, currentPath.lastIndexOf('.html'));
+      window.history.replaceState(null, '', cleanPath + window.location.hash);
+    }
+
+    // Trasforma automaticamente tutti i link del menu e della pagina
+    document.querySelectorAll('a').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.endsWith('.html') && !href.startsWith('http')) {
+        link.setAttribute('href', href.replace('.html', ''));
+      }
+    });
+  })();
+</script>
 </body>
 </html>tml>
