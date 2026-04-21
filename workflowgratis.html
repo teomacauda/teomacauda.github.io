@@ -32,23 +32,42 @@
         .glass-nav { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         
         .nav-link { 
-            padding: 0.625rem 1.25rem;
+            padding: 0.6rem 1.4rem;
             border-radius: 9999px;
-            border: 1px solid #FF7A00;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             font-weight: 500;
             color: #AAAAAA;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
         .nav-link:hover {
-            border-color: rgba(255, 122, 0, 0.3);
-            background: rgba(255, 122, 0, 0.1);
             color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
         }
         .nav-link.active {
-            background: #FF7A00;
-            color: white;
-            box-shadow: 0 10px 20px -5px rgba(255, 122, 0, 0.3);
+            background: rgba(255, 122, 0, 0.1);
+            color: #FF7A00;
+            border-color: rgba(255, 122, 0, 0.4);
+            box-shadow: 0 0 20px -5px rgba(255, 122, 0, 0.2);
+            font-weight: 600;
+        }
+
+        /* Effetto riflesso "Shine" al passaggio del mouse */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-link:hover::after {
+            left: 100%;
         }
 
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -104,15 +123,15 @@
     <!-- Header -->
     <header class="fixed top-0 w-full z-[135] glass-nav" id="navbar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
-                <svg class="h-10 md:h-12 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
+                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
                     <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
                 </svg>
             </a>
             
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex gap-2 items-center">
+            <!-- Desktop Navigation: Look "Segmented Control" -->
+            <nav class="hidden md:flex gap-1 items-center bg-white/5 p-1.5 rounded-full border border-white/5">
                 <a href="/" class="nav-link">Home</a>
                 <a href="/lavori.html" class="nav-link">Lavori</a>
                 <a href="/#servizi" class="nav-link">Servizi</a>
