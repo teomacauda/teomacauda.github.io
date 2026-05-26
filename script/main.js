@@ -4,12 +4,12 @@ import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from
 
 // 1. INCOLLA QUI I TUOI DATI PRESI DALLA CONSOLE DI FIREBASE
 const firebaseConfig = {
-    apiKey: "LA_TUA_API_KEY",
-    authDomain: "IL_TUO_AUTH_DOMAIN",
-    projectId: "IL_TUO_PROJECT_ID",
-    storageBucket: "IL_TUO_STORAGE_BUCKET",
-    messagingSenderId: "IL_TUO_MESSAGING_SENDER_ID",
-    appId: "IL_TUO_APP_ID"
+    apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
+    authDomain: "script-sito.firebaseapp.com",
+    projectId: "script-sito",
+    storageBucket: "script-sito.firebasestorage.app",
+    messagingSenderId: "863535754551",
+    appId: "G-7YHRQZCNMN"
 };
 
 // Inizializzazione
