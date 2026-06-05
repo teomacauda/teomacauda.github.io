@@ -88,18 +88,21 @@ async function initRouter(user) {
 
 function renderVideoTable(videos, isAdmin) {
     const tbody = document.getElementById('video-table-body');
+    const mobileContainer = document.getElementById('video-cards-container');
+    
     tbody.innerHTML = '';
+    if (mobileContainer) mobileContainer.innerHTML = '';
 
     if (videos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-graytext font-light italic">Nessun contenuto programmato al momento.</td></tr>`;
+        const emptyStateHtml = `Nessun contenuto programmato al momento.`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-graytext font-light italic">${emptyStateHtml}</td></tr>`;
+        if (mobileContainer) {
+            mobileContainer.innerHTML = `<div class="p-6 text-center text-graytext font-light italic glass-card rounded-xl border border-white/5">${emptyStateHtml}</div>`;
+        }
         return;
     }
 
     videos.forEach((video, index) => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-white/[0.01] transition-colors group";
-        
-        // Mappatura dinamica delle EMOJI integrate nello stato richiesto
         let emoji = "💡";
         let badgeStyle = "bg-white/5 text-graytext border-white/5";
         if (video.status === "Scrittura") { emoji = "📝"; badgeStyle = "bg-blue-500/10 text-blue-400 border-blue-500/20"; }
@@ -116,6 +119,9 @@ function renderVideoTable(videos, isAdmin) {
         if (format === "Storia") typeStyle = "bg-amber-500/10 text-amber-400 border-amber-500/20";
         if (format === "Post") typeStyle = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
 
+        // DESKTOP ROW
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-white/[0.01] transition-colors group";
         tr.innerHTML = `
             <td class="p-5 font-medium whitespace-nowrap">
                 <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border px-2.5 py-0.5 rounded-full ${badgeStyle}">
@@ -136,7 +142,6 @@ function renderVideoTable(videos, isAdmin) {
                         <span>Leggi Script</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
                 ` : `<span class="text-xs text-graytext/40 italic pr-2">Nessuno Script</span>`}
-                
                 ${isAdmin ? `
                     <button data-index="${index}" class="btn-edit-single inline-flex h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-lg items-center justify-center text-graytext hover:text-white transition-all" title="Modifica Contenuto">
                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
@@ -148,9 +153,64 @@ function renderVideoTable(videos, isAdmin) {
             </td>
         `;
         tbody.appendChild(tr);
+
+        // MOBILE CARD
+        if (mobileContainer) {
+            const card = document.createElement('div');
+            card.className = "glass-card p-4 rounded-xl border border-white/5 flex flex-col gap-3 transition-all";
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-3 select-none cursor-pointer" onclick="document.getElementById('mobile-details-${index}').classList.toggle('hidden'); this.querySelector('.chevron-icon').classList.toggle('rotate-180');">
+                    <div class="flex flex-col gap-1.5 max-w-[85%]">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider border px-2 py-0.5 rounded-full ${badgeStyle}">
+                                <span>${emoji}</span><span>${video.status}</span>
+                            </span>
+                            <span class="inline-block text-[9px] font-bold tracking-wide border px-2 py-0.5 rounded-md ${typeStyle}">
+                                ${format}
+                            </span>
+                        </div>
+                        <h3 class="text-base font-bold text-white tracking-tight leading-snug">${video.title}</h3>
+                        <div class="flex items-center gap-1 text-xs text-graytext mt-0.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-accent"></i>
+                            <span>${video.date || 'Da definire'}</span>
+                        </div>
+                    </div>
+                    <div class="pt-1">
+                        <i data-lucide="chevron-down" class="chevron-icon w-5 h-5 text-graytext transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div id="mobile-details-${index}" class="hidden border-t border-white/5 pt-3 mt-1 space-y-3">
+                    ${video.notes ? `
+                        <div>
+                            <span class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-1">Note / Briefing</span>
+                            <p class="text-xs text-graytext font-light leading-relaxed bg-white/[0.01] p-2.5 rounded-lg border border-white/5 whitespace-pre-line">${video.notes}</p>
+                        </div>
+                    ` : ''}
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                        <div>
+                            ${video.scriptLink ? `
+                                <a href="${video.scriptLink}" class="inline-flex h-8 px-3 bg-white/5 hover:bg-accent hover:text-white rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
+                                    <span>Leggi Script</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
+                            ` : `<span class="text-xs text-graytext/40 italic">Nessuno Script</span>`}
+                        </div>
+                        ${isAdmin ? `
+                            <div class="flex items-center gap-2">
+                                <button data-index="${index}" class="btn-edit-single inline-flex h-8 px-3 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Modifica
+                                </button>
+                                <button data-index="${index}" class="btn-delete-single inline-flex h-8 w-8 bg-red-500/10 hover:bg-red-500 border border-red-500/10 text-red-400 hover:text-white rounded-lg items-center justify-center transition-all">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            mobileContainer.appendChild(card);
+        }
     });
 
-    // Aggancio dei listener operativi per i bottoni singoli appena generati
     if (isAdmin) {
         document.querySelectorAll('.btn-edit-single').forEach(btn => {
             btn.addEventListener('click', () => {
