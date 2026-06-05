@@ -58,8 +58,9 @@
                     <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
                 </svg>
             </a>
-            <div id="admin-indicator" class="hidden text-xs font-semibold bg-accent/10 text-accent border border-accent/30 px-3 py-1 rounded-full flex items-center gap-1.5 animate-pulse">
-                <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Mode
+            <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Admin Mode
             </div>
         </div>
     </header>
@@ -71,12 +72,12 @@
         </div>
 
         <div id="section-lock" class="hidden max-w-md mx-auto text-center py-20 flex flex-col items-center">
-            <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6 text-graytext">
-                <i data-lucide="lock" class="w-8 h-8 text-accent"></i>
+            <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
+                <i data-lucide="lock" class="w-7 h-7 text-white"></i>
             </div>
             <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Piani Editoriali</h1>
             <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link diretto cliente o credenziali amministratore.</p>
-            <button onclick="openAuthModal()" class="h-12 px-6 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+            <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
                 <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
             </button>
         </div>
@@ -112,7 +113,7 @@
             </div>
 
             <div class="w-full overflow-x-auto glass-card rounded-2xl border border-white/5 no-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[750px]">
+                <table class="w-full text-left border-collapse min-w-[800px]">
                     <thead>
                         <tr class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
                             <th class="p-5">Stato</th>
@@ -120,7 +121,7 @@
                             <th class="p-5">Contenuto / Concept</th>
                             <th class="p-5">Data Pubblicazione</th>
                             <th class="p-5">Note / Briefing</th>
-                            <th class="p-5 text-right">Script</th>
+                            <th class="p-5 text-right">Azioni / Script</th>
                         </tr>
                     </thead>
                     <tbody id="video-table-body" class="text-sm divide-y divide-white/5">
