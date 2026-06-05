@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Piani Editoriali | Teo Macauda</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
+        #page-wrapper { overflow-x: hidden; width: 100%; position: relative; min-height: 100vh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        .glass-nav { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.4s ease; margin-top: env(safe-area-inset-top); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
+        .plus-card { border: 1px dashed rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.01); }
+        .plus-card:hover { border-color: rgba(255, 122, 0, 0.5); background: rgba(255, 122, 0, 0.02); }
+        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.2) 0%, rgba(255, 122, 0, 0.04) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; z-index: 1; pointer-events: none; }
+        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+<div id="page-wrapper" class="flex flex-col">
+    <div class="ambient-glow"></div>
+    <div class="hero-grid"></div>
+
+    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
+        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center hover:opacity-80 transition-all">
+                <svg class="h-9 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+            </a>
+            <div id="admin-indicator" class="hidden text-xs font-semibold bg-accent/10 text-accent border border-accent/30 px-3 py-1 rounded-full flex items-center gap-1.5 animate-pulse">
+                <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Mode
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10">
+        
+        <div id="main-loader" class="flex justify-center items-center py-32">
+            <div class="loader !w-9 !h-9"></div>
+        </div>
+
+        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-20 flex flex-col items-center">
+            <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6 text-graytext">
+                <i data-lucide="lock" class="w-8 h-8 text-accent"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Piani Editoriali</h1>
+            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link diretto cliente o credenziali amministratore.</p>
+            <button onclick="openAuthModal()" class="h-12 px-6 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+                <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
+            </button>
+        </div>
+
+        <div id="section-admin-catalog" class="hidden">
+            <div class="mb-10 text-left">
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Gestione <span class="text-accent">Piani Editoriali</span></h1>
+                <p class="text-graytext text-sm font-light mt-1">Seleziona un cliente o creane uno nuovo da configurare.</p>
+            </div>
+            <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                </div>
+        </div>
+
+        <div id="section-client-plan" class="hidden">
+            <div id="admin-plan-tools" class="hidden glass-card p-4 rounded-2xl border-accent/20 mb-8 bg-accent/5 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-sm font-medium text-white">
+                    <i data-lucide="sliders" class="text-accent w-4 h-4"></i> Pannello Controllo Piano
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-add-video" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Contenuto
+                    </button>
+                    <button id="btn-delete-plan" class="h-9 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Elimina Intero Piano
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-10 text-left">
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-3">Content Strategy</span>
+                <h1 id="client-title" class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Piano Editoriale</h1>
+                <p class="text-graytext text-sm font-light mt-1">Tracciamento della produzione e del rilascio dei contenuti del brand.</p>
+            </div>
+
+            <div class="w-full overflow-x-auto glass-card rounded-2xl border border-white/5 no-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[750px]">
+                    <thead>
+                        <tr class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
+                            <th class="p-5">Stato</th>
+                            <th class="p-5">Formato</th>
+                            <th class="p-5">Contenuto / Concept</th>
+                            <th class="p-5">Data Pubblicazione</th>
+                            <th class="p-5">Note / Briefing</th>
+                            <th class="p-5 text-right">Script</th>
+                        </tr>
+                    </thead>
+                    <tbody id="video-table-body" class="text-sm divide-y divide-white/5">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="auth-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
+        
+        <div class="glass-modal w-full sm:max-w-xl p-6 md:p-8 rounded-t-[2rem] sm:rounded-3xl relative transform translate-y-full sm:translate-y-10 transition-transform duration-400 max-h-[88vh] overflow-y-auto no-scrollbar pb-10">
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            
+            <div id="modal-step-auth">
+                <h3 class="text-xl font-bold mb-1 text-white">Autenticazione Admin</h3>
+                <p class="text-xs text-graytext mb-5">Inserisci i tuoi dati per sbloccare la gestione dei piani editoriali.</p>
+                <form id="form-login" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email</label>
+                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
+                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div id="auth-error" class="text-xs text-red-500 hidden font-medium"></div>
+                    <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2">
+                        <span>Accedi</span><div id="login-loader" class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div id="modal-step-create-client" class="hidden">
+                <h3 class="text-xl font-bold mb-0.5 text-white">Nuovo <span class="text-accent">Piano Cliente</span></h3>
+                <p class="text-xs text-graytext mb-4">Verrà creata una mappa vuota pronta per l'inserimento dei contenuti.</p>
+                <form id="form-create-client" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Nome Cliente / Azienda</label>
+                        <input type="text" id="client-name-input" required placeholder="Es. Rossi Luxury Brand" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2 shadow-lg">
+                        <i data-lucide="send" class="w-4 h-4"></i> Crea Spazio Cliente
+                    </button>
+                </form>
+            </div>
+
+            <div id="modal-step-add-video" class="hidden">
+                <h3 class="text-xl font-bold mb-0.5 text-white">Aggiungi <span class="text-accent">al Piano Editoriale</span></h3>
+                <p class="text-xs text-graytext mb-4">Configura le informazioni relative al prossimo contenuto programmato.</p>
+                <form id="form-add-video" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Titolo del Contenuto / Hook Principale</label>
+                        <input type="text" id="video-title" required placeholder="Es. 3 Errori che uccidono la tua Retention" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Tipo di Pubblicazione / Formato</label>
+                            <select id="video-type" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <option value="Reel">📸 Reel (IG/FB)</option>
+                                <option value="TikTok">🎵 TikTok</option>
+                                <option value="YT Shorts">🩳 YT Shorts</option>
+                                <option value="Video YT">📺 Video YT</option>
+                                <option value="Storia">⏳ Storia</option>
+                                <option value="Post">🖼️ Post</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Stato di Avanzamento</label>
+                            <select id="video-status" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <option value="Idea">💡 Idea / Concept</option>
+                                <option value="Scrittura">📝 In Scrittura</option>
+                                <option value="In Produzione">🎥 In Produzione</option>
+                                <option value="Pronto">✅ Pronto per Pubblicare</option>
+                                <option value="Pubblicato">🚀 Pubblicato</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Data di Rilascio Prevista</label>
+                        <input type="text" id="video-date" placeholder="Es. 15 Giugno o ASAP" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Note di Regia / Briefing (Opzionale)</label>
+                        <textarea id="video-notes" rows="3" placeholder="Info su inquadrature, copy da usare, hashtag o scadenze..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Link Diretto allo Script (Opzionale)</label>
+                        <input type="text" id="video-script-link" placeholder="Es. /script/?v=tagli-veloci" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+
+                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2 shadow-lg">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Inserisci nel Piano
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+        <p class="text-graytext text-sm mb-4">
+            © <script>document.write(new Date().getFullYear())</script> 
+            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+        </p>
+        <div class="px-6">
+            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
+                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
+            </p>
+        </div>
+    </footer>
+</div>
+
+<script type="module" src="./pianoeditoriale.js"></script>
+
+</body>
+</html>
