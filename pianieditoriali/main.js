@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Configurazione standard del tuo ecosistema
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
     authDomain: "script-sito.firebaseapp.com",
@@ -28,6 +27,7 @@ const authModal = document.getElementById('auth-modal');
 const modalContent = authModal.querySelector('.glass-modal');
 
 let currentClientDocId = null;
+let editingVideoIndex = null; // Traccia l'indice del contenuto se in fase di modifica
 
 function createSlug(text) {
     return text.toString().toLowerCase().trim()
@@ -66,14 +66,14 @@ async function initRouter(user) {
                     document.getElementById('admin-plan-tools').classList.add('hidden');
                 }
 
-                renderVideoTable(clientData.videos || []);
+                renderVideoTable(clientData.videos || [], user !== null);
                 loaderEl.classList.add('hidden');
                 clientPlanSection.classList.remove('hidden');
             } else {
                 window.location.href = './';
             }
         } catch (error) {
-            console.error("Errore recupero piano:", error);
+            console.error("Errore:", error);
             window.location.href = './';
         }
     } else {
@@ -86,7 +86,7 @@ async function initRouter(user) {
     }
 }
 
-function renderVideoTable(videos) {
+function renderVideoTable(videos, isAdmin) {
     const tbody = document.getElementById('video-table-body');
     tbody.innerHTML = '';
 
@@ -95,21 +95,20 @@ function renderVideoTable(videos) {
         return;
     }
 
-    videos.forEach((video) => {
+    videos.forEach((video, index) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-white/[0.01] transition-colors group";
         
-        // 1. Badge dinamico dello STATO DI PRODUZIONE
+        // Mappatura dinamica delle EMOJI integrate nello stato richiesto
+        let emoji = "💡";
         let badgeStyle = "bg-white/5 text-graytext border-white/5";
-        if (video.status === "Scrittura") badgeStyle = "bg-blue-500/10 text-blue-400 border-blue-500/20";
-        if (video.status === "In Produzione") badgeStyle = "bg-accent/10 text-accent border-accent/20";
-        if (video.status === "Pronto") badgeStyle = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-        if (video.status === "Pubblicato") badgeStyle = "bg-white/10 text-white border-white/20";
+        if (video.status === "Scrittura") { emoji = "📝"; badgeStyle = "bg-blue-500/10 text-blue-400 border-blue-500/20"; }
+        if (video.status === "In Produzione") { emoji = "🎥"; badgeStyle = "bg-accent/10 text-accent border-accent/20"; }
+        if (video.status === "Pronto") { emoji = "✅"; badgeStyle = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"; }
+        if (video.status === "Pubblicato") { emoji = "🚀"; badgeStyle = "bg-white/10 text-white border-white/20"; }
 
-        // 2. Badge dinamico del TIPO DI PUBBLICAZIONE (Formato)
         let typeStyle = "bg-white/5 text-graytext border-white/10";
-        const format = video.type || "Video YT"; // Fallback se vecchio documento
-        
+        const format = video.type || "Video YT";
         if (format === "Reel") typeStyle = "bg-pink-500/10 text-pink-400 border-pink-500/20";
         if (format === "TikTok") typeStyle = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
         if (format === "YT Shorts") typeStyle = "bg-red-500/10 text-red-400 border-red-500/20";
@@ -119,8 +118,8 @@ function renderVideoTable(videos) {
 
         tr.innerHTML = `
             <td class="p-5 font-medium whitespace-nowrap">
-                <span class="inline-block text-[10px] font-bold uppercase tracking-wider border px-2.5 py-0.5 rounded-full ${badgeStyle}">
-                    ${video.status}
+                <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border px-2.5 py-0.5 rounded-full ${badgeStyle}">
+                    <span>${emoji}</span><span>${video.status}</span>
                 </span>
             </td>
             <td class="p-5 font-medium whitespace-nowrap">
@@ -131,17 +130,76 @@ function renderVideoTable(videos) {
             <td class="p-5 font-bold text-white tracking-tight">${video.title}</td>
             <td class="p-5 text-graytext font-medium whitespace-nowrap">${video.date || 'Da definire'}</td>
             <td class="p-5 text-graytext font-light max-w-xs truncate md:whitespace-normal">${video.notes || '-'}</td>
-            <td class="p-5 text-right">
+            <td class="p-5 text-right whitespace-nowrap space-x-1.5">
                 ${video.scriptLink ? `
                     <a href="${video.scriptLink}" class="inline-flex h-8 px-3 bg-white/5 hover:bg-accent hover:text-white rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
                         <span>Leggi Script</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
-                ` : `<span class="text-xs text-graytext/40 italic">Non collegato</span>`}
+                ` : `<span class="text-xs text-graytext/40 italic pr-2">Nessuno Script</span>`}
+                
+                ${isAdmin ? `
+                    <button data-index="${index}" class="btn-edit-single inline-flex h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-lg items-center justify-center text-graytext hover:text-white transition-all" title="Modifica Contenuto">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button data-index="${index}" class="btn-delete-single inline-flex h-8 w-8 bg-red-500/10 hover:bg-red-500 border border-red-500/10 text-red-400 hover:text-white rounded-lg items-center justify-center transition-all" title="Elimina Contenuto">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                ` : ''}
             </td>
         `;
         tbody.appendChild(tr);
     });
+
+    // Aggancio dei listener operativi per i bottoni singoli appena generati
+    if (isAdmin) {
+        document.querySelectorAll('.btn-edit-single').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.getAttribute('data-index'));
+                openEditVideoModal(idx, videos[idx]);
+            });
+        });
+        document.querySelectorAll('.btn-delete-single').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const idx = parseInt(btn.getAttribute('data-index'));
+                if (confirm("Sei sicuro di voler eliminare questo singolo contenuto dal piano?")) {
+                    await deleteSingleVideo(idx, videos);
+                }
+            });
+        });
+    }
+
     lucide.createIcons();
+}
+
+// APERTURA MODULO AGGIORNAMENTO DATI
+function openEditVideoModal(index, video) {
+    editingVideoIndex = index;
+    
+    document.getElementById('video-title').value = video.title;
+    document.getElementById('video-type').value = video.type || "Video YT";
+    document.getElementById('video-status').value = video.status;
+    document.getElementById('video-date').value = video.date || "";
+    document.getElementById('video-notes').value = video.notes || "";
+    document.getElementById('video-script-link').value = video.scriptLink || "";
+    
+    document.querySelector('#modal-step-add-video h3').innerHTML = 'Modifica <span class="text-accent">Contenuto</span>';
+    document.querySelector('#form-add-video button[type="submit"]').innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Aggiorna Contenuto';
+    
+    lucide.createIcons();
+    openCustomStep('add-video');
+}
+
+// ELIMINAZIONE SINGOLO CONTENUTO DALL'ARRAY
+async function deleteSingleVideo(index, currentVideos) {
+    if (!currentClientDocId) return;
+    try {
+        currentVideos.splice(index, 1);
+        const docRef = doc(db, "pianiEditoriali", currentClientDocId);
+        await updateDoc(docRef, { videos: currentVideos });
+        initRouter(auth.currentUser);
+    } catch (error) {
+        alert("Errore rimozione elemento.");
+    }
 }
 
 async function loadAdminCatalog() {
@@ -219,7 +277,7 @@ if (createClientForm) {
             closeAuthModal();
             loadAdminCatalog();
         } catch (error) {
-            alert("Errore inserimento Firestore.");
+            alert("Errore inserimento.");
         }
     });
 }
@@ -230,8 +288,7 @@ if (addVideoForm) {
         e.preventDefault();
         if (!currentClientDocId) return;
 
-        // Estrazione di tutti i parametri inclusa la tipologia di pubblicazione
-        const newVideo = {
+        const videoData = {
             title: document.getElementById('video-title').value,
             type: document.getElementById('video-type').value,
             status: document.getElementById('video-status').value,
@@ -245,16 +302,24 @@ if (addVideoForm) {
             const docSnap = await getDoc(docRef);
             
             if (docSnap.exists()) {
-                const currentVideos = docSnap.data().videos || [];
-                currentVideos.push(newVideo);
+                let currentVideos = docSnap.data().videos || [];
+                
+                if (editingVideoIndex !== null) {
+                    // Sovrascrive la riga specifica modificata
+                    currentVideos[editingVideoIndex] = videoData;
+                } else {
+                    // Inserimento standard a coda
+                    currentVideos.push(videoData);
+                }
                 
                 await updateDoc(docRef, { videos: currentVideos });
                 closeAuthModal();
+                editingVideoIndex = null;
                 initRouter(auth.currentUser);
                 addVideoForm.reset();
             }
         } catch (error) {
-            alert("Errore aggiornamento piano.");
+            alert("Errore salvataggio dati.");
         }
     });
 }
@@ -272,6 +337,11 @@ document.getElementById('btn-delete-plan').addEventListener('click', async () =>
 });
 
 document.getElementById('btn-add-video').addEventListener('click', () => {
+    editingVideoIndex = null; // Resetta per l'aggiunta pulita
+    document.getElementById('form-add-video').reset();
+    document.querySelector('#modal-step-add-video h3').innerHTML = 'Aggiungi <span class="text-accent">al Piano Editoriale</span>';
+    document.querySelector('#form-add-video button[type="submit"]').innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i> Inserisci nel Piano';
+    lucide.createIcons();
     openCustomStep('add-video');
 });
 
