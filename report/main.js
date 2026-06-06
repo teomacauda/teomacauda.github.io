@@ -29,7 +29,7 @@ let currentReportDocId = null;
 let editingItemIndex = null;
 let activeAdminSort = 'global'; 
 
-// Codice Vettoriale SVG Nativo Strutturato
+// Codice Vettoriale SVG Nativo Strutturato Premium (Inclusi i vettori up/down richiesti)
 const inlineVectors = {
     instagram: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
     tiktok: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>`,
@@ -40,7 +40,9 @@ const inlineVectors = {
     pencil: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
     trash: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
     eye: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
-    heart: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`
+    heart: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+    arrowUp: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>`,
+    arrowDown: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 4.5l-15 15m0 0h11.25m-11.25 0V8.25"/></svg>`
 };
 
 function generateSlug(text) {
@@ -59,6 +61,13 @@ function getPlatformTagHtml(type) {
     if (type === "TikTok") customStyle = "bg-cyan-500/10 border-cyan-500/20 text-cyan-400";
 
     return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${customStyle}">${type}</span>`;
+}
+
+// Analizzatore di negatività universale (per stringhe come "-5%" e numeri < 0)
+function checkIsNegative(value) {
+    if (typeof value === 'number') return value < 0;
+    if (typeof value === 'string') return value.trim().startsWith('-');
+    return false;
 }
 
 // Router Manager Context
@@ -89,7 +98,6 @@ async function initReportRouter(user) {
                     document.getElementById('followers-tiktok').value = reportData.followersTt || 0;
                     document.getElementById('followers-youtube').value = reportData.followersYt || 0;
                     
-                    // Popolamento dei nuovi campi KPI opzionali nell'interfaccia admin
                     document.getElementById('kpi-reached-count').value = reportData.kpiReachedCount || 0;
                     document.getElementById('kpi-reached-pct').value = reportData.kpiReachedPct || '';
                     document.getElementById('kpi-visits-count').value = reportData.kpiVisitsCount || 0;
@@ -259,7 +267,7 @@ function renderClientReportView(data) {
     
     document.getElementById('client-hero-title').innerText = data.title;
 
-    // Foto Profilo Cliente Orizzontale/Verticale Quadrata
+    // Foto Profilo Cliente Asset
     const wrapperAvatar = document.getElementById('client-avatar-wrapper');
     const imgAvatar = document.getElementById('client-avatar-img');
     if (data.clientAvatarUrl && data.clientAvatarUrl.trim() !== '') {
@@ -269,41 +277,70 @@ function renderClientReportView(data) {
         wrapperAvatar.classList.add('hidden');
     }
 
-    // Iniezione Vettori Icone Righe fissate
     document.querySelector('.id-svg-ig').innerHTML = inlineVectors.instagram;
     document.querySelector('.id-svg-tt').innerHTML = inlineVectors.tiktok;
     document.querySelector('.id-svg-yt').innerHTML = inlineVectors.youtube;
 
-    // Elaborazione Logica Follower Condizionale (Niente zeri o vuoti)
+    // Calcolo e colorazione dinamica della slide Follower Acquisiti
     const igF = parseInt(data.followersIg) || 0;
     const ttF = parseInt(data.followersTt) || 0;
     const ytF = parseInt(data.followersYt) || 0;
     const totalF = igF + ttF + ytF;
 
     const slideFollowers = document.getElementById('slide-client-followers');
-    if (totalF > 0) {
+    if (igF !== 0 || ttF !== 0 || ytF !== 0) {
         slideFollowers.classList.remove('hidden');
-        document.getElementById('client-stat-total-followers').setAttribute('data-target', totalF);
         
-        if(igF > 0) {
+        // Gestione Macro Card Aggregata (Rosso vs Verde)
+        const totalSignEl = document.getElementById('client-stat-total-sign');
+        const macroCard = document.getElementById('client-followers-macro-card');
+        const macroBadge = document.getElementById('client-followers-macro-badge');
+        const macroArrowBox = document.getElementById('client-followers-macro-arrow-box');
+        const macroTextStatus = document.getElementById('client-followers-macro-text-status');
+        
+        // Impostiamo l'obiettivo assoluto per il counter numerico
+        document.getElementById('client-stat-total-followers').setAttribute('data-target', Math.abs(totalF));
+
+        if (totalF < 0) {
+            totalSignEl.innerText = "-";
+            macroCard.className = "glass-card p-6 rounded-3xl text-center mb-5 relative overflow-hidden transition-all border-red-500/20 bg-red-500/[0.01]";
+            macroBadge.className = "mt-3 inline-flex items-center justify-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500/10 border border-red-500/20 text-red-400";
+            macroArrowBox.innerHTML = inlineVectors.arrowDown;
+            macroTextStatus.innerText = "DECRESCITA";
+        } else {
+            totalSignEl.innerText = "+";
+            macroCard.className = "glass-card p-6 rounded-3xl text-center mb-5 relative overflow-hidden transition-all border-emerald-500/20 bg-emerald-500/[0.01]";
+            macroBadge.className = "mt-3 inline-flex items-center justify-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+            macroArrowBox.innerHTML = inlineVectors.arrowUp;
+            macroTextStatus.innerText = "CRESCITA";
+        }
+        
+        // Breakdown Singoli Canali (Niente zeri)
+        if(igF !== 0) {
             document.getElementById('row-client-ig-followers').classList.remove('hidden');
-            document.getElementById('client-stat-ig-followers').setAttribute('data-target', igF);
+            const sign = igF < 0 ? '-' : '+';
+            const colorClass = igF < 0 ? 'text-red-400' : 'text-white';
+            document.querySelector('.id-text-color-ig').innerHTML = `<span class="${colorClass}">${sign}<span class="counter-anim" id="client-stat-ig-followers" data-target="${Math.abs(igF)}">0</span></span>`;
         } else { document.getElementById('row-client-ig-followers').classList.add('hidden'); }
         
-        if(ttF > 0) {
+        if(ttF !== 0) {
             document.getElementById('row-client-tt-followers').classList.remove('hidden');
-            document.getElementById('client-stat-tt-followers').setAttribute('data-target', ttF);
+            const sign = ttF < 0 ? '-' : '+';
+            const colorClass = ttF < 0 ? 'text-red-400' : 'text-white';
+            document.querySelector('.id-text-color-tt').innerHTML = `<span class="${colorClass}">${sign}<span class="counter-anim" id="client-stat-tt-followers" data-target="${Math.abs(ttF)}">0</span></span>`;
         } else { document.getElementById('row-client-tt-followers').classList.add('hidden'); }
         
-        if(ytF > 0) {
+        if(ytF !== 0) {
             document.getElementById('row-client-yt-followers').classList.remove('hidden');
-            document.getElementById('client-stat-yt-followers').setAttribute('data-target', ytF);
+            const sign = ytF < 0 ? '-' : '+';
+            const colorClass = ytF < 0 ? 'text-red-400' : 'text-white';
+            document.querySelector('.id-text-color-yt').innerHTML = `<span class="${colorClass}">${sign}<span class="counter-anim" id="client-stat-yt-followers" data-target="${Math.abs(ytF)}">0</span></span>`;
         } else { document.getElementById('row-client-yt-followers').classList.add('hidden'); }
     } else {
         slideFollowers.classList.add('hidden');
     }
 
-    // ================= RENDERING CONDIZIONALE ACC. RAGGIUNTI E VISITE PROFILO =================
+    // ================= RENDERING CONDIZIONALE + COLORE SULLE NUOVE SLIDE (ACCOUNT & VISITE) =================
     const reachedCount = parseInt(data.kpiReachedCount) || 0;
     const reachedPct = data.kpiReachedPct ? data.kpiReachedPct.trim() : '';
     const slideReached = document.getElementById('slide-client-reached');
@@ -312,6 +349,16 @@ function renderClientReportView(data) {
         slideReached.classList.remove('hidden');
         document.getElementById('client-stat-reached-count').setAttribute('data-target', reachedCount);
         document.getElementById('client-stat-reached-pct').innerText = reachedPct;
+        
+        const reachedBadge = document.getElementById('client-stat-reached-badge');
+        const reachedArrowBox = document.getElementById('client-stat-reached-arrow-box');
+        if (checkIsNegative(reachedPct)) {
+            reachedBadge.className = "inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
+            reachedArrowBox.innerHTML = inlineVectors.arrowDown;
+        } else {
+            reachedBadge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
+            reachedArrowBox.innerHTML = inlineVectors.arrowUp;
+        }
     } else {
         slideReached.classList.add('hidden');
     }
@@ -324,6 +371,16 @@ function renderClientReportView(data) {
         slideVisits.classList.remove('hidden');
         document.getElementById('client-stat-visits-count').setAttribute('data-target', visitsCount);
         document.getElementById('client-stat-visits-pct').innerText = visitsPct;
+        
+        const visitsBadge = document.getElementById('client-stat-visits-badge');
+        const visitsArrowBox = document.getElementById('client-stat-visits-arrow-box');
+        if (checkIsNegative(visitsPct)) {
+            visitsBadge.className = "inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
+            visitsArrowBox.innerHTML = inlineVectors.arrowDown;
+        } else {
+            visitsBadge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
+            visitsArrowBox.innerHTML = inlineVectors.arrowUp;
+        }
     } else {
         slideVisits.classList.add('hidden');
     }
@@ -343,7 +400,7 @@ function renderClientReportView(data) {
     document.getElementById('client-king-views-icon').innerHTML = iconMap[kingViews.type] || '';
     document.getElementById('client-views-king-link').href = kingViews.link || '#';
 
-    // Video con più LIKE (Ora configurato con link attivo)
+    // Video con più LIKE (Ora con link attivo cliccabile)
     const kingLikes = [...items].sort((a, b) => (parseInt(b.likes) || 0) - (parseInt(a.likes) || 0))[0];
     document.getElementById('client-king-likes-title').innerText = kingLikes.title;
     document.getElementById('client-king-likes-platform').innerText = kingLikes.type;
@@ -424,7 +481,7 @@ function triggerSmoothCount(element, target) {
     requestAnimationFrame(flow);
 }
 
-// Modals Handlers locali ed export a window
+// Modals Handlers locali ed export a window scope sicuro
 function openAuthModal() {
     const modal = document.getElementById('auth-modal');
     modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -435,7 +492,7 @@ function closeAuthModal() {
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
 }
-// Semplificato per risolvere scope
+
 window.openAuthModal = openAuthModal;
 window.closeAuthModal = closeAuthModal;
 
@@ -509,7 +566,6 @@ document.getElementById('form-create-report').addEventListener('submit', async (
     const tVal = document.getElementById('report-client-name').value;
     const slug = generateSlug(tVal) + "-" + Math.floor(1000 + Math.random() * 9000);
     
-    // Inizializza includendo le chiavi per i nuovi KPI
     await addDoc(collection(db, "reportMensili"), { 
         title: tVal, slug: slug, items: [], 
         followersIg: 0, followersTt: 0, followersYt: 0, 
