@@ -26,8 +26,14 @@ const adminIndicator = document.getElementById('admin-indicator');
 const authModal = document.getElementById('auth-modal');
 const modalContent = authModal.querySelector('.glass-modal');
 
+const btnEditTitle = document.getElementById('btn-edit-title');
+const editTitleContainer = document.getElementById('edit-title-container');
+const inputClientTitle = document.getElementById('input-client-title');
+const btnSaveTitle = document.getElementById('btn-save-title');
+const btnCancelTitle = document.getElementById('btn-cancel-title');
+
 let currentClientDocId = null;
-let editingVideoIndex = null; // Traccia l'indice del contenuto se in fase di modifica
+let editingVideoIndex = null; 
 
 function createSlug(text) {
     return text.toString().toLowerCase().trim()
@@ -62,8 +68,11 @@ async function initRouter(user) {
                 
                 if (user) {
                     document.getElementById('admin-plan-tools').classList.remove('hidden');
+                    if (btnEditTitle) btnEditTitle.classList.remove('hidden');
                 } else {
                     document.getElementById('admin-plan-tools').classList.add('hidden');
+                    if (btnEditTitle) btnEditTitle.classList.add('hidden');
+                    if (editTitleContainer) editTitleContainer.classList.add('hidden');
                 }
 
                 renderVideoTable(clientData.videos || [], user !== null);
@@ -76,7 +85,7 @@ async function initRouter(user) {
             console.error("Errore:", error);
             window.location.href = './';
         }
-          } else {
+    } else {
         if (user) {
             loadAdminCatalog();
         } else {
@@ -94,46 +103,41 @@ function renderVideoTable(videos, isAdmin) {
     tbody.innerHTML = '';
     if (mobileContainer) mobileContainer.innerHTML = '';
 
-    // --- COSTRUZIONE RIPRODUZIONE DESIGN SCREENSHOT (HIDES 0) ---
+    // --- COSTRUZIONE BLOCCHI DI RIEPILOGO PREMIUM (SQUARE & CENTERED) ---
     const statsContainer = document.getElementById('stats-dashboard');
     if (statsContainer) {
         statsContainer.innerHTML = '';
         
-        // Inizializza i contatori
         const counts = { "Video YT": 0, "Reel": 0, "TikTok": 0, "YT Shorts": 0, "Storia": 0, "Post": 0 };
         videos.forEach(v => {
             const fmt = v.type || "Video YT";
             if (counts[fmt] !== undefined) counts[fmt]++;
         });
 
-        // Configurazione estetica fedele ai tuoi badge ma in versione solida ad alto impatto
+        // Configurazione estetica coerente con l'interfaccia dark/premium e i tag di riga
         const formatsConfig = [
-            { id: "Video YT", label: "Video YT", emoji: "📺", bg: "bg-red-600" },
-            { id: "Reel", label: "Reel", emoji: "📸", bg: "bg-pink-500" },
-            { id: "TikTok", label: "TikTok", emoji: "🎵", bg: "bg-cyan-500" },
-            { id: "YT Shorts", label: "YT Shorts", emoji: "🩳", bg: "bg-red-500" },
-            { id: "Storia", label: "Storia", emoji: "⏳", bg: "bg-amber-500" },
-            { id: "Post", label: "Post", emoji: "🖼️", bg: "bg-indigo-500" }
+            { id: "Video YT", label: "YT Video", emoji: "📺", styleClass: "bg-red-600/[0.02] border-red-600/20 text-red-500 hover:border-red-500/40" },
+            { id: "Reel", label: "Reel", emoji: "📸", styleClass: "bg-pink-500/[0.02] border-pink-500/20 text-pink-400 hover:border-pink-400/40" },
+            { id: "TikTok", label: "TikTok", emoji: "🎵", styleClass: "bg-cyan-500/[0.02] border-cyan-500/20 text-cyan-400 hover:border-cyan-400/40" },
+            { id: "YT Shorts", label: "Shorts", emoji: "🩳", styleClass: "bg-red-500/[0.02] border-red-500/20 text-red-400 hover:border-red-400/40" },
+            { id: "Storia", label: "Storia", emoji: "⏳", styleClass: "bg-amber-500/[0.02] border-amber-500/20 text-amber-400 hover:border-amber-400/40" },
+            { id: "Post", label: "Post", emoji: "🖼️", styleClass: "bg-indigo-500/[0.02] border-indigo-500/20 text-indigo-400 hover:border-indigo-400/40" }
         ];
 
         formatsConfig.forEach(cfg => {
             const count = counts[cfg.id] || 0;
             
-            // SE IL CONTATORE È 0, SALTA COMPLETAMENTE E NON MOSTRARE LA CARD
             if (count > 0) {
                 const card = document.createElement('div');
-                // Struttura a blocchi solidi con angoli arrotondati e overflow protetto
-                card.className = `relative overflow-hidden rounded-2xl p-4 flex flex-col justify-between h-32 ${cfg.bg} shadow-lg`;
+                card.className = `relative overflow-hidden aspect-square w-24 sm:w-28 rounded-2xl flex flex-col items-center justify-center border text-center transition-all duration-300 group glass-card ${cfg.styleClass}`;
                 card.innerHTML = `
-                    <div class="inline-block bg-white text-black font-extrabold text-[11px] tracking-tight px-2.5 py-1 rounded-xl self-start uppercase select-none">
+                    <div class="text-[10px] font-bold tracking-wider text-graytext uppercase select-none opacity-70 mb-1">
                         ${cfg.label}
                     </div>
-                    
-                    <div class="text-6xl font-black text-black/90 tracking-tighter leading-none select-none absolute bottom-2 left-3.5 z-10">
+                    <div class="text-3xl font-black text-white tracking-tight leading-none select-none z-10">
                         ${count}
                     </div>
-                    
-                    <div class="absolute right-2 bottom-0 text-5xl opacity-40 select-none pointer-events-none transform translate-y-1 scale-110">
+                    <div class="absolute right-1.5 bottom-1.5 text-sm opacity-20 group-hover:opacity-40 transition-opacity select-none pointer-events-none">
                         ${cfg.emoji}
                     </div>
                 `;
@@ -280,7 +284,6 @@ function renderVideoTable(videos, isAdmin) {
     lucide.createIcons();
 }
 
-// APERTURA MODULO AGGIORNAMENTO DATI
 function openEditVideoModal(index, video) {
     editingVideoIndex = index;
     
@@ -298,7 +301,6 @@ function openEditVideoModal(index, video) {
     openCustomStep('add-video');
 }
 
-// ELIMINAZIONE SINGOLO CONTENUTO DALL'ARRAY
 async function deleteSingleVideo(index, currentVideos) {
     if (!currentClientDocId) return;
     try {
@@ -369,6 +371,44 @@ async function loadAdminCatalog() {
     }
 }
 
+// LOGICA MODIFICA TITOLO PIANO EDITORIALE
+if (btnEditTitle) {
+    btnEditTitle.addEventListener('click', () => {
+        const clientTitleEl = document.getElementById('client-title');
+        const currentTitle = clientTitleEl.innerText.replace("Piano Editoriale: ", "");
+        inputClientTitle.value = currentTitle;
+        editTitleContainer.classList.remove('hidden');
+    });
+}
+
+if (btnCancelTitle) {
+    btnCancelTitle.addEventListener('click', () => {
+        editTitleContainer.classList.add('hidden');
+    });
+}
+
+if (btnSaveTitle) {
+    btnSaveTitle.addEventListener('click', async () => {
+        const newTitle = inputClientTitle.value.trim();
+        if (!newTitle) {
+            alert("Il nome del piano non può essere vuoto.");
+            return;
+        }
+        if (!currentClientDocId) return;
+
+        try {
+            const docRef = doc(db, "pianiEditoriali", currentClientDocId);
+            await updateDoc(docRef, { clientName: newTitle });
+            
+            document.getElementById('client-title').innerText = `Piano Editoriale: ${newTitle}`;
+            editTitleContainer.classList.add('hidden');
+        } catch (error) {
+            console.error("Errore durante la modifica del titolo:", error);
+            alert("Impossibile aggiornare il titolo del piano.");
+        }
+    });
+}
+
 const createClientForm = document.getElementById('form-create-client');
 if (createClientForm) {
     createClientForm.addEventListener('submit', async (e) => {
@@ -414,10 +454,8 @@ if (addVideoForm) {
                 let currentVideos = docSnap.data().videos || [];
                 
                 if (editingVideoIndex !== null) {
-                    // Sovrascrive la riga specifica modificata
                     currentVideos[editingVideoIndex] = videoData;
                 } else {
-                    // Inserimento standard a coda
                     currentVideos.push(videoData);
                 }
                 
@@ -446,7 +484,7 @@ document.getElementById('btn-delete-plan').addEventListener('click', async () =>
 });
 
 document.getElementById('btn-add-video').addEventListener('click', () => {
-    editingVideoIndex = null; // Resetta per l'aggiunta pulita
+    editingVideoIndex = null; 
     document.getElementById('form-add-video').reset();
     document.querySelector('#modal-step-add-video h3').innerHTML = 'Aggiungi <span class="text-accent">al Piano Editoriale</span>';
     document.querySelector('#form-add-video button[type="submit"]').innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i> Inserisci nel Piano';
