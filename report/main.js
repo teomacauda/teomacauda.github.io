@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -30,13 +29,14 @@ let currentReportDocId = null;
 let editingItemIndex = null;
 let activeAdminSort = 'global'; 
 
-// Codice Vettoriale SVG Nativo Strutturato (Previene blocchi cross-device o mancate librerie)
+// Codice Vettoriale SVG Nativo Strutturato (Inclusa icona video per Shorts)
 const inlineVectors = {
     instagram: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
     tiktok: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>`,
     youtube: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17z"/><polygon points="10 15 15 12 10 9"/></svg>`,
     image: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
     clock: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    video: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>`,
     pencil: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
     trash: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
     eye: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
@@ -50,7 +50,6 @@ function generateSlug(text) {
         .replace(/\-\-+/g, '-');
 }
 
-// Funzione helper per iniettare i tag grafici personalizzati in stile Badge
 function getPlatformTagHtml(type) {
     let customStyle = "bg-white/5 border-white/10 text-white";
     if (type === "Reel") customStyle = "bg-pink-500/10 border-pink-500/20 text-pink-400";
@@ -165,7 +164,6 @@ async function loadAdminCatalogGrid() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// Logica Render Layout Admin (Con centratura assoluta icone e Tag Social)
 function renderAdminContentsLayout(items) {
     const container = document.getElementById('admin-report-contents-layout');
     container.innerHTML = '';
@@ -251,13 +249,11 @@ function buildAdminTableBlock(title, sortedItems, originalItems = null) {
     return block;
 }
 
-// ================= RENDER LOGICA CLIENT SCROLLYTELLING CON VETTORI INLINE =================
 function renderClientReportView(data) {
     const items = data.items || [];
     
     document.getElementById('client-hero-title').innerText = data.title;
 
-    // Gestione Immagine Profilo Cliente
     const wrapperAvatar = document.getElementById('client-avatar-wrapper');
     const imgAvatar = document.getElementById('client-avatar-img');
     if (data.clientAvatarUrl && data.clientAvatarUrl.trim() !== '') {
@@ -267,7 +263,6 @@ function renderClientReportView(data) {
         wrapperAvatar.classList.add('hidden');
     }
 
-    // Iniezione Vettori Nativi sulle righe fisse dei follower per evitare l'uso di Lucide
     document.querySelector('.id-svg-ig').innerHTML = inlineVectors.instagram;
     document.querySelector('.id-svg-tt').innerHTML = inlineVectors.tiktok;
     document.querySelector('.id-svg-yt').innerHTML = inlineVectors.youtube;
@@ -301,7 +296,6 @@ function renderClientReportView(data) {
         'Video YT': inlineVectors.youtube, 'YT Shorts': inlineVectors.video, 'TikTok': inlineVectors.tiktok
     };
 
-    // Video con più VIEWS
     const kingViews = [...items].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0))[0];
     document.getElementById('client-king-views-title').innerText = kingViews.title;
     document.getElementById('client-king-views-platform').innerText = kingViews.type;
@@ -309,14 +303,12 @@ function renderClientReportView(data) {
     document.getElementById('client-king-views-icon').innerHTML = iconMap[kingViews.type] || '';
     document.getElementById('client-views-king-link').href = kingViews.link || '#';
 
-    // Video con più LIKE
     const kingLikes = [...items].sort((a, b) => (parseInt(b.likes) || 0) - (parseInt(a.likes) || 0))[0];
     document.getElementById('client-king-likes-title').innerText = kingLikes.title;
     document.getElementById('client-king-likes-platform').innerText = kingLikes.type;
     document.getElementById('client-stat-king-likes-count').setAttribute('data-target', kingLikes.likes);
     document.getElementById('client-king-likes-icon').innerHTML = iconMap[kingLikes.type] || '';
 
-    // Slide Finale Breakdown Analitico
     const breakdownLayout = document.getElementById('client-full-breakdown-layout');
     breakdownLayout.innerHTML = '';
 
@@ -349,7 +341,6 @@ function renderClientReportView(data) {
     });
 }
 
-// ================= TIMING COUNTER INTERSECTION OBSERVER =================
 function initIntersectionCounters() {
     const targetCounters = document.querySelectorAll('.counter-anim');
     const config = { root: null, threshold: 0.10 };
@@ -390,29 +381,28 @@ function triggerSmoothCount(element, target) {
     requestAnimationFrame(flow);
 }
 
-// ================= MODAL HANDLERS ED EVENTI INTERFACCIA GESTIONALE =================
-window.openAuthModal = () => {
+// Modals Handlers locali ed export a window
+function openAuthModal() {
     const modal = document.getElementById('auth-modal');
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-};
-window.closeAuthModal = () => {
+}
+function closeAuthModal() {
     const modal = document.getElementById('auth-modal');
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-};
-window.openCreateReportModal = () => {
+}
+function openCreateReportModal() {
     const modal = document.getElementById('create-report-modal');
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-};
-window.closeCreateReportModal = () => {
+}
+function closeCreateReportModal() {
     const modal = document.getElementById('create-report-modal');
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-};
-
-window.openAddItemModal = (index = null) => {
+}
+function openAddItemModal(index = null) {
     editingItemIndex = index;
     const modal = document.getElementById('add-item-modal');
     const form = document.getElementById('form-report-item');
@@ -437,13 +427,19 @@ window.openAddItemModal = (index = null) => {
 
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-};
-
-window.closeAddItemModal = () => {
+}
+function closeAddItemModal() {
     const modal = document.getElementById('add-item-modal');
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-};
+}
+
+window.openAuthModal = openAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.openCreateReportModal = openCreateReportModal;
+window.closeCreateReportModal = closeCreateReportModal;
+window.openAddItemModal = openAddItemModal;
+window.closeAddItemModal = closeAddItemModal;
 
 document.getElementById('sort-btn-global').addEventListener('click', () => {
     activeAdminSort = 'global';
