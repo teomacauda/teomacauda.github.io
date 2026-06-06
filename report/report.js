@@ -141,10 +141,10 @@ async function loadClientReport(slug) {
             document.getElementById('main-loader').classList.add('hidden');
             document.getElementById('view-client-report').classList.remove('hidden');
         } else {
-            window.location.href = './report.html';
+            window.location.href = './';
         }
     } catch (err) {
-        window.location.href = './report.html';
+        window.location.href = './';
     }
 }
 
@@ -381,7 +381,7 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
 // LISTENERS INTERFACCIA STATICI
 document.getElementById('btn-admin-gate').addEventListener('click', () => {
     if(auth.currentUser && reportSlug) {
-        window.location.href = './report.html';
+        window.location.href = './';
     } else {
         openCustomStep('report-form');
     }
