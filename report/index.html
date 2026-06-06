@@ -35,6 +35,7 @@
         .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
         .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.03) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .client-bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 122, 0, 0.14) 0%, rgba(255, 122, 0, 0.02) 65%, rgba(0, 0, 0, 0) 100%); z-index: 0; pointer-events: none; }
         .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.01) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.4; z-index: 1; pointer-events: none; }
         .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -125,8 +126,12 @@
             </div>
 
             <div class="glass-card p-6 rounded-2xl border-white/5 mb-8">
-                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-accent"></i> Follower Acquisiti nel Mese (Integrazione Manuale)</h2>
+                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-accent"></i> Impostazioni e Canali del Cliente</h2>
                 <form id="form-report-followers" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">URL Immagine Profilo Cliente (Asset Repository GitHub)</label>
+                        <input type="url" id="client-avatar-url" placeholder="https://raw.githubusercontent.com/username/repo/main/immagine.png" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">Instagram Followers</label>
                         <input type="number" id="followers-instagram" value="0" min="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
@@ -140,7 +145,7 @@
                         <input type="number" id="followers-youtube" value="0" min="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                     </div>
                     <div class="sm:col-span-3 flex justify-end pt-2">
-                        <button type="submit" class="h-10 px-4 bg-white/5 hover:bg-accent/10 border border-white/10 hover:border-accent/40 text-xs font-bold text-white rounded-xl transition-all flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva Follower</button>
+                        <button type="submit" class="h-10 px-5 bg-white/5 hover:bg-accent/10 border border-white/10 hover:border-accent/40 text-xs font-bold text-white rounded-xl transition-all flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva Configurazione</button>
                     </div>
                 </form>
             </div>
@@ -158,20 +163,28 @@
 
         <div id="section-client-report-view" class="hidden fixed inset-0 z-[150] bg-black w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory scroll-smooth no-scrollbar select-none">
             
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center text-center p-6 relative">
-                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,122,0,0.08)_0%,transparent_70%)] pointer-events-none"></div>
+            <div class="client-bg-glow"></div>
+
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center text-center p-6 relative z-10">
                 <div class="max-w-xl flex flex-col items-center gap-4">
+                    
+                    <div id="client-avatar-wrapper" class="hidden mb-2">
+                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl p-1 bg-black border-2 border-accent shadow-lg shadow-accent/20 overflow-hidden">
+                            <img id="client-avatar-img" src="" alt="Client Asset" class="w-full h-full object-cover rounded-xl">
+                        </div>
+                    </div>
+
                     <span class="px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-accent/10 border border-accent/20 text-accent">Performance Review</span>
                     <h1 id="client-hero-title" class="text-4xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none">REPORT PERFORMANCE</h1>
                     <p id="client-hero-subtitle" class="text-graytext text-sm md:text-lg font-light tracking-wide max-w-sm">Analisi strategica e risultati dei contenuti posizionati nel mese.</p>
                 </div>
                 <div class="absolute bottom-8 flex flex-col items-center gap-1.5 opacity-40 animate-bounce">
                     <span class="text-[8px] uppercase tracking-widest font-bold text-graytext">Scorri per esplorare</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-accent"></i>
+                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
                 </div>
             </section>
 
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative">
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
                 <div class="w-full max-w-sm mx-auto flex flex-col justify-center h-full">
                     <div class="mb-6 text-center">
                         <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Crescita dei Canali</span>
@@ -186,21 +199,21 @@
                     <div class="space-y-2.5" id="client-followers-rows-container">
                         <div id="row-client-ig-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400"><i data-lucide="instagram" class="w-4 h-4"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 id-svg-ig"></div>
                                 <span class="text-xs font-semibold text-white">Instagram Followers</span>
                             </div>
                             <div class="text-lg font-bold text-white">+<span class="counter-anim" id="client-stat-ig-followers" data-target="0">0</span></div>
                         </div>
                         <div id="row-client-tt-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400"><i data-lucide="music" class="w-4 h-4"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 id-svg-tt"></div>
                                 <span class="text-xs font-semibold text-white">TikTok Followers</span>
                             </div>
                             <div class="text-lg font-bold text-white">+<span class="counter-anim" id="client-stat-tt-followers" data-target="0">0</span></div>
                         </div>
                         <div id="row-client-yt-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400"><i data-lucide="youtube" class="w-4 h-4"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 id-svg-yt"></div>
                                 <span class="text-xs font-semibold text-white">YouTube Iscritti</span>
                             </div>
                             <div class="text-lg font-bold text-white">+<span class="counter-anim" id="client-stat-yt-followers" data-target="0">0</span></div>
@@ -209,7 +222,7 @@
                 </div>
             </section>
 
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative">
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
                 <div class="w-full max-w-md mx-auto flex flex-col justify-center h-full">
                     <div class="mb-5 text-center">
                         <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Massimo Traguardo Visivo</span>
@@ -222,7 +235,7 @@
                                 <span id="client-king-views-icon"></span>
                                 <span id="client-king-views-platform" class="text-[10px] font-bold text-white uppercase tracking-wider">PLATFORM</span>
                             </div>
-                            <span class="text-[9px] text-graytext font-bold uppercase flex items-center gap-1 group-hover:text-accent transition-colors">Vedi Video <i data-lucide="external-link" class="w-3 h-3"></i></span>
+                            <span class="text-[9px] text-graytext font-bold uppercase flex items-center gap-1 group-hover:text-accent transition-colors">Vedi Video <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></span>
                         </div>
                         <h3 id="client-king-views-title" class="text-lg md:text-xl font-black text-white leading-snug tracking-tight mb-6 group-hover:text-accent transition-colors">Titolo Video</h3>
                         <div class="border-t border-white/5 pt-4 flex items-center justify-between">
@@ -233,7 +246,7 @@
                 </div>
             </section>
 
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative">
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
                 <div class="w-full max-w-md mx-auto flex flex-col justify-center h-full">
                     <div class="mb-5 text-center">
                         <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Massimo Coinvolgimento</span>
@@ -248,13 +261,13 @@
                         <h3 id="client-king-likes-title" class="text-lg md:text-xl font-black text-white leading-snug tracking-tight mb-6">Titolo Video</h3>
                         <div class="border-t border-white/5 pt-4 flex items-center justify-between">
                             <span class="text-xs text-graytext">Mi Piace Ricevuti</span>
-                            <div class="text-2xl font-black text-pink-400 tracking-tight flex items-center gap-1.5"><i data-lucide="heart" class="w-5 h-5 fill-pink-400"></i> <span class="counter-anim" id="client-stat-king-likes-count" data-target="0">0</span></div>
+                            <div class="text-2xl font-black text-pink-400 tracking-tight flex items-center gap-1.5"><svg class="w-5 h-5 fill-pink-400 text-pink-400" viewBox="0 0 24 24" fill="currentColor"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3c1.749 0 3.3 1.01 4.312 2.522C13.012 4.01 14.563 3 16.312 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg> <span class="counter-anim" id="client-stat-king-likes-count" data-target="0">0</span></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="snap-start min-h-[100dvh] h-auto w-full flex flex-col justify-start items-center p-6 pt-16 relative overflow-y-auto">
+            <section class="snap-start min-h-[100dvh] h-auto w-full flex flex-col justify-start items-center p-6 pt-16 relative z-10 overflow-y-auto">
                 <div class="w-full max-w-2xl mx-auto mb-8 text-center">
                     <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Catalogo Analitico</span>
                     <h2 class="text-2xl font-extrabold text-white tracking-tight">Riepilogo Dettagliato Mensile</h2>
