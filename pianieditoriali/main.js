@@ -94,47 +94,54 @@ function renderVideoTable(videos, isAdmin) {
     tbody.innerHTML = '';
     if (mobileContainer) mobileContainer.innerHTML = '';
 
-    // --- CALCOLO E RENDERING RECAP GRAFICO ---
+    // --- COSTRUZIONE RIPRODUZIONE DESIGN SCREENSHOT (HIDES 0) ---
     const statsContainer = document.getElementById('stats-dashboard');
     if (statsContainer) {
+        statsContainer.innerHTML = '';
+        
+        // Inizializza i contatori
         const counts = { "Video YT": 0, "Reel": 0, "TikTok": 0, "YT Shorts": 0, "Storia": 0, "Post": 0 };
         videos.forEach(v => {
             const fmt = v.type || "Video YT";
             if (counts[fmt] !== undefined) counts[fmt]++;
         });
 
+        // Configurazione estetica fedele ai tuoi badge ma in versione solida ad alto impatto
         const formatsConfig = [
-            { id: "Video YT", label: "Video YT", emoji: "📺", border: "hover:border-red-600/30", glow: "group-hover:bg-red-600/10" },
-            { id: "Reel", label: "Reel", emoji: "📸", border: "hover:border-pink-500/30", glow: "group-hover:bg-pink-500/10" },
-            { id: "TikTok", label: "TikTok", emoji: "🎵", border: "hover:border-cyan-500/30", glow: "group-hover:bg-cyan-500/10" },
-            { id: "YT Shorts", label: "YT Shorts", emoji: "🩳", border: "hover:border-red-500/30", glow: "group-hover:bg-red-500/10" },
-            { id: "Storia", label: "Storia", emoji: "⏳", border: "hover:border-amber-500/30", glow: "group-hover:bg-amber-500/10" },
-            { id: "Post", label: "Post", emoji: "🖼️", border: "hover:border-indigo-500/30", glow: "group-hover:bg-indigo-500/10" }
-          ];
+            { id: "Video YT", label: "Video YT", emoji: "📺", bg: "bg-red-600" },
+            { id: "Reel", label: "Reel", emoji: "📸", bg: "bg-pink-500" },
+            { id: "TikTok", label: "TikTok", emoji: "🎵", bg: "bg-cyan-500" },
+            { id: "YT Shorts", label: "YT Shorts", emoji: "🩳", bg: "bg-red-500" },
+            { id: "Storia", label: "Storia", emoji: "⏳", bg: "bg-amber-500" },
+            { id: "Post", label: "Post", emoji: "🖼️", bg: "bg-indigo-500" }
+        ];
 
-        statsContainer.innerHTML = '';
         formatsConfig.forEach(cfg => {
             const count = counts[cfg.id] || 0;
-            const card = document.createElement('div');
-            card.className = `glass-card p-4 rounded-xl flex flex-col justify-between relative overflow-hidden group transition-all duration-300 hover:-translate-y-0.5 ${cfg.border}`;
-            card.innerHTML = `
-                <div class="absolute -right-2 -bottom-2 text-4xl opacity-[0.02] group-hover:opacity-[0.07] transition-all duration-300 group-hover:scale-125 pointer-events-none">${cfg.emoji}</div>
-                <div class="flex items-center justify-between relative z-10">
-                    <span class="text-[10px] font-bold text-graytext uppercase tracking-widest">${cfg.label}</span>
-                    <span class="text-xs p-1 rounded-md bg-white/5 border border-white/5 filter grayscale group-hover:grayscale-0 transition-all">${cfg.emoji}</span>
-                </div>
-                <div class="mt-4 flex items-baseline gap-1 relative z-10">
-                    <span class="text-3xl font-black text-white tracking-tight">${count}</span>
-                    <span class="text-[9px] text-graytext font-medium uppercase tracking-wider">unità</span>
-                </div>
-                <div class="absolute inset-x-0 bottom-0 h-[2px] bg-transparent ${cfg.glow} transition-colors duration-300"></div>
-            `;
-            statsContainer.appendChild(card);
+            
+            // SE IL CONTATORE È 0, SALTA COMPLETAMENTE E NON MOSTRARE LA CARD
+            if (count > 0) {
+                const card = document.createElement('div');
+                // Struttura a blocchi solidi con angoli arrotondati e overflow protetto
+                card.className = `relative overflow-hidden rounded-2xl p-4 flex flex-col justify-between h-32 ${cfg.bg} shadow-lg`;
+                card.innerHTML = `
+                    <div class="inline-block bg-white text-black font-extrabold text-[11px] tracking-tight px-2.5 py-1 rounded-xl self-start uppercase select-none">
+                        ${cfg.label}
+                    </div>
+                    
+                    <div class="text-6xl font-black text-black/90 tracking-tighter leading-none select-none absolute bottom-2 left-3.5 z-10">
+                        ${count}
+                    </div>
+                    
+                    <div class="absolute right-2 bottom-0 text-5xl opacity-40 select-none pointer-events-none transform translate-y-1 scale-110">
+                        ${cfg.emoji}
+                    </div>
+                `;
+                statsContainer.appendChild(card);
+            }
         });
-        statsContainer.classList.remove('opacity-0');
     }
-    // ----------------------------------------
-
+    // -------------------------------------------------------------
     if (videos.length === 0) {
         const emptyStateHtml = `Nessun contenuto programmato al momento.`;
         tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-graytext font-light italic">${emptyStateHtml}</td></tr>`;
