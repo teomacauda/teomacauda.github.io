@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Configurazione Endpoint Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
     authDomain: "script-sito.firebaseapp.com",
@@ -21,18 +20,23 @@ const reportSlug = urlParams.get('r');
 
 let currentReportDocId = null;
 
-// ROUTER DI STATO E INTERFACCIA
 async function appRouter(user) {
-    document.getElementById('main-loader').classList.remove('hidden');
-    document.getElementById('view-client-report').classList.add('hidden');
-    document.getElementById('view-admin-catalog').classList.add('hidden');
+    const mainLoader = document.getElementById('main-loader');
+    const viewClientReport = document.getElementById('view-client-report');
+    const viewAdminCatalog = document.getElementById('view-admin-catalog');
+    const adminIndicator = document.getElementById('admin-logged-indicator');
+    const btnAdminGate = document.getElementById('btn-admin-gate');
+
+    if (mainLoader) mainLoader.classList.remove('hidden');
+    if (viewClientReport) viewClientReport.classList.add('hidden');
+    if (viewAdminCatalog) viewAdminCatalog.classList.add('hidden');
     
     if (user) {
-        document.getElementById('admin-logged-indicator').classList.remove('hidden');
-        document.getElementById('btn-admin-gate').innerHTML = `<i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-accent"></i> Console Archivio`;
+        if (adminIndicator) adminIndicator.classList.remove('hidden');
+        if (btnAdminGate) btnAdminGate.innerHTML = `<i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-accent"></i> Console Archivio`;
     } else {
-        document.getElementById('admin-logged-indicator').classList.add('hidden');
-        document.getElementById('btn-admin-gate').innerHTML = `<i data-lucide="lock" class="w-3.5 h-3.5 text-accent"></i> Area Admin`;
+        if (adminIndicator) adminIndicator.classList.add('hidden');
+        if (btnAdminGate) btnAdminGate.innerHTML = `<i data-lucide="lock" class="w-3.5 h-3.5 text-accent"></i> Area Admin`;
     }
 
     if (reportSlug) {
@@ -41,11 +45,12 @@ async function appRouter(user) {
         if (user) {
             await loadAdminCatalog();
         } else {
-            document.getElementById('main-loader').classList.add('hidden');
+            if (mainLoader) mainLoader.classList.add('hidden');
             openCustomStep('auth');
         }
     }
-    lucide.createIcons();
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function generateSlug(text) {
@@ -55,7 +60,6 @@ function generateSlug(text) {
         .replace(/\-\-+/g, '-');
 }
 
-// RENDERING LATO CLIENTE (HIDES EMPTY FIELDS)
 async function loadClientReport(slug) {
     try {
         const q = query(collection(db, "reportMensili"), where("slug", "==", slug));
@@ -63,83 +67,85 @@ async function loadClientReport(slug) {
         
         if (!snap.empty) {
             const docData = snap.docs[0].data();
-            document.getElementById('client-report-title').innerText = `Report: ${docData.clientName}`;
-            document.getElementById('report-period-badge').innerText = docData.reportMonth.toUpperCase();
-
-            // Macro Totali
-            const macroGrid = document.getElementById('macro-stats-grid');
-            macroGrid.innerHTML = '';
+            const reportTitle = document.getElementById('client-report-title');
+            const reportBadge = document.getElementById('report-period-badge');
             
-            if (docData.totalViews) {
-                macroGrid.innerHTML += `
-                    <div class="glass-card px-5 py-3 rounded-2xl border border-white/5 min-w-[120px] text-center md:text-left">
-                        <span class="block text-[9px] font-bold text-graytext uppercase tracking-wider select-none">VIEWS TOTALI</span>
-                        <span class="text-xl md:text-2xl font-black text-white tracking-tight">${Number(docData.totalViews).toLocaleString('it-IT')}</span>
-                    </div>
-                `;
-            }
-            if (docData.totalLikes) {
-                macroGrid.innerHTML += `
-                    <div class="glass-card px-5 py-3 rounded-2xl border border-white/5 min-w-[120px] text-center md:text-left">
-                        <span class="block text-[9px] font-bold text-graytext uppercase tracking-wider select-none">LIKE TOTALI</span>
-                        <span class="text-xl md:text-2xl font-black text-accent tracking-tight">${Number(docData.totalLikes).toLocaleString('it-IT')}</span>
-                    </div>
-                `;
-            }
+            if (reportTitle) reportTitle.innerText = `Report: ${docData.clientName}`;
+            if (reportBadge) reportBadge.innerText = docData.reportMonth.toUpperCase();
 
-            // Classifica Leaderboard Video
-            const leaderboardContainer = document.getElementById('leaderboard-container');
-            leaderboardContainer.innerHTML = '';
-
-            const sortedVideos = (docData.videos || []).sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
-
-            if (sortedVideos.length === 0) {
-                leaderboardContainer.innerHTML = `<div class="col-span-full text-center py-12 text-graytext italic font-light text-sm">Nessun contenuto inserito per questo mese.</div>`;
-            } else {
-                sortedVideos.forEach((video, index) => {
-                    const position = String(index + 1).padStart(2, '0');
-                    
-                    let platformIcon = '<i data-lucide="video" class="w-4 h-4"></i>';
-                    if (video.platform.includes("Instagram")) platformIcon = '<i data-lucide="instagram" class="w-4 h-4 text-pink-400"></i>';
-                    if (video.platform.includes("YouTube")) platformIcon = '<i data-lucide="youtube" class="w-4 h-4 text-red-500"></i>';
-                    if (video.platform === "TikTok") platformIcon = '<i data-lucide="music" class="w-4 h-4 text-cyan-400"></i>';
-
-                    // Generazione condizionale delle sole metriche compilate dall'admin
-                    let metricsBlockHtml = '';
-                    if (video.views) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Visualizzazioni</span><span class="font-bold text-white">${Number(video.views).toLocaleString('it-IT')}</span></div>`;
-                    if (video.likes) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Mi Piace</span><span class="font-bold text-accent">${Number(video.likes).toLocaleString('it-IT')}</span></div>`;
-                    if (video.comments) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Commenti</span><span class="font-medium text-white">${Number(video.comments).toLocaleString('it-IT')}</span></div>`;
-                    if (video.shares) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Condivisioni</span><span class="font-medium text-white">${Number(video.shares).toLocaleString('it-IT')}</span></div>`;
-                    if (video.reposts) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Repost / Salvataggi</span><span class="font-medium text-white">${Number(video.reposts).toLocaleString('it-IT')}</span></div>`;
-
-                    const videoCard = document.createElement('div');
-                    videoCard.className = "glass-card p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between group h-full min-h-[300px]";
-                    videoCard.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 px-2.5 py-1 rounded-md text-white">
-                                    ${platformIcon} <span>${video.platform}</span>
-                                </span>
-                                <span class="rank-number select-none">${position}</span>
-                            </div>
-                            <h3 class="text-lg font-extrabold text-white tracking-tight leading-snug mb-6 group-hover:text-accent transition-colors">${video.title || 'Contenuto Video'}</h3>
-                        </div>
-                        
-                        <div class="space-y-2 text-xs w-full mt-auto">
-                            ${metricsBlockHtml}
-                            ${video.url ? `
-                                <a href="${video.url}" target="_blank" class="w-full h-9 bg-white/5 hover:bg-accent hover:text-white rounded-xl flex items-center justify-center gap-2 font-bold tracking-tight text-graytext hover:text-white transition-all text-[11px] uppercase mt-4">
-                                    <span>Vedi Video Originale</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                </a>
-                            ` : ''}
+            const macroGrid = document.getElementById('macro-stats-grid');
+            if (macroGrid) {
+                macroGrid.innerHTML = '';
+                if (docData.totalViews) {
+                    macroGrid.innerHTML += `
+                        <div class="glass-card px-5 py-3 rounded-2xl border border-white/5 min-w-[120px] text-center md:text-left">
+                            <span class="block text-[9px] font-bold text-graytext uppercase tracking-wider select-none">VIEWS TOTALI</span>
+                            <span class="text-xl md:text-2xl font-black text-white tracking-tight">${Number(docData.totalViews).toLocaleString('it-IT')}</span>
                         </div>
                     `;
-                    leaderboardContainer.appendChild(videoCard);
-                });
+                }
+                if (docData.totalLikes) {
+                    macroGrid.innerHTML += `
+                        <div class="glass-card px-5 py-3 rounded-2xl border border-white/5 min-w-[120px] text-center md:text-left">
+                            <span class="block text-[9px] font-bold text-graytext uppercase tracking-wider select-none">LIKE TOTALI</span>
+                            <span class="text-xl md:text-2xl font-black text-accent tracking-tight">${Number(docData.totalLikes).toLocaleString('it-IT')}</span>
+                        </div>
+                    `;
+                }
             }
 
-            document.getElementById('main-loader').classList.add('hidden');
-            document.getElementById('view-client-report').classList.remove('hidden');
+            const leaderboardContainer = document.getElementById('leaderboard-container');
+            if (leaderboardContainer) {
+                leaderboardContainer.innerHTML = '';
+                const sortedVideos = (docData.videos || []).sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
+
+                if (sortedVideos.length === 0) {
+                    leaderboardContainer.innerHTML = `<div class="col-span-full text-center py-12 text-graytext italic font-light text-sm">Nessun contenuto inserito per questo mese.</div>`;
+                } else {
+                    sortedVideos.forEach((video, index) => {
+                        const position = String(index + 1).padStart(2, '0');
+                        let platformIcon = '<i data-lucide="video" class="w-4 h-4"></i>';
+                        if (video.platform.includes("Instagram")) platformIcon = '<i data-lucide="instagram" class="w-4 h-4 text-pink-400"></i>';
+                        if (video.platform.includes("YouTube")) platformIcon = '<i data-lucide="youtube" class="w-4 h-4 text-red-500"></i>';
+                        if (video.platform === "TikTok") platformIcon = '<i data-lucide="music" class="w-4 h-4 text-cyan-400"></i>';
+
+                        let metricsBlockHtml = '';
+                        if (video.views) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Visualizzazioni</span><span class="font-bold text-white">${Number(video.views).toLocaleString('it-IT')}</span></div>`;
+                        if (video.likes) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Mi Piace</span><span class="font-bold text-accent">${Number(video.likes).toLocaleString('it-IT')}</span></div>`;
+                        if (video.comments) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Commenti</span><span class="font-medium text-white">${Number(video.comments).toLocaleString('it-IT')}</span></div>`;
+                        if (video.shares) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Condivisioni</span><span class="font-medium text-white">${Number(video.shares).toLocaleString('it-IT')}</span></div>`;
+                        if (video.reposts) metricsBlockHtml += `<div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-graytext">Repost / Salvataggi</span><span class="font-medium text-white">${Number(video.reposts).toLocaleString('it-IT')}</span></div>`;
+
+                        const videoCard = document.createElement('div');
+                        videoCard.className = "glass-card p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between group h-full min-h-[300px]";
+                        videoCard.innerHTML = `
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <span class="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 px-2.5 py-1 rounded-md text-white">
+                                        ${platformIcon} <span>${video.platform}</span>
+                                    </span>
+                                    <span class="rank-number select-none">${position}</span>
+                                </div>
+                                <h3 class="text-lg font-extrabold text-white tracking-tight leading-snug mb-6 group-hover:text-accent transition-colors">${video.title || 'Contenuto Video'}</h3>
+                            </div>
+                            <div class="space-y-2 text-xs w-full mt-auto">
+                                ${metricsBlockHtml}
+                                ${video.url ? `
+                                    <a href="${video.url}" target="_blank" class="w-full h-9 bg-white/5 hover:bg-accent hover:text-white rounded-xl flex items-center justify-center gap-2 font-bold tracking-tight text-graytext hover:text-white transition-all text-[11px] uppercase mt-4">
+                                        <span>Vedi Video Originale</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        `;
+                        leaderboardContainer.appendChild(videoCard);
+                    });
+                }
+            }
+
+            const mainLoader = document.getElementById('main-loader');
+            const viewClientReport = document.getElementById('view-client-report');
+            if (mainLoader) mainLoader.classList.add('hidden');
+            if (viewClientReport) viewClientReport.classList.remove('hidden');
         } else {
             window.location.href = './';
         }
@@ -148,12 +154,12 @@ async function loadClientReport(slug) {
     }
 }
 
-// CARICA CATALOGO GENERALE AMMINISTRATORE
 async function loadAdminCatalog() {
     try {
         const q = query(collection(db, "reportMensili"), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         const grid = document.getElementById('report-grid');
+        if (!grid) return;
         grid.innerHTML = '';
 
         snap.forEach((reportDoc) => {
@@ -185,9 +191,8 @@ async function loadAdminCatalog() {
             grid.appendChild(card);
         });
 
-        // Eventi pulsanti dinamici catalogo
         document.querySelectorAll('.btn-delete-report').forEach(b => {
-            b.addEventListener('click', async (e) => {
+            b.addEventListener('click', async () => {
                 if(confirm("Eliminare definitivamente questo report?")) {
                     await deleteDoc(doc(db, "reportMensili", b.getAttribute('data-id')));
                     loadAdminCatalog();
@@ -206,17 +211,19 @@ async function loadAdminCatalog() {
             b.addEventListener('click', () => openEditReportModal(b.getAttribute('data-id')));
         });
 
-        document.getElementById('main-loader').classList.add('hidden');
-        document.getElementById('view-admin-catalog').classList.remove('hidden');
-        lucide.createIcons();
+        const mainLoader = document.getElementById('main-loader');
+        const viewAdminCatalog = document.getElementById('view-admin-catalog');
+        if (mainLoader) mainLoader.classList.add('hidden');
+        if (viewAdminCatalog) viewAdminCatalog.classList.remove('hidden');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     } catch (err) {
         console.error(err);
     }
 }
 
-// COMPILATORE RIGHE INPUT VIDEO DINAMICHE
 function addVideoRow(data = {}) {
     const container = document.getElementById('dynamic-video-rows');
+    if (!container) return;
     const row = document.createElement('div');
     row.className = "video-row p-4 rounded-xl border border-white/5 bg-white/[0.01] relative flex flex-col gap-3 pt-8";
     row.innerHTML = `
@@ -266,11 +273,10 @@ function addVideoRow(data = {}) {
     `;
     container.appendChild(row);
     row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// INSERIMENTO E AGGIORNAMENTO DB
-document.getElementById('form-report').addEventListener('submit', async (e) => {
+document.getElementById('form-report')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const clientName = document.getElementById('rep-client-name').value;
@@ -317,12 +323,15 @@ document.getElementById('form-report').addEventListener('submit', async (e) => {
     }
 });
 
-// APERTURA MODALE EDITING
 async function openEditReportModal(docId) {
     currentReportDocId = docId;
-    document.getElementById('form-report').reset();
-    document.getElementById('dynamic-video-rows').innerHTML = '';
-    document.getElementById('report-form-title').innerHTML = 'Modifica <span class="text-accent">Report</span>';
+    const formReport = document.getElementById('form-report');
+    const videoRowsContainer = document.getElementById('dynamic-video-rows');
+    const formTitle = document.getElementById('report-form-title');
+
+    if (formReport) formReport.reset();
+    if (videoRowsContainer) videoRowsContainer.innerHTML = '';
+    if (formTitle) formTitle.innerHTML = 'Modifica <span class="text-accent">Report</span>';
 
     try {
         const snap = await getDoc(doc(db, "reportMensili", docId));
@@ -341,60 +350,45 @@ async function openEditReportModal(docId) {
     }
 }
 
-// CONTROL STEP INTERNO MODALI
 function openCustomStep(step) {
-    document.getElementById('modal-step-auth').classList.add('hidden');
-    document.getElementById('modal-step-report-form').classList.add('hidden');
+    const modalStepAuth = document.getElementById('modal-step-auth');
+    const modalStepReport = document.getElementById('modal-step-report-form');
+    
+    if (modalStepAuth) modalStepAuth.classList.add('hidden');
+    if (modalStepReport) modalStepReport.classList.add('hidden');
 
     if (!auth.currentUser) {
-        document.getElementById('modal-step-auth').classList.remove('hidden');
+        if (modalStepAuth) modalStepAuth.classList.remove('hidden');
     } else if (step === 'report-form') {
-        document.getElementById('modal-step-report-form').classList.remove('hidden');
+        if (modalStepReport) modalStepReport.classList.remove('hidden');
     }
     
     const modal = document.getElementById('system-modal');
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
+    if (modal) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+        const content = modal.querySelector('.glass-modal');
+        if (content) {
+            content.classList.remove('translate-y-10');
+            content.classList.add('translate-y-0');
+        }
+    }
 }
 
 function closeSystemModal() {
     const modal = document.getElementById('system-modal');
-    modal.classList.add('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
+    if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100', 'pointer-events-auto');
+        const content = modal.querySelector('.glass-modal');
+        if (content) {
+            content.classList.remove('translate-y-0');
+            content.classList.add('translate-y-10');
+        }
+    }
 }
 
-// AUTENTICAZIONE
-document.getElementById('form-login').addEventListener('submit', async (e) => {
+document.getElementById('form-login')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     document.getElementById('auth-error').classList.add('hidden');
-    document.getElementById('login-loader').classList.remove('hidden');
-
-    try {
-        await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value);
-        closeSystemModal();
-    } catch (err) {
-        document.getElementById('login-loader').classList.add('hidden');
-        document.getElementById('auth-error').classList.remove('hidden');
-    }
-});
-
-// LISTENERS INTERFACCIA STATICI
-document.getElementById('btn-admin-gate').addEventListener('click', () => {
-    if(auth.currentUser && reportSlug) {
-        window.location.href = './';
-    } else {
-        openCustomStep('report-form');
-    }
-});
-document.getElementById('btn-create-report').addEventListener('click', () => {
-    currentReportDocId = null;
-    document.getElementById('form-report').reset();
-    document.getElementById('dynamic-video-rows').innerHTML = '';
-    document.getElementById('report-form-title').innerHTML = 'Crea <span class="text-accent">Nuovo Report</span>';
-    openCustomStep('report-form');
-});
-document.getElementById('btn-add-video-row').addEventListener('click', () => addVideoRow());
-document.getElementById('btn-close-modal').addEventListener('click', closeSystemModal);
-document.getElementById('modal-overlay').addEventListener('click', closeSystemModal);
-
-onAuthStateChanged(auth, appRouter);
+    document.getElementById('login-loader').classList.remove('
