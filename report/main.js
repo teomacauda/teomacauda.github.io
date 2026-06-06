@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -27,13 +28,38 @@ const adminIndicator = document.getElementById('admin-indicator');
 
 let currentReportDocId = null;
 let editingItemIndex = null;
-let activeAdminSort = 'global'; // 'global' o 'grouped'
+let activeAdminSort = 'global'; 
+
+// Codice Vettoriale SVG Nativo Strutturato (Previene blocchi cross-device o mancate librerie)
+const inlineVectors = {
+    instagram: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
+    tiktok: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>`,
+    youtube: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17z"/><polygon points="10 15 15 12 10 9"/></svg>`,
+    image: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
+    clock: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    pencil: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
+    trash: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
+    eye: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    heart: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`
+};
 
 function generateSlug(text) {
     return text.toString().toLowerCase().trim()
         .replace(/\s+/g, '-')
         .replace(/[^\w\-]+/g, '')
         .replace(/\-\-+/g, '-');
+}
+
+// Funzione helper per iniettare i tag grafici personalizzati in stile Badge
+function getPlatformTagHtml(type) {
+    let customStyle = "bg-white/5 border-white/10 text-white";
+    if (type === "Reel") customStyle = "bg-pink-500/10 border-pink-500/20 text-pink-400";
+    if (type === "Post") customStyle = "bg-indigo-500/10 border-indigo-500/20 text-indigo-400";
+    if (type === "Storia") customStyle = "bg-amber-500/10 border-amber-500/20 text-amber-400";
+    if (type === "Video YT" || type === "YT Shorts") customStyle = "bg-red-500/10 border-red-500/20 text-red-400";
+    if (type === "TikTok") customStyle = "bg-cyan-500/10 border-cyan-500/20 text-cyan-400";
+
+    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${customStyle}">${type}</span>`;
 }
 
 // Router Manager Context
@@ -58,8 +84,8 @@ async function initReportRouter(user) {
                 currentReportDocId = docSnapshot.id;
 
                 if (user) {
-                    // Vista Admin Dettaglio
                     document.getElementById('report-title-display').innerText = reportData.title;
+                    document.getElementById('client-avatar-url').value = reportData.clientAvatarUrl || '';
                     document.getElementById('followers-instagram').value = reportData.followersIg || 0;
                     document.getElementById('followers-tiktok').value = reportData.followersTt || 0;
                     document.getElementById('followers-youtube').value = reportData.followersYt || 0;
@@ -68,7 +94,6 @@ async function initReportRouter(user) {
                     loaderEl.classList.add('hidden');
                     adminDetailSection.classList.remove('hidden');
                 } else {
-                    // Vista Cliente Scrollytelling Premium
                     document.getElementById('main-footer').classList.add('hidden');
                     document.getElementById('navbar').classList.add('hidden');
                     
@@ -140,7 +165,7 @@ async function loadAdminCatalogGrid() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// Logica Render Layout Admin (Global vs Grouped) con Condizione Zero Spazzatura
+// Logica Render Layout Admin (Con centratura assoluta icone e Tag Social)
 function renderAdminContentsLayout(items) {
     const container = document.getElementById('admin-report-contents-layout');
     container.innerHTML = '';
@@ -151,11 +176,9 @@ function renderAdminContentsLayout(items) {
     }
 
     if (activeAdminSort === 'global') {
-        // Classifica Totale Ordine Decrescente di Views
         const sortedItems = [...items].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
         container.appendChild(buildAdminTableBlock("Classifica Globale Performance", sortedItems));
     } else {
-        // Raggruppati per Piattaforma - Se non presenti, scompaiono totalmente dal DOM
         const platforms = ["Reel", "Post", "Storia", "Video YT", "YT Shorts", "TikTok"];
         platforms.forEach(platform => {
             const filtered = items.filter(i => i.type === platform)
@@ -165,7 +188,6 @@ function renderAdminContentsLayout(items) {
             }
         });
     }
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function buildAdminTableBlock(title, sortedItems, originalItems = null) {
@@ -173,17 +195,16 @@ function buildAdminTableBlock(title, sortedItems, originalItems = null) {
     block.className = "glass-card p-5 rounded-2xl border border-white/5 overflow-hidden";
     
     let rowsHtml = sortedItems.map(item => {
-        // Trova l'indice originario per la modifica/eliminazione sicura
         const originalIndex = originalItems ? originalItems.findIndex(orig => orig.title === item.title && orig.views === item.views) : sortedItems.indexOf(item);
         return `
             <tr class="border-b border-white/5 hover:bg-white/[0.01] transition-all">
                 <td class="p-4 font-bold text-white text-sm">${item.title}</td>
-                <td class="p-4 text-xs text-accent font-semibold">${item.type}</td>
+                <td class="p-4 text-xs">${getPlatformTagHtml(item.type)}</td>
                 <td class="p-4 text-sm text-white font-medium">${parseInt(item.views).toLocaleString('it-IT')}</td>
                 <td class="p-4 text-sm text-graytext">${parseInt(item.likes).toLocaleString('it-IT')}</td>
-                <td class="p-4 text-right space-x-2">
-                    <button data-index="${originalIndex}" class="btn-item-edit h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-lg border border-white/5 transition-all"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                    <button data-index="${originalIndex}" class="btn-item-delete h-8 w-8 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg border border-red-500/10 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
+                    <button data-index="${originalIndex}" class="btn-item-edit inline-flex items-center justify-center h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent text-graytext rounded-lg border border-white/5 transition-all">${inlineVectors.pencil}</button>
+                    <button data-index="${originalIndex}" class="btn-item-delete inline-flex items-center justify-center h-8 w-8 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg border border-red-500/10 transition-all">${inlineVectors.trash}</button>
                 </td>
             </tr>
         `;
@@ -207,7 +228,6 @@ function buildAdminTableBlock(title, sortedItems, originalItems = null) {
         </div>
     `;
 
-    // Event Handlers per azioni interni alla tabella generata
     block.querySelectorAll('.btn-item-edit').forEach(btn => {
         btn.addEventListener('click', () => {
             const idx = btn.getAttribute('data-index');
@@ -231,14 +251,27 @@ function buildAdminTableBlock(title, sortedItems, originalItems = null) {
     return block;
 }
 
-// ================= RENDER LOGICA CLIENT SCROLLYTELLING CON CALCOLI AUTOMATICI =================
+// ================= RENDER LOGICA CLIENT SCROLLYTELLING CON VETTORI INLINE =================
 function renderClientReportView(data) {
     const items = data.items || [];
     
-    // 1. Configurazione Titoli Copertina
     document.getElementById('client-hero-title').innerText = data.title;
 
-    // 2. Calcolo Follower Totali e Gestione Visibilità Righe Condizionali Canali
+    // Gestione Immagine Profilo Cliente
+    const wrapperAvatar = document.getElementById('client-avatar-wrapper');
+    const imgAvatar = document.getElementById('client-avatar-img');
+    if (data.clientAvatarUrl && data.clientAvatarUrl.trim() !== '') {
+        imgAvatar.src = data.clientAvatarUrl.trim();
+        wrapperAvatar.classList.remove('hidden');
+    } else {
+        wrapperAvatar.classList.add('hidden');
+    }
+
+    // Iniezione Vettori Nativi sulle righe fisse dei follower per evitare l'uso di Lucide
+    document.querySelector('.id-svg-ig').innerHTML = inlineVectors.instagram;
+    document.querySelector('.id-svg-tt').innerHTML = inlineVectors.tiktok;
+    document.querySelector('.id-svg-yt').innerHTML = inlineVectors.youtube;
+
     const igF = parseInt(data.followersIg) || 0;
     const ttF = parseInt(data.followersTt) || 0;
     const ytF = parseInt(data.followersYt) || 0;
@@ -249,30 +282,26 @@ function renderClientReportView(data) {
     if(igF > 0) {
         document.getElementById('row-client-ig-followers').classList.remove('hidden');
         document.getElementById('client-stat-ig-followers').setAttribute('data-target', igF);
-    }
+    } else { document.getElementById('row-client-ig-followers').classList.add('hidden'); }
+    
     if(ttF > 0) {
         document.getElementById('row-client-tt-followers').classList.remove('hidden');
         document.getElementById('client-stat-tt-followers').setAttribute('data-target', ttF);
-    }
+    } else { document.getElementById('row-client-tt-followers').classList.add('hidden'); }
+    
     if(ytF > 0) {
         document.getElementById('row-client-yt-followers').classList.remove('hidden');
         document.getElementById('client-stat-yt-followers').setAttribute('data-target', ytF);
-    }
+    } else { document.getElementById('row-client-yt-followers').classList.add('hidden'); }
 
-    // Se non ci sono contenuti inseriti, bypassiamo i calcoli di Re o Campioni
     if(items.length === 0) return;
 
-    // Mappatura Icone Lucide
     const iconMap = {
-        'Reel': '<i data-lucide="instagram" class="w-4 h-4 text-pink-400"></i>',
-        'Post': '<i data-lucide="image" class="w-4 h-4 text-indigo-400"></i>',
-        'Storia': '<i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>',
-        'Video YT': '<i data-lucide="youtube" class="w-4 h-4 text-red-500"></i>',
-        'YT Shorts': '<i data-lucide="video" class="w-4 h-4 text-red-400"></i>',
-        'TikTok': '<i data-lucide="music" class="w-4 h-4 text-cyan-400"></i>'
+        'Reel': inlineVectors.instagram, 'Post': inlineVectors.image, 'Storia': inlineVectors.clock,
+        'Video YT': inlineVectors.youtube, 'YT Shorts': inlineVectors.video, 'TikTok': inlineVectors.tiktok
     };
 
-    // 3. Elaborazione Automatica Video con più VIEWS
+    // Video con più VIEWS
     const kingViews = [...items].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0))[0];
     document.getElementById('client-king-views-title').innerText = kingViews.title;
     document.getElementById('client-king-views-platform').innerText = kingViews.type;
@@ -280,14 +309,14 @@ function renderClientReportView(data) {
     document.getElementById('client-king-views-icon').innerHTML = iconMap[kingViews.type] || '';
     document.getElementById('client-views-king-link').href = kingViews.link || '#';
 
-    // 4. Elaborazione Automatica Video con più LIKE
+    // Video con più LIKE
     const kingLikes = [...items].sort((a, b) => (parseInt(b.likes) || 0) - (parseInt(a.likes) || 0))[0];
     document.getElementById('client-king-likes-title').innerText = kingLikes.title;
     document.getElementById('client-king-likes-platform').innerText = kingLikes.type;
     document.getElementById('client-stat-king-likes-count').setAttribute('data-target', kingLikes.likes);
     document.getElementById('client-king-likes-icon').innerHTML = iconMap[kingLikes.type] || '';
 
-    // 5. Generazione Slide Finale di Dettaglio Strutturato (Solo Piattaforme Esistenti)
+    // Slide Finale Breakdown Analitico
     const breakdownLayout = document.getElementById('client-full-breakdown-layout');
     breakdownLayout.innerHTML = '';
 
@@ -309,8 +338,8 @@ function renderClientReportView(data) {
                 rowItem.innerHTML = `
                     <div class="text-sm font-bold text-white tracking-tight">${item.title}</div>
                     <div class="flex items-center gap-4 text-xs text-graytext mt-2 border-t border-white/5 pt-2">
-                        <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5 text-accent"></i> <b>${parseInt(item.views).toLocaleString('it-IT')}</b> views</span>
-                        <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3.5 h-3.5 text-pink-400"></i> <b>${parseInt(item.likes).toLocaleString('it-IT')}</b> like</span>
+                        <span class="flex items-center gap-1">${inlineVectors.eye} <b>${parseInt(item.views).toLocaleString('it-IT')}</b> views</span>
+                        <span class="flex items-center gap-1">${inlineVectors.heart} <b>${parseInt(item.likes).toLocaleString('it-IT')}</b> like</span>
                     </div>
                 `;
                 cardWrap.appendChild(rowItem);
@@ -318,13 +347,12 @@ function renderClientReportView(data) {
             breakdownLayout.appendChild(cardWrap);
         }
     });
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// ================= TIMING COUNTER INTERSECTION OBSERVER (TRIGGER AL WORD-OF-SIGHT) =================
+// ================= TIMING COUNTER INTERSECTION OBSERVER =================
 function initIntersectionCounters() {
     const targetCounters = document.querySelectorAll('.counter-anim');
-    const config = { root: null, threshold: 0.15 };
+    const config = { root: null, threshold: 0.10 };
 
     const runObserver = new IntersectionObserver((entries, self) => {
         entries.forEach(entry => {
@@ -332,7 +360,7 @@ function initIntersectionCounters() {
                 const element = entry.target;
                 const limitValue = parseInt(element.getAttribute('data-target'), 10) || 0;
                 triggerSmoothCount(element, limitValue);
-                self.unobserve(element); // Stoppa ascolto ad animazione eseguita
+                self.unobserve(element); 
             }
         });
     }, config);
@@ -342,14 +370,12 @@ function initIntersectionCounters() {
 
 function triggerSmoothCount(element, target) {
     let start = 0;
-    const animationDuration = 1600; // Fluidità in 1.6s
+    const animationDuration = 1400; 
     const launchTime = performance.now();
 
     function flow(now) {
         const dynamicTime = now - launchTime;
         const timelineProgress = Math.min(dynamicTime / animationDuration, 1);
-        
-        // Easing quadratica out
         const easeOutEffect = timelineProgress * (2 - timelineProgress);
         const intermediateVal = Math.floor(easeOutEffect * target);
         
@@ -419,7 +445,6 @@ window.closeAddItemModal = () => {
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
 };
 
-// Listeners dei Form e dei Pulsanti Controllo Sort
 document.getElementById('sort-btn-global').addEventListener('click', () => {
     activeAdminSort = 'global';
     document.getElementById('sort-btn-global').className = "px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white";
@@ -446,7 +471,7 @@ document.getElementById('form-create-report').addEventListener('submit', async (
     e.preventDefault();
     const tVal = document.getElementById('report-client-name').value;
     const slug = generateSlug(tVal) + "-" + Math.floor(1000 + Math.random() * 9000);
-    await addDoc(collection(db, "reportMensili"), { title: tVal, slug: slug, items: [], followersIg: 0, followersTt: 0, followersYt: 0 });
+    await addDoc(collection(db, "reportMensili"), { title: tVal, slug: slug, items: [], followersIg: 0, followersTt: 0, followersYt: 0, clientAvatarUrl: "" });
     closeCreateReportModal();
     loadAdminCatalogGrid();
 });
@@ -483,11 +508,13 @@ document.getElementById('form-report-item').addEventListener('submit', async (e)
 document.getElementById('form-report-followers').addEventListener('submit', async (e) => {
     e.preventDefault();
     await updateDoc(doc(db, "reportMensili", currentReportDocId), {
+        clientAvatarUrl: document.getElementById('client-avatar-url').value.trim(),
         followersIg: parseInt(document.getElementById('followers-instagram').value) || 0,
         followersTt: parseInt(document.getElementById('followers-tiktok').value) || 0,
         followersYt: parseInt(document.getElementById('followers-youtube').value) || 0
     });
-    alert("Metriche follower salvate correttamente nel database.");
+    alert("Configurazione del cliente salvata correttamente nel database.");
+    initReportRouter(auth.currentUser);
 });
 
 document.getElementById('btn-clear-all').addEventListener('click', async () => {
@@ -502,7 +529,6 @@ document.getElementById('btn-copy-link').addEventListener('click', () => {
     navigator.clipboard.writeText(link).then(() => alert("Link cliente copiato nei appunti."));
 });
 
-// Personalizzazione Titolo Report real-time
 document.getElementById('btn-edit-report-title').addEventListener('click', () => {
     document.getElementById('edit-title-field-container').classList.remove('hidden');
     document.getElementById('input-report-title').value = document.getElementById('report-title-display').innerText;
@@ -517,7 +543,6 @@ document.getElementById('btn-save-report-title').addEventListener('click', async
     document.getElementById('edit-title-field-container').classList.add('hidden');
 });
 
-// Monitoraggio Stato Auth
 onAuthStateChanged(auth, (user) => {
     initReportRouter(user);
 });
