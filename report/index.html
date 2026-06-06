@@ -40,64 +40,6 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* ================= VERA CONFIGURAZIONE STAMPA PDF PREMIUM ================= */
-        @media print {
-            /* 1. Forza il browser a stampare lo sfondo nero e tutti i gradienti radiali */
-            html, body { 
-                background-color: #000000 !important; 
-                color: #ffffff !important;
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important;
-                overflow: visible !important;
-                height: auto !important;
-            }
-            
-            /* 2. Disattiva lo scroll-snap e srotola l'applicazione */
-            #section-client-report-view { 
-                position: relative !important;
-                display: block !important; 
-                height: auto !important; 
-                min-height: auto !important;
-                overflow: visible !important; 
-                snap-type: none !important;
-            }
-
-            /* 3. Mantiene l'effetto glow radiale su ogni foglio stampato */
-            .client-bg-glow { 
-                display: block !important; 
-                position: absolute !important; 
-                inset: 0 !important; 
-                z-index: 0 !important;
-                background: radial-gradient(circle at 50% 50%, rgba(255, 122, 0, 0.14) 0%, rgba(255, 122, 0, 0.02) 65%, rgba(0, 0, 0, 0) 100%) !important;
-            }
-
-            /* 4. Impone ad ogni slide di occupare una pagina PDF esatta senza spezzarsi a metà */
-            #section-client-report-view section { 
-                page-break-after: always !important; 
-                page-break-inside: avoid !important; 
-                height: 100vh !important; 
-                display: flex !important; 
-                flex-direction: column !important;
-                justify-content: center !important; 
-                align-items: center !important; 
-                position: relative !important;
-                box-sizing: border-box !important;
-            }
-
-            /* 5. Mantiene la visibilità delle card e dei badge grafici */
-            .glass-card { 
-                background: rgba(255, 255, 255, 0.04) !important; 
-                border: 1px solid rgba(255, 255, 255, 0.12) !important; 
-                box-shadow: none !important;
-            }
-
-            /* 6. Elimina elementi superflui dall'output finale del PDF */
-            .btn-print-trigger, .animate-bounce, #main-footer, #navbar { 
-                display: none !important; 
-            }
-        }
-        }
     </style>
 </head>
 <body class="antialiased">
@@ -397,12 +339,6 @@
                 
                 <div id="client-full-breakdown-layout" class="w-full max-w-2xl space-y-8 pb-4"></div>
 
-                <div class="w-full max-w-2xl pb-16 pt-4 text-center btn-print-trigger">
-                    <button onclick="window.print()" class="h-12 px-6 bg-white/5 border border-white/10 hover:bg-accent hover:border-accentHover text-white text-xs font-bold rounded-2xl transition-all duration-300 shadow-md flex items-center justify-center gap-2 mx-auto">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                        Scarica Report Completo (PDF)
-                    </button>
-                </div>
             </section>
         </div>
     </main>
