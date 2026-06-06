@@ -76,10 +76,10 @@ async function initRouter(user) {
             console.error("Errore:", error);
             window.location.href = './';
         }
-    } else {
+          } else {
         if (user) {
             loadAdminCatalog();
-                } else {
+        } else {
             loaderEl.classList.add('hidden');
             lockSection.classList.remove('hidden');
             if (typeof lucide !== 'undefined') lucide.createIcons();
