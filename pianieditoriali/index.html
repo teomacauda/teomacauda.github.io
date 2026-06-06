@@ -76,7 +76,7 @@
                 <i data-lucide="lock" class="w-7 h-7 text-white"></i>
             </div>
             <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Piani Editoriali</h1>
-            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link diretto cliente o credenziali amministratore.</p>
+            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link directo cliente o credenziali amministratore.</p>
             <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
                 <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
             </button>
@@ -88,7 +88,7 @@
                 <p class="text-graytext text-sm font-light mt-1">Seleziona un cliente o creane uno nuovo da configurare.</p>
             </div>
             <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                </div>
+            </div>
         </div>
 
         <div id="section-client-plan" class="hidden">
@@ -106,37 +106,45 @@
                 </div>
             </div>
 
-                                   <div class="mb-10 text-left">
+            <div class="mb-10 text-left">
                 <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-3">Content Strategy</span>
-                <h1 id="client-title" class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Piano Editoriale</h1>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h1 id="client-title" class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Piano Editoriale</h1>
+                    <button id="btn-edit-title" class="hidden h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-xl flex items-center justify-center text-graytext hover:text-white transition-all" title="Modifica Titolo Piano">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <div id="edit-title-container" class="hidden mt-4 flex items-center gap-2 max-w-md">
+                    <input type="text" id="input-client-title" class="h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent flex-1">
+                    <button id="btn-save-title" class="h-11 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-xl flex items-center justify-center transition-all">Salva</button>
+                    <button id="btn-cancel-title" class="h-11 px-3 bg-white/5 text-graytext rounded-xl text-xs hover:text-white flex items-center justify-center">Annulla</button>
+                </div>
                 <p class="text-graytext text-sm font-light mt-1">Tracciamento della produzione e del rilascio dei contenuti del brand.</p>
             </div>
 
-            <div id="stats-dashboard" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-                </div>
-
-            <div id="stats-dashboard" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10 opacity-0 transition-opacity duration-500">
-                </div>
+            <div id="stats-dashboard" class="flex flex-wrap justify-center items-center gap-3 mb-10">
+            </div>
 
             <div class="hidden md:block w-full overflow-x-auto glass-card rounded-2xl border border-white/5 no-scrollbar">
-    <table class="w-full text-left border-collapse min-w-[800px]">
-        <thead>
-            <tr class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
-                <th class="p-5">Stato</th>
-                <th class="p-5">Formato</th>
-                <th class="p-5">Contenuto / Concept</th>
-                <th class="p-5">Data Pubblicazione</th>
-                <th class="p-5">Note / Briefing</th>
-                <th class="p-5 text-right">Azioni / Script</th>
-            </tr>
-        </thead>
-        <tbody id="video-table-body" class="text-sm divide-y divide-white/5">
-        </tbody>
-    </table>
-</div>
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
+                            <th class="p-5">Stato</th>
+                            <th class="p-5">Formato</th>
+                            <th class="p-5">Contenuto / Concept</th>
+                            <th class="p-5">Data Pubblicazione</th>
+                            <th class="p-5">Note / Briefing</th>
+                            <th class="p-5 text-right">Azioni / Script</th>
+                        </tr>
+                    </thead>
+                    <tbody id="video-table-body" class="text-sm divide-y divide-white/5">
+                    </tbody>
+                </table>
+            </div>
 
-<div id="video-cards-container" class="block md:hidden space-y-4">
-</div>
+            <div id="video-cards-container" class="block md:hidden space-y-4">
+            </div>
         </div>
     </main>
 
