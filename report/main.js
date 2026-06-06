@@ -89,6 +89,12 @@ async function initReportRouter(user) {
                     document.getElementById('followers-tiktok').value = reportData.followersTt || 0;
                     document.getElementById('followers-youtube').value = reportData.followersYt || 0;
                     
+                    // Popolamento dei nuovi campi KPI opzionali nell'interfaccia admin
+                    document.getElementById('kpi-reached-count').value = reportData.kpiReachedCount || 0;
+                    document.getElementById('kpi-reached-pct').value = reportData.kpiReachedPct || '';
+                    document.getElementById('kpi-visits-count').value = reportData.kpiVisitsCount || 0;
+                    document.getElementById('kpi-visits-pct').value = reportData.kpiVisitsPct || '';
+                    
                     renderAdminContentsLayout(reportData.items || []);
                     loaderEl.classList.add('hidden');
                     adminDetailSection.classList.remove('hidden');
@@ -116,7 +122,6 @@ async function initReportRouter(user) {
             lockSection.classList.remove('hidden');
         }
     }
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // Catalogo Iniziale dei Report Creati
@@ -139,7 +144,7 @@ async function loadAdminCatalogGrid() {
                     </div>
                     <div class="flex items-center justify-between mt-4">
                         <button onclick="window.location.search = '?v=${data.slug}'" class="h-8 px-3 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg transition-all">Apri Report</button>
-                        <button data-id="${docSnap.id}" class="btn-delete-report h-8 w-8 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg flex items-center justify-center transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        <button data-id="${docSnap.id}" class="btn-delete-report h-8 w-8 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg flex items-center justify-center transition-all">${inlineVectors.trash}</button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -161,7 +166,6 @@ async function loadAdminCatalogGrid() {
     }
     loaderEl.classList.add('hidden');
     adminCatalogSection.classList.remove('hidden');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function renderAdminContentsLayout(items) {
@@ -249,11 +253,13 @@ function buildAdminTableBlock(title, sortedItems, originalItems = null) {
     return block;
 }
 
+// ================= RENDER LOGICA CLIENT SCROLLYTELLING COMPLETA =================
 function renderClientReportView(data) {
     const items = data.items || [];
     
     document.getElementById('client-hero-title').innerText = data.title;
 
+    // Foto Profilo Cliente Orizzontale/Verticale Quadrata
     const wrapperAvatar = document.getElementById('client-avatar-wrapper');
     const imgAvatar = document.getElementById('client-avatar-img');
     if (data.clientAvatarUrl && data.clientAvatarUrl.trim() !== '') {
@@ -263,31 +269,64 @@ function renderClientReportView(data) {
         wrapperAvatar.classList.add('hidden');
     }
 
+    // Iniezione Vettori Icone Righe fissate
     document.querySelector('.id-svg-ig').innerHTML = inlineVectors.instagram;
     document.querySelector('.id-svg-tt').innerHTML = inlineVectors.tiktok;
     document.querySelector('.id-svg-yt').innerHTML = inlineVectors.youtube;
 
+    // Elaborazione Logica Follower Condizionale (Niente zeri o vuoti)
     const igF = parseInt(data.followersIg) || 0;
     const ttF = parseInt(data.followersTt) || 0;
     const ytF = parseInt(data.followersYt) || 0;
     const totalF = igF + ttF + ytF;
 
-    document.getElementById('client-stat-total-followers').setAttribute('data-target', totalF);
-    
-    if(igF > 0) {
-        document.getElementById('row-client-ig-followers').classList.remove('hidden');
-        document.getElementById('client-stat-ig-followers').setAttribute('data-target', igF);
-    } else { document.getElementById('row-client-ig-followers').classList.add('hidden'); }
-    
-    if(ttF > 0) {
-        document.getElementById('row-client-tt-followers').classList.remove('hidden');
-        document.getElementById('client-stat-tt-followers').setAttribute('data-target', ttF);
-    } else { document.getElementById('row-client-tt-followers').classList.add('hidden'); }
-    
-    if(ytF > 0) {
-        document.getElementById('row-client-yt-followers').classList.remove('hidden');
-        document.getElementById('client-stat-yt-followers').setAttribute('data-target', ytF);
-    } else { document.getElementById('row-client-yt-followers').classList.add('hidden'); }
+    const slideFollowers = document.getElementById('slide-client-followers');
+    if (totalF > 0) {
+        slideFollowers.classList.remove('hidden');
+        document.getElementById('client-stat-total-followers').setAttribute('data-target', totalF);
+        
+        if(igF > 0) {
+            document.getElementById('row-client-ig-followers').classList.remove('hidden');
+            document.getElementById('client-stat-ig-followers').setAttribute('data-target', igF);
+        } else { document.getElementById('row-client-ig-followers').classList.add('hidden'); }
+        
+        if(ttF > 0) {
+            document.getElementById('row-client-tt-followers').classList.remove('hidden');
+            document.getElementById('client-stat-tt-followers').setAttribute('data-target', ttF);
+        } else { document.getElementById('row-client-tt-followers').classList.add('hidden'); }
+        
+        if(ytF > 0) {
+            document.getElementById('row-client-yt-followers').classList.remove('hidden');
+            document.getElementById('client-stat-yt-followers').setAttribute('data-target', ytF);
+        } else { document.getElementById('row-client-yt-followers').classList.add('hidden'); }
+    } else {
+        slideFollowers.classList.add('hidden');
+    }
+
+    // ================= RENDERING CONDIZIONALE ACC. RAGGIUNTI E VISITE PROFILO =================
+    const reachedCount = parseInt(data.kpiReachedCount) || 0;
+    const reachedPct = data.kpiReachedPct ? data.kpiReachedPct.trim() : '';
+    const slideReached = document.getElementById('slide-client-reached');
+
+    if (reachedCount > 0 && reachedPct !== '') {
+        slideReached.classList.remove('hidden');
+        document.getElementById('client-stat-reached-count').setAttribute('data-target', reachedCount);
+        document.getElementById('client-stat-reached-pct').innerText = reachedPct;
+    } else {
+        slideReached.classList.add('hidden');
+    }
+
+    const visitsCount = parseInt(data.kpiVisitsCount) || 0;
+    const visitsPct = data.kpiVisitsPct ? data.kpiVisitsPct.trim() : '';
+    const slideVisits = document.getElementById('slide-client-visits');
+
+    if (visitsCount > 0 && visitsPct !== '') {
+        slideVisits.classList.remove('hidden');
+        document.getElementById('client-stat-visits-count').setAttribute('data-target', visitsCount);
+        document.getElementById('client-stat-visits-pct').innerText = visitsPct;
+    } else {
+        slideVisits.classList.add('hidden');
+    }
 
     if(items.length === 0) return;
 
@@ -296,6 +335,7 @@ function renderClientReportView(data) {
         'Video YT': inlineVectors.youtube, 'YT Shorts': inlineVectors.video, 'TikTok': inlineVectors.tiktok
     };
 
+    // Video con più VIEWS
     const kingViews = [...items].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0))[0];
     document.getElementById('client-king-views-title').innerText = kingViews.title;
     document.getElementById('client-king-views-platform').innerText = kingViews.type;
@@ -303,12 +343,15 @@ function renderClientReportView(data) {
     document.getElementById('client-king-views-icon').innerHTML = iconMap[kingViews.type] || '';
     document.getElementById('client-views-king-link').href = kingViews.link || '#';
 
+    // Video con più LIKE (Ora configurato con link attivo)
     const kingLikes = [...items].sort((a, b) => (parseInt(b.likes) || 0) - (parseInt(a.likes) || 0))[0];
     document.getElementById('client-king-likes-title').innerText = kingLikes.title;
     document.getElementById('client-king-likes-platform').innerText = kingLikes.type;
     document.getElementById('client-stat-king-likes-count').setAttribute('data-target', kingLikes.likes);
     document.getElementById('client-king-likes-icon').innerHTML = iconMap[kingLikes.type] || '';
+    document.getElementById('client-likes-king-link').href = kingLikes.link || '#';
 
+    // Slide Finale Breakdown Analitico
     const breakdownLayout = document.getElementById('client-full-breakdown-layout');
     breakdownLayout.innerHTML = '';
 
@@ -341,6 +384,7 @@ function renderClientReportView(data) {
     });
 }
 
+// ================= TIMING COUNTER INTERSECTION OBSERVER =================
 function initIntersectionCounters() {
     const targetCounters = document.querySelectorAll('.counter-anim');
     const config = { root: null, threshold: 0.10 };
@@ -360,7 +404,6 @@ function initIntersectionCounters() {
 }
 
 function triggerSmoothCount(element, target) {
-    let start = 0;
     const animationDuration = 1400; 
     const launchTime = performance.now();
 
@@ -392,25 +435,29 @@ function closeAuthModal() {
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
 }
-function openCreateReportModal() {
+// Semplificato per risolvere scope
+window.openAuthModal = openAuthModal;
+window.closeAuthModal = closeAuthModal;
+
+window.openCreateReportModal = () => {
     const modal = document.getElementById('create-report-modal');
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-}
-function closeCreateReportModal() {
+};
+window.closeCreateReportModal = () => {
     const modal = document.getElementById('create-report-modal');
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-}
-function openAddItemModal(index = null) {
+};
+
+window.openAddItemModal = (index = null) => {
     editingItemIndex = index;
     const modal = document.getElementById('add-item-modal');
     const form = document.getElementById('form-report-item');
-    const mTitle = document.getElementById('add-item-modal-title');
     
     form.reset();
     if(editingItemIndex !== null) {
-        mTitle.innerText = "Modifica Contenuto";
+        document.getElementById('add-item-modal-title').innerText = "Modifica Contenuto";
         getDoc(doc(db, "reportMensili", currentReportDocId)).then(snap => {
             const item = snap.data().items[editingItemIndex];
             document.getElementById('item-title').value = item.title;
@@ -422,24 +469,18 @@ function openAddItemModal(index = null) {
             document.getElementById('metric-shares').value = item.shares || 0;
         });
     } else {
-        mTitle.innerText = "Aggiungi Contenuto al Report";
+        document.getElementById('add-item-modal-title').innerText = "Aggiungi Contenuto al Report";
     }
 
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-}
-function closeAddItemModal() {
+};
+
+window.closeAddItemModal = () => {
     const modal = document.getElementById('add-item-modal');
     modal.classList.add('opacity-0', 'pointer-events-none');
     modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-}
-
-window.openAuthModal = openAuthModal;
-window.closeAuthModal = closeAuthModal;
-window.openCreateReportModal = openCreateReportModal;
-window.closeCreateReportModal = closeCreateReportModal;
-window.openAddItemModal = openAddItemModal;
-window.closeAddItemModal = closeAddItemModal;
+};
 
 document.getElementById('sort-btn-global').addEventListener('click', () => {
     activeAdminSort = 'global';
@@ -467,8 +508,15 @@ document.getElementById('form-create-report').addEventListener('submit', async (
     e.preventDefault();
     const tVal = document.getElementById('report-client-name').value;
     const slug = generateSlug(tVal) + "-" + Math.floor(1000 + Math.random() * 9000);
-    await addDoc(collection(db, "reportMensili"), { title: tVal, slug: slug, items: [], followersIg: 0, followersTt: 0, followersYt: 0, clientAvatarUrl: "" });
-    closeCreateReportModal();
+    
+    // Inizializza includendo le chiavi per i nuovi KPI
+    await addDoc(collection(db, "reportMensili"), { 
+        title: tVal, slug: slug, items: [], 
+        followersIg: 0, followersTt: 0, followersYt: 0, 
+        clientAvatarUrl: "", kpiReachedCount: 0, kpiReachedPct: "", 
+        kpiVisitsCount: 0, kpiVisitsPct: "" 
+    });
+    window.closeCreateReportModal();
     loadAdminCatalogGrid();
 });
 
@@ -507,9 +555,13 @@ document.getElementById('form-report-followers').addEventListener('submit', asyn
         clientAvatarUrl: document.getElementById('client-avatar-url').value.trim(),
         followersIg: parseInt(document.getElementById('followers-instagram').value) || 0,
         followersTt: parseInt(document.getElementById('followers-tiktok').value) || 0,
-        followersYt: parseInt(document.getElementById('followers-youtube').value) || 0
+        followersYt: parseInt(document.getElementById('followers-youtube').value) || 0,
+        kpiReachedCount: parseInt(document.getElementById('kpi-reached-count').value) || 0,
+        kpiReachedPct: document.getElementById('kpi-reached-pct').value.trim(),
+        kpiVisitsCount: parseInt(document.getElementById('kpi-visits-count').value) || 0,
+        kpiVisitsPct: document.getElementById('kpi-visits-pct').value.trim()
     });
-    alert("Configurazione del cliente salvata correttamente nel database.");
+    alert("Tutte le metriche e configurazioni del report salvate correttamente.");
     initReportRouter(auth.currentUser);
 });
 
