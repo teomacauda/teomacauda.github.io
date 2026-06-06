@@ -264,6 +264,8 @@ function buildAdminTableBlock(title, sortedItems, originalItems = null) {
 // ================= RENDER LOGICA CLIENT SCROLLYTELLING COMPLETA =================
 function renderClientReportView(data) {
     const items = data.items || [];
+
+    document.title = `Report ${data.title} - Teo Macauda Videomaker`;
     
     document.getElementById('client-hero-title').innerText = data.title;
 
