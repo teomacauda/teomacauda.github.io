@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Report Performance Mensili | Teo Macauda</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
+        #page-wrapper { overflow-x: hidden; width: 100%; position: relative; min-height: 100vh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        .glass-nav { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.4s ease; margin-top: env(safe-area-inset-top); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
+        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.03) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.01) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.4; z-index: 1; pointer-events: none; }
+        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+<div id="page-wrapper" class="flex flex-col">
+    <div class="ambient-glow"></div>
+    <div class="hero-grid"></div>
+
+    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
+        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center hover:opacity-80 transition-all">
+                <svg class="h-9 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+            </a>
+            <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Admin Mode
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full mx-auto relative z-10">
+        
+        <div id="main-loader" class="flex justify-center items-center py-40">
+            <div class="loader !w-9 !h-9"></div>
+        </div>
+
+        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-24 px-6 flex flex-col items-center">
+            <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
+                <i data-lucide="lock" class="w-7 h-7 text-white"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Analisi Performance</h1>
+            <p class="text-graytext text-sm font-light mb-8">Questa sezione raccoglie i report mensili di posizionamento ed è accessibile tramite link diretto cliente.</p>
+            <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
+                <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
+            </button>
+        </div>
+
+        <div id="section-admin-catalog" class="hidden max-w-7xl mx-auto px-6 pt-32 pb-16">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Analisi <span class="text-accent">Mensili</span></h1>
+                    <p class="text-graytext text-sm font-light mt-1">Gestisci, aggiorna e genera i report di performance mobile per i clienti.</p>
+                </div>
+                <button onclick="openCreateReportModal()" class="h-11 px-5 bg-accent hover:bg-accentHover text-white text-sm font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-accent/10 self-start sm:self-auto">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Nuovo Report
+                </button>
+            </div>
+            <div id="report-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        </div>
+
+        <div id="section-admin-report-detail" class="hidden max-w-7xl mx-auto px-6 pt-32 pb-16">
+            <div id="admin-tools-banner" class="glass-card p-4 rounded-2xl border-accent/20 mb-8 bg-accent/5 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-sm font-medium text-white">
+                    <i data-lucide="sliders" class="text-accent w-4 h-4"></i> Gestione Report Mensile
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-add-item" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Contenuto
+                    </button>
+                    <button id="btn-clear-all" class="h-9 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Svuota Tutto
+                    </button>
+                    <button id="btn-copy-link" class="h-9 px-4 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 border border-white/10 transition-all">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copia Link Cliente
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-10 text-left flex flex-col gap-1.5">
+                <span class="inline-block px-3 py-1 self-start rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent">Performance Report</span>
+                <div class="flex items-center gap-3">
+                    <h1 id="report-title-display" class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">Caricamento...</h1>
+                    <button id="btn-edit-report-title" class="p-2 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-lg transition-all text-graytext"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                </div>
+                <div id="edit-title-field-container" class="hidden flex items-center gap-2 mt-2 max-w-md">
+                    <input type="text" id="input-report-title" class="flex-1 h-10 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    <button id="btn-save-report-title" class="h-10 px-4 bg-accent text-white text-xs font-bold rounded-xl">Salva</button>
+                    <button id="btn-cancel-report-title" class="h-10 px-4 bg-white/5 text-graytext text-xs font-bold rounded-xl">Annulla</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-2xl border-white/5 mb-8">
+                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-accent"></i> Follower Acquisiti nel Mese (Integrazione Manuale)</h2>
+                <form id="form-report-followers" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">Instagram Followers</label>
+                        <input type="number" id="followers-instagram" value="0" min="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">TikTok Followers</label>
+                        <input type="number" id="followers-tiktok" value="0" min="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">YouTube Iscritti</label>
+                        <input type="number" id="followers-youtube" value="0" min="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div class="sm:col-span-3 flex justify-end pt-2">
+                        <button type="submit" class="h-10 px-4 bg-white/5 hover:bg-accent/10 border border-white/10 hover:border-accent/40 text-xs font-bold text-white rounded-xl transition-all flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva Follower</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h2 class="text-xl font-bold text-white tracking-tight">Catalogo Video e Post Inseriti</h2>
+                <div class="flex items-center gap-1.5 bg-white/5 border border-white/10 p-1 rounded-xl self-start sm:self-auto">
+                    <button id="sort-btn-global" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white">Classifica Totale (Views ↓)</button>
+                    <button id="sort-btn-grouped" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-graytext hover:text-white">Raggruppati per Piattaforma</button>
+                </div>
+            </div>
+
+            <div id="admin-report-contents-layout" class="space-y-8"></div>
+        </div>
+
+        <div id="section-client-report-view" class="hidden fixed inset-0 z-[150] bg-black w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory scroll-smooth no-scrollbar select-none">
+            
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center text-center p-6 relative">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,122,0,0.08)_0%,transparent_70%)] pointer-events-none"></div>
+                <div class="max-w-xl flex flex-col items-center gap-4">
+                    <span class="px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-accent/10 border border-accent/20 text-accent">Performance Review</span>
+                    <h1 id="client-hero-title" class="text-4xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none">REPORT PERFORMANCE</h1>
+                    <p id="client-hero-subtitle" class="text-graytext text-sm md:text-lg font-light tracking-wide max-w-sm">Analisi strategica e risultati dei contenuti posizionati nel mese.</p>
+                </div>
+                <div class="absolute bottom-8 flex flex-col items-center gap-1.5 opacity-40 animate-bounce">
+                    <span class="text-[8px] uppercase tracking-widest font-bold text-graytext">Scorri per esplorare</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-accent"></i>
+                </div>
+            </section>
+
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative">
+                <div class="w-full max-w-sm mx-auto flex flex-col justify-center h-full">
+                    <div class="mb-6 text-center">
+                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Crescita dei Canali</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Nuovo Pubblico Acquisito</h2>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border-accent/20 bg-accent/[0.01] text-center mb-5">
+                        <div class="text-[9px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Totale Aggregata</div>
+                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none">+<span class="counter-anim" id="client-stat-total-followers" data-target="0">0</span></div>
+                    </div>
+
+                    <div class="space-y-2.5" id="client-followers-rows-container">
+                        <div id="row-client-ig-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400"><i data-lucide="instagram" class="w-4 h-4"></i></div>
+                                <span class="text-xs font-semibold text-white">Instagram Followers</span>
+                            </div>
+                            <div class="text-lg font-bold text-white">+<span class="counter-anim" id="client-stat-ig-followers" data-target="0">0</span></div>
+                        </div>
+                        <div id="row-client-tt-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400"><i data-lucide="music" class="w-4 h-4"></i></div>
+                                <span class="text-xs font-semibold text-white">TikTok Followers</span>
+                            </div>
+                            <div class="text-lg font-bold text-white">+<span class="counter-anim" id="client-stat-tt-followers" data-target="0">0</span></div>
+                        </div>
+                        <div id="row-client-yt-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400"><i data-lucide="youtube" class="w-4 h-4"></i></div>
+                                <span class="text-xs font-semibold text-white">YouTube Iscritti</span>
+                            </div>
+                            <div class="text-lg font-bold text-white">+<span class="counter-anim" id="client-stat-yt-followers" data-target="0">0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative">
+                <div class="w-full max-w-md mx-auto flex flex-col justify-center h-full">
+                    <div class="mb-5 text-center">
+                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Massimo Traguardo Visivo</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Contenuto con più Views</h2>
+                    </div>
+
+                    <a id="client-views-king-link" href="#" target="_blank" class="block group glass-card p-6 rounded-3xl border-emerald-500/20 bg-emerald-500/[0.01] hover:border-accent transition-all duration-500 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-2.5 py-1 rounded-xl">
+                                <span id="client-king-views-icon"></span>
+                                <span id="client-king-views-platform" class="text-[10px] font-bold text-white uppercase tracking-wider">PLATFORM</span>
+                            </div>
+                            <span class="text-[9px] text-graytext font-bold uppercase flex items-center gap-1 group-hover:text-accent transition-colors">Vedi Video <i data-lucide="external-link" class="w-3 h-3"></i></span>
+                        </div>
+                        <h3 id="client-king-views-title" class="text-lg md:text-xl font-black text-white leading-snug tracking-tight mb-6 group-hover:text-accent transition-colors">Titolo Video</h3>
+                        <div class="border-t border-white/5 pt-4 flex items-center justify-between">
+                            <span class="text-xs text-graytext">Visualizzazioni Registrate</span>
+                            <div class="text-2xl font-black text-white tracking-tight"><span class="counter-anim" id="client-stat-king-views-count" data-target="0">0</span></div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative">
+                <div class="w-full max-w-md mx-auto flex flex-col justify-center h-full">
+                    <div class="mb-5 text-center">
+                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Massimo Coinvolgimento</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Contenuto con più Like</h2>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border-pink-500/20 bg-pink-500/[0.01]">
+                        <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-2.5 py-1 rounded-xl mb-4 w-max">
+                            <span id="client-king-likes-icon"></span>
+                            <span id="client-king-likes-platform" class="text-[10px] font-bold text-white uppercase tracking-wider">PLATFORM</span>
+                        </div>
+                        <h3 id="client-king-likes-title" class="text-lg md:text-xl font-black text-white leading-snug tracking-tight mb-6">Titolo Video</h3>
+                        <div class="border-t border-white/5 pt-4 flex items-center justify-between">
+                            <span class="text-xs text-graytext">Mi Piace Ricevuti</span>
+                            <div class="text-2xl font-black text-pink-400 tracking-tight flex items-center gap-1.5"><i data-lucide="heart" class="w-5 h-5 fill-pink-400"></i> <span class="counter-anim" id="client-stat-king-likes-count" data-target="0">0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="snap-start min-h-[100dvh] h-auto w-full flex flex-col justify-start items-center p-6 pt-16 relative overflow-y-auto">
+                <div class="w-full max-w-2xl mx-auto mb-8 text-center">
+                    <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Catalogo Analitico</span>
+                    <h2 class="text-2xl font-extrabold text-white tracking-tight">Riepilogo Dettagliato Mensile</h2>
+                </div>
+                <div id="client-full-breakdown-layout" class="w-full max-w-2xl space-y-8 pb-12"></div>
+            </section>
+        </div>
+    </main>
+
+    <div id="auth-modal" class="fixed inset-0 z-[250] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closeAuthModal()"></div>
+        <div class="glass-modal w-full max-w-sm rounded-2xl p-6 relative z-10 transform translate-y-10 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-white mb-4">Credenziali Amministratore</h3>
+            <form id="form-admin-login" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Email</label>
+                    <input type="email" id="login-email" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg">Accedi</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="create-report-modal" class="fixed inset-0 z-[250] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closeCreateReportModal()"></div>
+        <div class="glass-modal w-full max-w-sm rounded-2xl p-6 relative z-10 transform translate-y-10 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-white mb-4">Inizializza Nuovo Report</h3>
+            <form id="form-create-report" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Cliente e Mese (Es: Aprile 2026 - Brand X)</label>
+                    <input type="text" id="report-client-name" required placeholder="Inserisci titolo report..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg">Inizializza</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-item-modal" class="fixed inset-0 z-[250] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closeAddItemModal()"></div>
+        <div class="glass-modal w-full max-w-md rounded-2xl p-6 relative z-10 transform translate-y-10 transition-transform duration-300 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <h3 id="add-item-modal-title" class="text-lg font-bold text-white mb-4">Inserisci Contenuto</h3>
+            <form id="form-report-item" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Titolo del Video / Post</label>
+                    <input type="text" id="item-title" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Formato</label>
+                        <select id="item-type" class="w-full h-11 bg-[#101010] border border-white/10 rounded-xl px-3 text-xs text-white focus:outline-none focus:border-accent">
+                            <option value="Reel">📸 Reel</option>
+                            <option value="Post">🖼️ Post</option>
+                            <option value="Storia">⏳ Storia</option>
+                            <option value="Video YT">📺 Video YT</option>
+                            <option value="YT Shorts">🩳 YT Shorts</option>
+                            <option value="TikTok">🎵 TikTok</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Link (Manuale)</label>
+                        <input type="url" id="item-link" placeholder="https://..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-3 text-xs text-white focus:outline-none focus:border-accent">
+                    </div>
+                </div>
+                <div class="border-t border-white/5 pt-3">
+                    <h4 class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Metriche Riscontrate</h4>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Views</label>
+                            <input type="number" id="metric-views" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Like</label>
+                            <input type="number" id="metric-likes" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Commenti</label>
+                            <input type="number" id="metric-comments" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Condivisioni / Repost</label>
+                            <input type="number" id="metric-shares" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg mt-2">Salva Contenuto</button>
+            </form>
+        </div>
+    </div>
+
+    <footer id="main-footer" class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+        <p class="text-graytext text-sm mb-4">
+            © <script>document.write(new Date().getFullYear())</script> 
+            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+        </p>
+    </footer>
+</div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
