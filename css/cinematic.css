@@ -51,3 +51,15 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     letter-spacing: 0.02em;
 }
+
+
+/* Fix angoli arrotondati per pareggiare il look premium della pagina lavori */
+.work-item {
+    border-radius: 1rem; /* Corrisponde a rounded-2xl di Tailwind (Mobile) */
+}
+
+@media (min-width: 768px) {
+    .work-item {
+        border-radius: 1.5rem; /* Corrisponde a md:rounded-3xl di Tailwind (Desktop) */
+    }
+}
