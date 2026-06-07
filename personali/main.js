@@ -1,19 +1,20 @@
 // --- PORTFOLIO DATA (DATABASE LOCALE) ---
+// Modifica qui gli ID dei video inserendo codici REALI di YouTube (Es: 'DWQPP8C6h9E')
 const portfolioItems = [
     {
-        youtubeId: 'ZYBKlJY46wA', // ID reale di YouTube
-        originalUrl: 'https://www.youtube.com/watch?v=ZYBKlJY46wA', // Link originale Instagram
+        youtubeId: 'ZYBKlJY46wA', // Usa un ID reale esistente su YouTube altrimenti dà schermata d'errore
+        originalUrl: 'https://www.youtube.com/watch?v=ZYBKlJY46wA',
         title: 'Reel Instagram 2026',
         category: 'Personal Projects',
         coverImg: 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/youtube1.webp',
-        views: '2,5k', // Badge visualizzazioni dinamico
-        isVertical: false // true = 9:16 (Reel), false = 16:9 (Vlog)
+        views: '12.4K', 
+        isVertical: false // true = Formato verticale (9:16), false = Formato standard (16:9)
     }
 ];
 
 let activePlayer = null;
 
-// --- DYNAMIC RENDERING GRID ---
+// --- RENDERING DINAMICO GRIGLIA ---
 function renderPortfolioGrid() {
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return;
@@ -28,7 +29,7 @@ function renderPortfolioGrid() {
                 ${badgeHtml}
                 <img src="${item.coverImg}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 flex items-center justify-center z-10">
-                    <i data-lucide="play-circle" class="w-16 h-16 text-white/80 group-hover:text-accent transition-all"></i>
+                    <i data-lucide="play-circle" class="w-14 h-14 text-white/80 group-hover:text-accent transition-all"></i>
                 </div>
                 <div class="work-overlay absolute inset-0 p-6 flex flex-col justify-end z-20">
                     <span class="text-accent text-xs font-bold uppercase tracking-widest mb-2">${item.category}</span>
@@ -41,39 +42,46 @@ function renderPortfolioGrid() {
     lucide.createIcons();
 }
 
-// --- MODAL & PLYR LOGIC ---
+// --- LOGICA MODAL ADATTIVA DESKTOP / MOBILE ---
 function openVideoModal(youtubeId, originalUrl, title, isVertical = false) {
     const modal = document.getElementById('videoModal');
     const content = document.getElementById('videoModalContent');
     const container = document.getElementById('videoContainer');
+    const titleBar = document.getElementById('videoTitleBar');
     document.getElementById('videoTitle').innerText = title;
 
-    content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col mx-auto w-full";
-    if (isVertical) {
-        content.classList.add('max-w-[340px]', 'md:max-w-[380px]', 'aspect-[9/16]');
-    } else {
-        content.classList.add('max-w-5xl', 'aspect-video');
-    }
-
     const consentStatus = localStorage.getItem('video_consent_teo');
+    
     if (consentStatus === 'true') {
-        loadPlyrPlayer(youtubeId, originalUrl, container);
+        // --- LAYOUT CON CONSENSO ACCETTATO: CARICA IL VIDEO ---
+        titleBar.classList.remove('hidden');
+        if (isVertical) {
+            content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full max-w-[340px] md:max-w-[360px] bg-[#0F0F0F] mx-auto";
+            container.className = "w-full aspect-[9/16] bg-black p-0";
+        } else {
+            content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full max-w-5xl bg-[#0F0F0F] mx-auto";
+            container.className = "w-full aspect-video bg-black p-0";
+        }
+        loadPlyrPlayer(youtubeId, originalUrl, container, isVertical);
     } else {
+        // --- LAYOUT SENZA CONSENSO: SCHERMATA COOKIE COMPATTA FLUIDA ---
+        content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full max-w-md bg-[#0F0F0F] mx-auto p-6 sm:p-8";
+        titleBar.classList.add('hidden'); // Nasconde il titolo per salvare spazio verticale su smartphone
+        container.className = "w-full flex flex-col items-center justify-center text-center py-4";
+        
         container.innerHTML = `
-            <div class="flex flex-col items-center gap-6 p-8">
-                <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-2">
-                    <i data-lucide="eye-off" class="w-8 h-8"></i>
-                </div>
-                <div class="space-y-3">
-                    <h4 class="text-lg md:text-xl font-bold tracking-tight text-white">Cookie di terze parti</h4>
-                    <p class="text-graytext text-sm max-w-[320px] mx-auto leading-relaxed text-center">
-                        Per vedere questo contenuto devi accettare i cookie di YouTube e Instagram. Leggi i dettagli nella nostra <a href="../privacy.html" class="underline text-white hover:text-accent transition-colors">Privacy Policy</a>.
-                    </p>
-                </div>
-                <div class="flex flex-col w-full gap-3 mt-6">
-                    <button onclick="handleConsentDecision(true, '${youtubeId}', '${originalUrl}')" class="w-full py-4 bg-accent hover:bg-accentHover text-white rounded-2xl font-bold transition-all shadow-lg shadow-accent/20 uppercase tracking-widest text-xs">Accetta e guarda</button>
-                    <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white transition-colors uppercase tracking-widest font-bold">No, grazie</button>
-                </div>
+            <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-accent mb-4 shrink-0">
+                <i data-lucide="eye-off" class="w-6 h-6"></i>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-lg font-bold tracking-tight text-white">Cookie di terze parti</h4>
+                <p class="text-graytext text-xs sm:text-sm max-w-[280px] mx-auto leading-relaxed">
+                    Per vedere questo contenuto devi accettare i cookie di YouTube e Instagram. Leggi la nostra <a href="../privacy.html" class="underline text-white hover:text-accent transition-colors">Privacy Policy</a>.
+                </p>
+            </div>
+            <div class="flex flex-col w-full gap-2.5 mt-6 shrink-0">
+                <button onclick="handleConsentDecision(true, '${youtubeId}', '${originalUrl}', ${isVertical})" class="w-full py-3.5 bg-accent hover:bg-accentHover text-white rounded-xl font-bold transition-all shadow-lg shadow-accent/20 uppercase tracking-widest text-[11px] focus:outline-none">Accetta e guarda</button>
+                <button onclick="closeVideoModal()" class="text-[10px] text-graytext hover:text-white transition-colors uppercase tracking-widest font-bold py-1.5 focus:outline-none">No, grazie</button>
             </div>
         `;
         lucide.createIcons();
@@ -84,11 +92,23 @@ function openVideoModal(youtubeId, originalUrl, title, isVertical = false) {
     document.body.style.overflow = 'hidden';
 }
 
-function handleConsentDecision(isAccepted, youtubeId = null, originalUrl = null) {
+function handleConsentDecision(isAccepted, youtubeId = null, originalUrl = null, isVertical = false) {
     if (isAccepted) {
         localStorage.setItem('video_consent_teo', 'true');
         if (youtubeId && originalUrl) {
-            loadPlyrPlayer(youtubeId, originalUrl, document.getElementById('videoContainer'));
+            const content = document.getElementById('videoModalContent');
+            const container = document.getElementById('videoContainer');
+            const titleBar = document.getElementById('videoTitleBar');
+            
+            titleBar.classList.remove('hidden');
+            if (isVertical) {
+                content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-100 transition-all duration-500 flex flex-col w-full max-w-[340px] md:max-w-[360px] bg-[#0F0F0F] mx-auto";
+                container.className = "w-full aspect-[9/16] bg-black p-0";
+            } else {
+                content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-100 transition-all duration-500 flex flex-col w-full max-w-5xl bg-[#0F0F0F] mx-auto";
+                container.className = "w-full aspect-video bg-black p-0";
+            }
+            loadPlyrPlayer(youtubeId, originalUrl, container, isVertical);
         }
     } else {
         localStorage.setItem('video_consent_teo', 'false');
@@ -96,7 +116,7 @@ function handleConsentDecision(isAccepted, youtubeId = null, originalUrl = null)
     }
 }
 
-function loadPlyrPlayer(youtubeId, originalUrl, container) {
+function loadPlyrPlayer(youtubeId, originalUrl, container, isVertical = false) {
     if (activePlayer) {
         activePlayer.destroy();
         activePlayer = null;
@@ -109,6 +129,7 @@ function loadPlyrPlayer(youtubeId, originalUrl, container) {
     `;
 
     activePlayer = new Plyr('#plyr-instance', {
+        ratio: isVertical ? '9:16' : '16:9',
         youtube: { modestbranding: 1, rel: 0, showinfo: 0, iv_load_policy: 3, playsinline: 1 },
         controls: [
             'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen',
@@ -144,7 +165,7 @@ function closeVideoModal() {
     }, 300);
 }
 
-// --- CORE UI LOGIC ---
+// --- LOGICA CORE UI (MENU & CONTATTI) ---
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     const menuContent = document.getElementById('mobileMenuContent');
@@ -189,7 +210,7 @@ function initScrollAnimations() {
     reveals.forEach(r => observer.observe(r));
 }
 
-// --- INTERACTION LIFECYCLES ---
+// --- CICLI DI VITA INTERAZIONI ---
 document.addEventListener('DOMContentLoaded', () => {
     renderPortfolioGrid();
     initScrollAnimations();
@@ -226,7 +247,6 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Clean URL logic per cartelle innestate
 (function() {
     const currentPath = window.location.pathname;
     if (currentPath.endsWith('.html')) {
