@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Consegna Video | Teo Macauda</title>
+    
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { 
+                        dark: '#000000', 
+                        accent: '#FF7A00', 
+                        accentHover: '#E56D00', 
+                        graytext: '#999999',
+                        cardbg: '#0a0a0a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #000000; color: #ffffff; -webkit-tap-highlight-color: transparent; }
+        .orange-glow { box-shadow: 0 0 25px rgba(255, 122, 0, 0.15); }
+        .orange-glow-sm { box-shadow: 0 0 15px rgba(255, 122, 0, 0.08); }
+        .orange-glow-focus:focus { box-shadow: 0 0 15px rgba(255, 122, 0, 0.25); border-color: #FF7A00 !important; }
+        .video-card { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body class="flex flex-col min-h-full font-sans antialiased">
+
+    <div id="main-loader" class="fixed inset-0 bg-dark z-50 flex items-center justify-center transition-opacity duration-300">
+        <div class="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <section id="section-lock" class="hidden fixed inset-0 bg-dark z-40 flex items-center justify-center px-4">
+        <div class="w-full max-w-sm video-card rounded-2xl p-6 orange-glow">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-accent/10 text-accent rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="lock" class="w-5 h-5"></i>
+                </div>
+                <h2 class="text-xl font-bold tracking-tight uppercase">Admin Control</h2>
+                <p class="text-xs text-graytext mt-1">Ecosistema Consegne Privato</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Email</label>
+                    <input type="email" id="login-email" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none orange-glow-focus transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none orange-glow-focus transition-all">
+                </div>
+                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg active:scale-95 mt-2">Accedi</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="section-admin-dashboard" class="hidden container mx-auto max-w-4xl px-4 py-8 flex-1">
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+            <div>
+                <h1 class="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
+                    <span class="text-accent">Teo</span> Macauda
+                </h1>
+                <p class="text-xs text-graytext">Hub di Consegna Video Automatizzato</p>
+            </div>
+            <button id="btn-open-create" class="h-10 bg-accent hover:bg-accentHover text-white font-bold px-4 rounded-xl text-xs transition-all flex items-center gap-2 active:scale-95 shadow-lg">
+                <i data-lucide="plus" class="w-4 h-4"></i> Nuova Consegna
+            </button>
+        </div>
+
+        <div id="deliveries-list" class="space-y-3">
+            </div>
+    </section>
+
+    <section id="section-admin-form" class="hidden container mx-auto max-w-3xl px-4 py-8 flex-1">
+        <div class="mb-6 flex items-center justify-between">
+            <button id="btn-back-to-dashboard" class="text-xs text-graytext hover:text-white transition-colors flex items-center gap-1.5 py-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Torna alla Dashboard
+            </button>
+            <h2 id="form-action-title" class="text-xs font-bold uppercase tracking-widest text-accent">Crea Consegna</h2>
+        </div>
+
+        <form id="delivery-main-form" class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 video-card p-5 rounded-xl">
+                <div>
+                    <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Nome Cliente</label>
+                    <input type="text" id="input-client-name" required placeholder="Es. Andrea Rossi" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Titolo della Consegna</label>
+                    <input type="text" id="input-delivery-title" required placeholder="Es. Reels Content Marketing Maggio" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent transition-all">
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-graytext">Video Inclusi</h3>
+                    <button type="button" id="btn-add-video-item" class="text-xs bg-white/5 hover:bg-white/10 text-white border border-white/10 h-8 px-3 rounded-lg transition-colors flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Video
+                    </button>
+                </div>
+
+                <div id="videos-container" class="space-y-4">
+                    </div>
+            </div>
+
+            <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg active:scale-95 mt-6">Pubblica Pagina Consegna</button>
+        </form>
+    </section>
+
+    <section id="section-client-view" class="hidden w-full flex-1 flex flex-col">
+        <div id="admin-top-bar" class="hidden bg-neutral-900 border-b border-white/5 px-4 py-2.5 flex items-center justify-between text-xs">
+            <span class="text-accent font-bold flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Vista Cliente (Teo Admin)
+            </span>
+            <button id="btn-admin-return" class="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-lg text-[11px] font-medium transition-colors flex items-center gap-1">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Torna alla Dashboard
+            </button>
+        </div>
+
+        <div class="container mx-auto max-w-4xl px-4 pt-12 pb-4 text-center">
+            <p id="client-view-subtitle" class="text-[11px] font-extrabold text-accent uppercase tracking-widest mb-1.5"></p>
+            <h1 id="client-view-title" class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase leading-tight"></h1>
+            <div class="w-12 h-1 bg-accent mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        <div id="client-videos-render" class="container mx-auto max-w-4xl px-4 py-8 space-y-12 pb-28">
+            </div>
+
+        <a id="whatsapp-badge" href="https://wa.me/393784142773" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl transition-all active:scale-90 flex items-center justify-center orange-glow-sm">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.455L0 24zm6.59-4.846c1.6.95 3.488 1.449 5.412 1.451 5.432.002 9.851-4.413 9.854-9.843.002-2.631-1.025-5.102-2.892-6.971C17.155 1.922 14.68 1.897 12.01 1.897c-5.437 0-9.857 4.415-9.86 9.846-.001 1.927.501 3.813 1.455 5.418l-.993 3.627 3.719-.975zm11.067-7.42c-.27-.135-1.597-.788-1.846-.878-.248-.09-.43-.135-.61.135-.18.27-.697.878-.854 1.057-.158.18-.315.202-.586.067-.27-.135-1.14-.42-2.172-1.34-1.023-.913-1.713-2.04-1.913-2.377-.202-.337-.022-.52.113-.653.122-.119.27-.315.405-.472.135-.158.18-.27.27-.45.09-.18.045-.337-.022-.472-.068-.135-.61-1.467-.834-2.01-.22-.526-.44-.454-.61-.462-.158-.007-.338-.008-.517-.008-.18 0-.472.067-.72.337-.247.27-.945.922-.945 2.248s.967 2.607 1.102 2.787c.135.18 1.902 2.904 4.607 4.07 1.58.682 2.16.743 2.936.627.46-.068 1.597-.652 1.822-1.282.225-.63.225-1.17.157-1.282-.067-.113-.248-.203-.518-.338z"/>
+            </svg>
+        </a>
+    </section>
+
+    <footer class="py-6 text-center border-t border-white/5 bg-black mt-auto z-10">
+        <p class="text-graytext text-[11px] tracking-wide">
+            © <script>document.write(new Date().getFullYear())</script> 
+            Teo Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR)
+        </p>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
