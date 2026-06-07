@@ -37,7 +37,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #FF7A00; }
 
         .ambient-glow { position: absolute; width: 100%; height: 1000px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.02) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
-        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.6; z-index: 1; pointer-events: none; }
+        .hero-noise { position: absolute; inset: 0; background-image: url("https://grainy-gradients.vercel.app/noise.svg"); opacity: 0.12; pointer-events: none; z-index: 1; }
         
         .glass-nav { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin-top: env(safe-area-inset-top); }
         .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -54,7 +54,7 @@
 
 <div id="page-wrapper">
     <div class="ambient-glow"></div>
-    <div class="hero-grid"></div>
+    <div class="hero-noise"></div>
 
     <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
         <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -74,13 +74,13 @@
             <div class="loader !w-10 !h-10"></div>
         </div>
 
-        <div id="section-admin-login" class="hidden w-full max-w-md mx-auto my-auto animate-fade-in">
+        <div id="section-admin-login" class="hidden w-full max-w-md mx-auto my-auto">
             <div class="glass-card p-8 rounded-3xl border border-white/10 relative">
                 <div class="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-accent to-transparent"></div>
                 <h3 class="text-xl font-bold mb-1 text-white flex items-center gap-2">
-                    <i data-lucide="lock" class="w-5 h-5 text-accent"></i> Accesso Server Centrale
+                    <i data-lucide="lock" class="w-5 h-5 text-accent"></i> Area Autenticazione
                 </h3>
-                <p class="text-xs text-graytext mb-6">Autenticati per gestire l'interfaccia di consegna ai clienti.</p>
+                <p class="text-xs text-graytext mb-6">Verifica credenziali per sbloccare la dashboard consegne.</p>
                 
                 <form id="form-admin-login" class="space-y-4">
                     <div>
@@ -88,28 +88,26 @@
                         <input type="email" id="admin-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent transition-colors">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password di Sicurezza</label>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
                         <input type="password" id="admin-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent transition-colors">
                     </div>
                     <div id="admin-auth-error" class="text-xs text-red-500 hidden font-medium bg-red-500/10 border border-red-500/20 p-3 rounded-lg"></div>
                     <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2">
-                        <span>Esegui Login</span><div id="admin-login-loader" class="loader hidden !border-black/20 !border-t-black"></div>
+                        <span>Accedi al Pannello</span><div id="admin-login-loader" class="loader hidden !border-black/20 !border-t-black"></div>
                     </button>
                 </form>
             </div>
         </div>
 
         <div id="section-admin-dashboard" class="hidden w-full max-w-7xl mx-auto">
-            <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-6">
-                <div>
-                    <h1 class="text-2xl md:text-4xl font-extrabold tracking-tighter text-white">Management <span class="text-accent">Consegne Video</span></h1>
-                    <p class="text-graytext text-sm font-light mt-0.5">Gestisci flussi singoli e multi-video. Configura risoluzioni, link di download e formati d'aspetto.</p>
-                </div>
+            <div class="mb-10 border-b border-white/5 pb-6">
+                <h1 class="text-2xl md:text-4xl font-extrabold tracking-tighter text-white">Management <span class="text-accent">Consegne Video</span></h1>
+                <p class="text-graytext text-sm font-light mt-0.5">Genera pacchetti video, controlla le proporzioni e modifica i link attivi in tempo reale.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="lg:col-span-6">
-                    <form id="form-create-delivery" class="glass-card p-6 rounded-2xl border border-white/10 space-y-6 sticky top-24">
+                    <form id="form-create-delivery" class="glass-card p-6 rounded-2xl border border-white/10 space-y-6">
                         <div class="flex items-center justify-between border-b border-white/5 pb-3">
                             <h2 id="form-action-title" class="text-lg font-bold text-white flex items-center gap-2">
                                 <i data-lucide="plus-circle" class="text-accent w-5 h-5"></i> Configura Nuova Consegna
@@ -120,22 +118,21 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Nome Cliente</label>
-                                <input type="text" id="input-client-name" required placeholder="Es. Client Premium" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <input type="text" id="input-client-name" required placeholder="Es. Nome Brand" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Titolo Progetto / Batch</label>
-                                <input type="text" id="input-delivery-title" required placeholder="Es. Campagna Social Brand" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <input type="text" id="input-delivery-title" required placeholder="Es. Campagna ADV Social" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                             </div>
                         </div>
 
                         <div class="space-y-4">
                             <div class="flex items-center justify-between bg-white/[0.02] p-2 rounded-xl border border-white/5">
-                                <label class="block text-[10px] font-bold text-white uppercase tracking-wider pl-2">Moduli Video Correlati</label>
+                                <label class="block text-[10px] font-bold text-white uppercase tracking-wider pl-2">Moduli Video Relativi</label>
                                 <button type="button" id="btn-add-video" class="h-8 px-3 bg-accent/10 hover:bg-accent text-accent hover:text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1">
                                     <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Slot Video
                                 </button>
                             </div>
-
                             <div id="admin-videos-inputs-list" class="space-y-4 max-h-[380px] overflow-y-auto pr-1 no-scrollbar"></div>
                         </div>
                         
@@ -156,13 +153,12 @@
             </div>
         </div>
 
-        <div id="section-client" class="hidden w-full max-w-5xl mx-auto animate-fade-in">
+        <div id="section-client" class="hidden w-full max-w-5xl mx-auto">
             <div class="text-center mb-12 space-y-2">
                 <p id="client-name-top" class="text-accent text-xs font-bold uppercase tracking-widest bg-accent/5 border border-accent/10 px-3 py-1 rounded-full inline-block">CLIENTE</p>
                 <h1 id="client-delivery-title" class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">Progetto</h1>
-                <p class="text-graytext text-sm md:text-base font-light max-w-xl mx-auto">Vedi le anteprime master riprodotte direttamente in streaming cloud e scarica i file originali.</p>
+                <p class="text-graytext text-sm md:text-base font-light max-w-xl mx-auto">Riproduci le anteprime in alta definizione e scarica i file master originali non compressi.</p>
             </div>
-
             <div id="client-videos-container" class="space-y-12"></div>
         </div>
 
