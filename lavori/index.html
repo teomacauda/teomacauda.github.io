@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Social Marketing | Teo Macauda</title>
+    
+    <link rel="icon\" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png"/>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { dark: '#000000', accent: '#FF7A00', graytext: '#AAAAAA' }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="../css/global.css"/>
+    <link rel="stylesheet" href="../css/lavori.css"/>
+</head>
+<body class="bg-dark text-white font-sans antialiased selection:bg-accent/30 selection:text-white">
+
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group no-underline">
+                <div class="w-7 h-7 bg-white rounded-lg flex items-center justify-center transition-transform group-hover:rotate-6">
+                    <span class="text-black font-black text-xs tracking-tighter">T</span>
+                </div>
+                <span class="text-xs font-bold tracking-[0.25em] uppercase text-white/90 group-hover:text-white transition-colors">Teo Macauda</span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-1 bg-white/[0.02] border border-white/5 p-1 rounded-full backdrop-blur-md">
+                <a href="/" class="text-xs uppercase tracking-widest font-medium px-4 py-2 rounded-full text-graytext hover:text-white transition-colors">Home</a>
+                <a href="/lavori/" class="text-xs uppercase tracking-widest font-semibold px-4 py-2 rounded-full bg-accent/10 text-accent border border-accent/20">Social</a>
+                <a href="/cinematic/" class="text-xs uppercase tracking-widest font-medium px-4 py-2 rounded-full text-graytext hover:text-white transition-colors">Cinematic</a>
+                <a href="/personali/" class="text-xs uppercase tracking-widest font-medium px-4 py-2 rounded-full text-graytext hover:text-white transition-colors">Personali</a>
+            </div>
+
+            <button onclick="toggleMobileMenu()" class="md:hidden text-white hover:text-accent transition-colors p-2" aria-label="Menu">
+                <i id="icon-menu" data-lucide="menu" class="w-5 h-5"></i>
+                <i id="icon-x" data-lucide="x" class="w-5 h-5 hidden"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobileMenu" class="fixed inset-0 bg-dark/98 z-40 md:hidden opacity-0 pointer-events-none transition-all duration-300 pt-24 px-6">
+        <div id="mobileMenuContent" class="flex flex-col gap-6 transform -translate-y-10 transition-transform duration-300 text-center">
+            <a href="/" class="text-lg uppercase tracking-widest text-graytext hover:text-white py-2">Home</a>
+            <a href="/lavori/" class="text-lg uppercase tracking-widest text-accent font-bold py-2">Social</a>
+            <a href="/cinematic/" class="text-lg uppercase tracking-widest text-graytext hover:text-white py-2">Cinematic</a>
+            <a href="/personali/" class="text-lg uppercase tracking-widest text-graytext hover:text-white py-2">Personali</a>
+        </div>
+    </div>
+
+    <main class="relative z-10 pt-32 pb-24 px-6 max-w-7xl mx-auto">
+        <div class="max-w-3xl mb-20">
+            <span class="text-accent text-xs font-bold uppercase tracking-[0.3em] block mb-3">Content Marketing</span>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
+                Video che generano <br><span class="bg-gradient-to-r from-accent to-amber-400 bg-clip-text text-transparent">Attenzione e Risultati.</span>
+            </h1>
+            <p class="text-graytext text-base md:text-lg leading-relaxed max-w-2xl">
+                Format scalabili, editing ritmico e strategie di fidelizzazione. Ottimizzato per trattenere l'utente nei primi 3 secondi e convertire le views in community attiva.
+            </p>
+        </div>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+            
+            <div class="glass-card rounded-3xl overflow-hidden p-6 flex flex-col justify-between min-h-[320px]">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-accent bg-accent/10 px-3 py-1.5 rounded-full border border-accent/20">Performance Report</span>
+                        <span class="text-[10px] font-mono text-white/40">ANALYTICS 2026</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Crescita Organica Canale Brand</h3>
+                    <p class="text-graytext text-sm leading-relaxed max-w-md">
+                        Ottimizzazione della fidelizzazione attraverso lo studio ritmico dei tagli audio e frequenziali per rendere la voce maschile ultra-nitida sulla musica di fondo.
+                    </p>
+                </div>
+                <div class="mt-8 pt-6 border-t border-white/5 flex gap-8">
+                    <div>
+                        <div class="text-2xl font-black text-white stat-number">+140K</div>
+                        <div class="text-[10px] text-graytext uppercase tracking-wider mt-0.5">Views Totali</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-white stat-number">+15%</div>
+                        <div class="text-[10px] text-graytext uppercase tracking-wider mt-0.5">Retention Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl overflow-hidden p-6 flex flex-col justify-between min-h-[320px]">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-accent bg-accent/10 px-3 py-1.5 rounded-full border border-accent/20">Short-form Strategy</span>
+                        <span class="text-[10px] font-mono text-white/40">REELS / SHORTS</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Ingegnerizzazione dei Primi 3 Secondi</h3>
+                    <p class="text-graytext text-sm leading-relaxed max-w-md">
+                        Sviluppo di hook visivi e testuali dinamici. Struttura dei contenuti pensata per azzerare lo swiping passivo e massimizzare le interazioni.
+                    </p>
+                </div>
+                <div class="mt-8 pt-6 border-t border-white/5 flex gap-8">
+                    <div>
+                        <div class="text-2xl font-black text-white stat-number">2.4x</div>
+                        <div class="text-[10px] text-graytext uppercase tracking-wider mt-0.5">Condivisioni</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-white stat-number">+45%</div>
+                        <div class="text-[10px] text-graytext uppercase tracking-wider mt-0.5">Fidelizzazione</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="w-full mt-24 pt-12 border-t border-white/5 text-center">
+            <p class="text-graytext text-xs mb-4">
+                &copy; 2026 Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+                <a href="/privacy/" class="underline text-white/80 hover:text-accent transition-colors">Privacy Policy</a>
+            </p>
+            <p class="text-[9px] text-white/20 max-w-4xl mx-auto leading-relaxed uppercase tracking-widest">
+                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE.
+            </p>
+        </footer>
+    </main>
+
+    <a id="chat-pill" href="https://wa.me/3784142773?text=Ciao%20Teo,%20ho%20visto%20il%20tuo%20portfolio%20e%20vorrei%20ricevere%20informazioni%20sui%20tuoi%20servizi%20video." target="_blank" class="fixed bottom-6 right-6 z-50 flex items-center justify-center bg-accent text-white rounded-full min-w-[3.5rem] h-14 shadow-lg shadow-accent/20 border border-white/10 hover:scale-105 transition-all overflow-hidden" rel="noopener">
+        <i data-lucide="message-square" class="w-5 h-5 shrink-0"></i>
+    </a>
+
+    <script src="main.js"></script>
+</body>
+</html>
