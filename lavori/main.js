@@ -87,10 +87,14 @@ function openVideoModal(source, title, isVertical = false) {
 
 function handleConsentDecision(isAccepted, source = null) {
     if (isAccepted) {
+        // Salva il consenso nel browser
         localStorage.setItem('video_consent_teo', 'true');
-        if (source) loadIframe(source, document.getElementById('document.getElementById("videoContainer")'));
-        // Ricarica l'iframe istantaneamente
-        loadIframe(source, document.getElementById('videoContainer'));
+        
+        // Se è stato passato un link video, carica direttamente l'iframe senza bloccare il codice
+        if (source) {
+            const container = document.getElementById('videoContainer');
+            loadIframe(source, container);
+        }
     } else {
         localStorage.setItem('video_consent_teo', 'false');
         closeVideoModal();
