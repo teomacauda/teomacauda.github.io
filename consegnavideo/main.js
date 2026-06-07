@@ -101,21 +101,21 @@ function renderClientView(data) {
         card.innerHTML = `
             <div class="${playerWrapperClass}">
                 <iframe class="w-full h-full absolute inset-0" src="https://www.youtube.com/embed/${video.youtubeId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <div class="flex-1 w-full flex flex-col justify-between h-full space-y-6">
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent/10 border border-accent/20 text-accent uppercase tracking-wider">${video.resolution}</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/5 border border-white/10 text-graytext uppercase tracking-wider">${video.aspectRatio}</span>
-                    </div>
-                    <h2 class="text-xl font-bold tracking-tight text-white leading-snug">${video.title}</h2>
-                    <p class="text-xs text-graytext flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Durata: <span class="text-white font-medium">${video.duration}</span></p>
-                </div>
-                <a href="${video.driveLink}" target="_blank" class="w-fit h-9 px-5 bg-accent hover:bg-accentHover text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-md shadow-accent/10 group mt-auto sm:self-start">
-    <i data-lucide="download" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
-    <span>Scarica</span>
-                </a>
-            </div>
+            
+            <<div class="flex-1 w-full flex flex-col justify-between lg:self-stretch space-y-6 items-start text-left">
+    <div class="space-y-3 w-full flex flex-col items-start">
+        <div class="flex items-center gap-2 flex-wrap justify-start w-full">
+            <span class="inline-flex items-center justify-center w-fit px-2.5 py-1 rounded-md text-[10px] font-bold bg-accent/10 border border-accent/20 text-accent uppercase tracking-wider">${video.resolution}</span>
+            <span class="inline-flex items-center justify-center w-fit px-2.5 py-1 rounded-md text-[10px] font-bold bg-white/5 border border-white/10 text-graytext uppercase tracking-wider">${video.aspectRatio}</span>
+        </div>
+        <h2 class="text-xl font-bold tracking-tight text-white leading-snug">${video.title}</h2>
+        <p class="text-xs text-graytext flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Durata: <span class="text-white font-medium">${video.duration}</span></p>
+    </div>
+    <a href="${video.driveLink}" target="_blank" class="w-fit h-9 px-5 bg-accent hover:bg-accentHover text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-md shadow-accent/10 group">
+        <i data-lucide="download" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
+        <span>Scarica</span>
+    </a>
+</div>
         `;
         container.appendChild(card);
     });
