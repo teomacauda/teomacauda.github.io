@@ -1,12 +1,12 @@
 // --- PORTFOLIO DATA (DATABASE LOCALE) ---
 const portfolioItems = [
     {
-        youtubeId: 'ID_VIDEO_YOUTUBE_REEL_2026', // ID reale di YouTube
-        originalUrl: 'https://www.instagram.com/teo.macauda', // Link originale Instagram
+        youtubeId: 'ZYBKlJY46wA', // ID reale di YouTube
+        originalUrl: 'https://www.youtube.com/watch?v=ZYBKlJY46wA', // Link originale Instagram
         title: 'Reel Instagram 2026',
         category: 'Personal Projects',
         coverImg: 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/youtube1.webp',
-        views: '12.4K', // Badge visualizzazioni dinamico
+        views: '2,5k', // Badge visualizzazioni dinamico
         isVertical: false // true = 9:16 (Reel), false = 16:9 (Vlog)
     }
 ];
