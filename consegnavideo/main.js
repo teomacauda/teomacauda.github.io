@@ -18,7 +18,7 @@ const db = getFirestore(app);
 const urlParams = new URLSearchParams(window.location.search);
 const deliverySlug = urlParams.get('v');
 
-// Elementi di navigazione e orchestrazione UI
+// Dichiarazione esplicita e globale degli elementi del DOM per prevenire ReferenceError
 const loaderEl = document.getElementById('main-loader');
 const clientSection = document.getElementById('section-client');
 const adminLoginSection = document.getElementById('section-admin-login');
@@ -29,10 +29,13 @@ const btnAddVideo = document.getElementById('btn-add-video');
 const btnCancelEdit = document.getElementById('btn-cancel-edit');
 const formActionTitle = document.getElementById('form-action-title');
 const btnSubmitDelivery = document.getElementById('btn-submit-delivery');
+const loginForm = document.getElementById('form-admin-login');
+const authError = document.getElementById('admin-auth-error');
+const loginLoader = document.getElementById('admin-login-loader');
 
 let videoBlockCount = 0;
-let editingDocId = null; // Gestione stato CRUD: contiene l'ID documento in fase di modifica
-let loadedDeliveries = []; // Caching locale strutturato per caricamenti rapidi in modifica
+let editingDocId = null; 
+let loadedDeliveries = []; 
 
 function createSlug(text) {
     return text.toString().toLowerCase().trim()
@@ -41,15 +44,15 @@ function createSlug(text) {
         .replace(/\-\-+/g, '-');
 }
 
-// Router Centrale
+// Router asincrono principale
 async function initRouter() {
     loaderEl.classList.remove('hidden');
-    clientSection.classList.add('hidden');
-    adminLoginSection.classList.add('hidden');
-    adminDashboardSection.classList.add('hidden');
+    clientSection.style.display = 'none';
+    adminLoginSection.style.display = 'none';
+    adminDashboardSection.style.display = 'none';
 
     if (deliverySlug) {
-        // PERCORSO CLIENTE
+        // VISTA CLIENTE
         try {
             const q = query(collection(db, "consegneVideo"), where("slug", "==", deliverySlug));
             const querySnapshot = await getDocs(q);
@@ -59,26 +62,27 @@ async function initRouter() {
                 window.location.href = '/consegnavideo';
             }
         } catch (error) {
+            console.error("Errore routing cliente:", error);
             window.location.href = '/consegnavideo';
         }
     } else {
-        // PERCORSO MANAGEMENT ADMIN
+        // VISTA AMMINISTRATORE
         onAuthStateChanged(auth, (user) => {
             loaderEl.classList.add('hidden');
             if (user) {
-                adminLoginSection.classList.add('hidden');
+                adminLoginSection.style.display = 'none';
                 showAdminDashboard();
             } else {
-                adminDashboardSection.classList.add('hidden');
+                adminDashboardSection.style.display = 'none';
                 showAdminLogin();
             }
         });
     }
 }
 
-// Rendering Interfaccia Cliente Finale (Mobile Native UX)
+// Rendering della Vista Cliente Finale (Ottimizzazione Mobile)
 function renderClientView(data) {
-    document.title = `${data.deliveryTitle} | Teo Macauda`;
+    document.title = `${data.deliveryTitle} | Consegna Video`;
     document.getElementById('client-name-top').innerText = data.clientName;
     document.getElementById('client-delivery-title').innerText = data.deliveryTitle;
     
@@ -89,7 +93,6 @@ function renderClientView(data) {
         const card = document.createElement('div');
         card.className = "glass-card p-5 md:p-8 rounded-3xl border border-white/10 flex flex-col lg:flex-row gap-6 items-center relative";
         
-        // Calcolo delle classi CSS in base all'Aspect Ratio configurato
         const isVertical = video.aspectRatio === "9:16";
         const playerWrapperClass = isVertical 
             ? "w-full max-w-[290px] aspect-[9/16] bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0 mx-auto lg:mx-0"
@@ -103,14 +106,14 @@ function renderClientView(data) {
                 <div class="space-y-3">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent/10 border border-accent/20 text-accent uppercase tracking-wider">${video.resolution}</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/5 border border-white/10 text-graytext uppercase tracking-wider">${video.aspectRatio} Aspect</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/5 border border-white/10 text-graytext uppercase tracking-wider">${video.aspectRatio}</span>
                     </div>
                     <h2 class="text-xl font-bold tracking-tight text-white leading-snug">${video.title}</h2>
                     <p class="text-xs text-graytext flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Durata: <span class="text-white font-medium">${video.duration}</span></p>
                 </div>
                 <a href="${video.driveLink}" target="_blank" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-xs transition-all active:scale-95 flex justify-center items-center gap-2 shadow-md shadow-accent/10 group">
                     <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
-                    <span>Scarica File Originale</span>
+                    <span>Scarica Master Originale</span>
                 </a>
             </div>
         `;
@@ -122,13 +125,13 @@ function renderClientView(data) {
     }
 
     loaderEl.classList.add('hidden');
-    clientSection.classList.remove('hidden');
+    clientSection.style.display = 'block';
     lucide.createIcons();
 }
 
 function showAdminLogin() {
-    navActionZone.innerHTML = `<span class="text-xs font-semibold text-graytext bg-white/5 px-3 py-1.5 rounded-full uppercase tracking-wider">Dashboard Bloccata</span>`;
-    adminLoginSection.classList.remove('hidden');
+    navActionZone.innerHTML = `<span class="text-xs font-semibold text-graytext bg-white/5 px-3 py-1.5 rounded-full uppercase tracking-wider">Dashboard Protetta</span>`;
+    adminLoginSection.style.display = 'block';
 }
 
 function showAdminDashboard() {
@@ -138,12 +141,12 @@ function showAdminDashboard() {
         </button>
     `;
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
-    adminDashboardSection.classList.remove('hidden');
+    adminDashboardSection.style.display = 'block';
     resetAdminForm();
     loadDeliveryRecords();
 }
 
-// Generatore Dinamico Blocchi Video Form (Supporta popolamento automatico per l'Edit-Mode)
+// Iniezione moduli video nel pannello admin (Aggiunta / Modifica)
 function addVideoInputBlock(savedData = null) {
     videoBlockCount++;
     const id = videoBlockCount;
@@ -157,7 +160,7 @@ function addVideoInputBlock(savedData = null) {
         </button>
         <div>
             <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">Titolo della Clip</label>
-            <input type="text" class="vid-title w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="Es. Taglio Principale (16:9)">
+            <input type="text" class="vid-title w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="Es. Versione Orizzontale Main">
         </div>
         <div class="grid grid-cols-2 gap-3">
             <div>
@@ -169,12 +172,12 @@ function addVideoInputBlock(savedData = null) {
             </div>
             <div>
                 <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">Durata (Minutaggio)</label>
-                <input type="text" class="vid-duration w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="Es. 00:45">
+                <input type="text" class="vid-duration w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="Es. 01:15">
             </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3">
             <div>
-                <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">Proporzioni / Aspect Ratio</label>
+                <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">Aspect Ratio (Proporzioni)</label>
                 <select class="vid-aspect w-full h-9 bg-[#111] border border-white/10 rounded-lg px-2 text-xs text-white focus:outline-none focus:border-accent">
                     <option value="auto">Rileva in automatico (oEmbed)</option>
                     <option value="16:9">Orizzontale (16:9)</option>
@@ -183,22 +186,21 @@ function addVideoInputBlock(savedData = null) {
             </div>
             <div>
                 <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">YouTube Video ID</label>
-                <input type="text" class="vid-ytid w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="Es. z77iO77XwY8">
+                <input type="text" class="vid-ytid w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="Es. dQw4w9WgXcQ">
             </div>
         </div>
         <div>
-            <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">Link Google Drive (Download)</label>
+            <label class="block text-[9px] font-bold text-graytext uppercase tracking-wider mb-0.5">Link Google Drive Master</label>
             <input type="url" class="vid-drive w-full h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-accent" required placeholder="https://drive.google.com/...">
         </div>
     `;
     adminVideosInputsList.appendChild(block);
     
-    // Se stiamo iniettando dati da una modifica attiva, popola i campi
     if (savedData) {
         block.querySelector('.vid-title').value = savedData.title || '';
         block.querySelector('.vid-res').value = savedData.resolution || '4K';
         block.querySelector('.vid-duration').value = savedData.duration || '';
-        block.querySelector('.vid-aspect').value = savedData.aspectRatio || '16:9';
+        block.querySelector('.vid-aspect').value = savedData.aspectRatio || 'auto';
         block.querySelector('.vid-ytid').value = savedData.youtubeId || '';
         block.querySelector('.vid-drive').value = savedData.driveLink || '';
     }
@@ -209,7 +211,6 @@ function addVideoInputBlock(savedData = null) {
 
 btnAddVideo.addEventListener('click', () => addVideoInputBlock());
 
-// Reset del Form e Ripristino degli Stati UI originali
 function resetAdminForm() {
     editingDocId = null;
     document.getElementById('form-create-delivery').reset();
@@ -223,12 +224,12 @@ function resetAdminForm() {
 
 btnCancelEdit.addEventListener('click', resetAdminForm);
 
-// Gestore Submit Form (Crea / Aggiorna senza duplicati)
+// Gestione dell'invio del form (Salvataggio o Aggiornamento sovrascrivendo)
 document.getElementById('form-create-delivery').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     btnSubmitDelivery.disabled = true;
-    btnSubmitDelivery.innerText = `Analisi e salvataggio metadati...`;
+    btnSubmitDelivery.innerText = `Analisi ed elaborazione flussi...`;
 
     const clientName = document.getElementById('input-client-name').value;
     const deliveryTitle = document.getElementById('input-delivery-title').value;
@@ -241,7 +242,6 @@ document.getElementById('form-create-delivery').addEventListener('submit', async
         const selectedAspect = block.querySelector('.vid-aspect').value;
         let finalAspectRatio = selectedAspect;
 
-        // Se impostato su auto, eseguiamo il parsing via oEmbed
         if (selectedAspect === 'auto') {
             try {
                 const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${youtubeId}`);
@@ -268,7 +268,6 @@ document.getElementById('form-create-delivery').addEventListener('submit', async
 
     try {
         if (editingDocId) {
-            // AZIONE UPDATE (Modifica in tempo reale sul database)
             const docRef = doc(db, "consegneVideo", editingDocId);
             await updateDoc(docRef, {
                 clientName,
@@ -276,7 +275,6 @@ document.getElementById('form-create-delivery').addEventListener('submit', async
                 videos: videosData
             });
         } else {
-            // AZIONE CREATE
             const slug = createSlug(`${clientName} ${deliveryTitle}-${Math.floor(1000 + Math.random() * 9000)}`);
             await addDoc(collection(db, "consegneVideo"), {
                 clientName,
@@ -289,13 +287,14 @@ document.getElementById('form-create-delivery').addEventListener('submit', async
         resetAdminForm();
         loadDeliveryRecords();
     } catch (error) {
-        alert("Errore operativo Firestore durante il salvataggio.");
+        console.error(error);
+        alert("Errore durante il salvataggio.");
     } finally {
         btnSubmitDelivery.disabled = false;
     }
 });
 
-// Caricamento Record Storici e Attivazione Click Listener CRUD
+// Caricamento del database ed elaborazione comandi CRUD completi
 async function loadDeliveryRecords() {
     const listContainer = document.getElementById('delivery-list');
     if (!listContainer) return;
@@ -305,10 +304,10 @@ async function loadDeliveryRecords() {
         const q = query(collection(db, "consegneVideo"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
         listContainer.innerHTML = '';
-        loadedDeliveries = []; // Pulisci cache locale
+        loadedDeliveries = []; 
 
         if(querySnapshot.empty) {
-            listContainer.innerHTML = '<div class="text-xs text-graytext/40 py-8 text-center border border-white/5 border-dashed rounded-xl">Nessun pacchetto di consegna attivo nel database.</div>';
+            listContainer.innerHTML = '<div class="text-xs text-graytext/40 py-8 text-center border border-white/5 border-dashed rounded-xl">Nessun pacchetto di consegna attivo.</div>';
             return;
         }
 
@@ -316,7 +315,6 @@ async function loadDeliveryRecords() {
             const data = docSnap.data();
             const id = docSnap.id;
             
-            // Pushiamo nella nostra cache locale per non rifare letture inutili al click di Modifica
             loadedDeliveries.push({ id, ...data });
 
             const fullDeliveryUrl = `${window.location.origin}/consegnavideo/?v=${data.slug}`;
@@ -327,7 +325,7 @@ async function loadDeliveryRecords() {
             item.innerHTML = `
                 <div class="space-y-0.5">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-[9px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded">${numVideos} ${numVideos === 1 ? 'VIDEO MASTER' : 'VIDEO MASTER'}</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded">${numVideos} MASTER VIDEO</span>
                         <h4 class="text-sm font-bold text-white tracking-tight">${data.deliveryTitle}</h4>
                     </div>
                     <p class="text-xs text-graytext font-light">Destinatario: <span class="text-white/80">${data.clientName}</span></p>
@@ -347,18 +345,18 @@ async function loadDeliveryRecords() {
             listContainer.appendChild(item);
         });
 
-        // Configurazione Click Logici del Registro
+        // Pulsante copia link
         listContainer.querySelectorAll('.btn-copy').forEach(btn => {
             btn.addEventListener('click', () => {
                 navigator.clipboard.writeText(btn.getAttribute('data-url'));
                 const prev = btn.innerHTML;
                 btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> Copiato`;
                 lucide.createIcons();
-                setTimeout(() => { btn.innerHTML = prev; lucide.createIcons(); }, 1800);
+                setTimeout(() => { btn.innerHTML = prev; lucide.createIcons(); }, 1500);
             });
         });
 
-        // ATTIVAZIONE MODALITÀ MODIFICA (EDIT MODE COMPLETA)
+        // PULSANTE MODIFICA COMPLETO (Recupera dati salvati e setta l'Edit-Mode)
         listContainer.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', () => {
                 const docId = btn.getAttribute('data-id');
@@ -368,11 +366,9 @@ async function loadDeliveryRecords() {
 
                 editingDocId = docId;
                 
-                // Popolamento campi principali
                 document.getElementById('input-client-name').value = targetData.clientName;
                 document.getElementById('input-delivery-title').value = targetData.deliveryTitle;
                 
-                // Ricostruzione moduli video multipli salvati
                 adminVideosInputsList.innerHTML = '';
                 if(targetData.videos && targetData.videos.length > 0) {
                     targetData.videos.forEach(video => addVideoInputBlock(video));
@@ -380,18 +376,18 @@ async function loadDeliveryRecords() {
                     addVideoInputBlock();
                 }
 
-                // Switch UI in modalità Edit
-                formActionTitle.innerHTML = `<i data-lucide="edit-3" class="text-blue-400 w-5 h-5"></i> Modifica Consegna Esistente`;
+                formActionTitle.innerHTML = `<i data-lucide="edit-3" class="text-blue-400 w-5 h-5"></i> Modifica Consegna Attiva`;
                 btnSubmitDelivery.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Salva Modifiche`;
                 btnCancelEdit.classList.remove('hidden');
-                window.scrollTo({ top: document.getElementById('form-create-delivery').offsetTop - 100, behavior: 'smooth' });
+                window.scrollTo({ top: document.getElementById('form-create-delivery').offsetTop - 80, behavior: 'smooth' });
                 lucide.createIcons();
             });
         });
 
+        // Pulsante elimina
         listContainer.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', async () => {
-                if(confirm("Vuoi eliminare permanentemente questo pacchetto? Il cliente perderà immediatamente l'accesso ai file.")) {
+                if(confirm("Sei sicuro di voler eliminare permanentemente questo pacchetto di consegna?")) {
                     await deleteDoc(doc(db, "consegneVideo", btn.getAttribute('data-id')));
                     loadDeliveryRecords();
                 }
@@ -404,21 +400,19 @@ async function loadDeliveryRecords() {
     }
 }
 
-// Handler Autenticazione Form
+// Listener form di login
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const errEl = document.getElementById('admin-auth-error');
-        const loadEl = document.getElementById('admin-login-loader');
-        errEl.classList.add('hidden');
-        loadEl.classList.remove('hidden');
+        authError.classList.add('hidden');
+        loginLoader.classList.remove('hidden');
 
         try {
             await signInWithEmailAndPassword(auth, document.getElementById('admin-email').value, document.getElementById('admin-pass').value);
         } catch (error) {
-            loadEl.classList.add('hidden');
-            errEl.classList.remove('hidden');
-            errEl.innerText = "Credenziali errate o autorizzazione mancante.";
+            loginLoader.classList.add('hidden');
+            authError.classList.remove('hidden');
+            authError.innerText = "Credenziali invalide.";
         }
     });
 }
