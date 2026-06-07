@@ -18,7 +18,7 @@ const db = getFirestore(app);
 const urlParams = new URLSearchParams(window.location.search);
 const deliverySlug = urlParams.get('v');
 
-// Dichiarazione elementi del DOM
+// Elementi del DOM
 const loaderEl = document.getElementById('main-loader');
 const clientSection = document.getElementById('section-client');
 const adminLoginSection = document.getElementById('section-admin-login');
@@ -80,7 +80,7 @@ async function initRouter() {
     }
 }
 
-// Rendering della Vista Cliente Finale (Ottimizzazione Mobile e Desktop)
+// Rendering della Vista Cliente Finale (Ottimizzazione Geometrie e Testi)
 function renderClientView(data) {
     document.title = `${data.deliveryTitle} | Consegna Video`;
     document.getElementById('client-name-top').innerText = data.clientName;
@@ -91,18 +91,21 @@ function renderClientView(data) {
 
     data.videos.forEach((video) => {
         const card = document.createElement('div');
-        card.className = "glass-card p-5 md:p-8 rounded-3xl border border-white/10 flex flex-col lg:flex-row gap-6 items-center relative";
-        
         const isVertical = video.aspectRatio === "9:16";
+        
+        // Dimensione del badge unificata e speculare sia per orizzontale che verticale (max-w-3xl)
+        card.className = "glass-card p-6 md:p-8 rounded-3xl border border-white/10 max-w-3xl mx-auto w-full flex " + 
+                         (isVertical ? "flex-col sm:flex-row gap-6 items-center" : "flex-col gap-6 items-start");
+        
         const playerWrapperClass = isVertical 
-            ? "w-full max-w-[290px] aspect-[9/16] bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0 mx-auto lg:mx-0"
-            : "w-full lg:w-[55%] aspect-video bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0";
+            ? "w-full sm:w-[45%] max-w-[260px] aspect-[9/16] bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0 mx-auto sm:mx-0"
+            : "w-full aspect-video bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0";
 
         card.innerHTML = `
             <div class="${playerWrapperClass}">
                 <iframe class="w-full h-full absolute inset-0" src="https://www.youtube.com/embed/${video.youtubeId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
-            <div class="flex-1 w-full flex flex-col justify-between lg:self-stretch space-y-6 items-start text-left">
+            <div class="flex-1 w-full flex flex-col justify-between space-y-4 items-start text-left ${isVertical ? 'sm:self-stretch' : ''}">
                 <div class="space-y-3 w-full flex flex-col items-start">
                     <div class="flex items-center gap-2 flex-wrap justify-start w-full">
                         <span class="inline-flex items-center justify-center w-fit px-2.5 py-1 rounded-md text-[10px] font-bold bg-accent/10 border border-accent/20 text-accent uppercase tracking-wider">${video.resolution}</span>
@@ -110,8 +113,12 @@ function renderClientView(data) {
                     </div>
                     <h2 class="text-xl font-bold tracking-tight text-white leading-snug">${video.title}</h2>
                     <p class="text-xs text-graytext flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Durata: <span class="text-white font-medium">${video.duration}</span></p>
+                    
+                    <p class="text-[11px] text-graytext/60 bg-white/[0.01] border border-white/5 p-3 rounded-xl mt-2 leading-relaxed w-full">
+                        <span class="text-accent font-semibold">Nota:</span> Se il file è di dimensioni superiori a 100 MB, Google Drive chiederà una conferma di sicurezza prima di avviare il download.
+                    </p>
                 </div>
-                <a href="${video.driveLink}" target="_blank" class="w-fit h-9 px-5 bg-accent hover:bg-accentHover text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-md shadow-accent/10 group">
+                <a href="${video.driveLink}" target="_blank" class="w-fit h-9 px-5 bg-accent hover:bg-accentHover text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-md shadow-accent/10 group mt-2">
                     <i data-lucide="download" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
                     <span>Scarica</span>
                 </a>
