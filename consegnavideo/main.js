@@ -111,9 +111,9 @@ function renderClientView(data) {
                     <h2 class="text-xl font-bold tracking-tight text-white leading-snug">${video.title}</h2>
                     <p class="text-xs text-graytext flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Durata: <span class="text-white font-medium">${video.duration}</span></p>
                 </div>
-                <a href="${video.driveLink}" target="_blank" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-xs transition-all active:scale-95 flex justify-center items-center gap-2 shadow-md shadow-accent/10 group">
-                    <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
-                    <span>Scarica Master Originale</span>
+                <a href="${video.driveLink}" target="_blank" class="w-fit h-9 px-5 bg-accent hover:bg-accentHover text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-md shadow-accent/10 group mt-auto sm:self-start">
+    <i data-lucide="download" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
+    <span>Scarica</span>
                 </a>
             </div>
         `;
