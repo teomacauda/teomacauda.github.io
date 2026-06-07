@@ -26,35 +26,73 @@
                         dark: '#000000', 
                         accent: '#FF7A00', 
                         accentHover: '#E56D00', 
-                        graytext: '#999999',
-                        cardbg: '#0a0a0a'
+                        graytext: '#AAAAAA',
+                        cardbg: 'rgba(255, 255, 255, 0.03)'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #000000; color: #ffffff; -webkit-tap-highlight-color: transparent; }
-        .orange-glow { box-shadow: 0 0 25px rgba(255, 122, 0, 0.15); }
-        .orange-glow-sm { box-shadow: 0 0 15px rgba(255, 122, 0, 0.08); }
-        .orange-glow-focus:focus { box-shadow: 0 0 15px rgba(255, 122, 0, 0.25); border-color: #FF7A00 !important; }
-        .video-card { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background-color: #000000; color: #ffffff; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        
+        /* Implementazione Sfondi Premium dal tuo global.css */
+        .ambient-glow { 
+            position: absolute; 
+            width: 100%; 
+            height: 1200px; 
+            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.35) 0%, rgba(255, 122, 0, 0.08) 40%, rgba(0, 0, 0, 0) 85%); 
+            top: 0; 
+            left: 0; 
+            z-index: 0; 
+            pointer-events: none; 
+        }
+        .hero-noise { 
+            position: absolute; 
+            inset: 0; 
+            background-image: url("https://grainy-gradients.vercel.app/noise.svg"); 
+            opacity: 0.12; 
+            pointer-events: none; 
+            z-index: 1; 
+        }
+        
+        /* Glassmorphism e Glow Effetti */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 122, 0, 0.25);
+            box-shadow: 0 15px 30px -10px rgba(255, 122, 0, 0.1);
+        }
+        .orange-glow-focus:focus { 
+            box-shadow: 0 0 15px rgba(255, 122, 0, 0.2); 
+            border-color: #FF7A00 !important; 
+        }
     </style>
 </head>
-<body class="flex flex-col min-h-full font-sans antialiased">
+<body class="flex flex-col min-h-full font-sans antialiased relative">
+
+    <div class="ambient-glow"></div>
+    <div class="hero-noise"></div>
 
     <div id="main-loader" class="fixed inset-0 bg-dark z-50 flex items-center justify-center transition-opacity duration-300">
         <div class="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <section id="section-lock" class="hidden fixed inset-0 bg-dark z-40 flex items-center justify-center px-4">
-        <div class="w-full max-w-sm video-card rounded-2xl p-6 orange-glow">
+    <section id="section-lock" class="hidden fixed inset-0 bg-dark/90 backdrop-blur-md z-40 flex items-center justify-center px-4">
+        <div class="w-full max-w-sm glass-card rounded-2xl p-6 relative z-10">
             <div class="text-center mb-6">
-                <div class="w-12 h-12 bg-accent/10 text-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i data-lucide="lock" class="w-5 h-5"></i>
+                <div class="flex justify-center mb-4">
+                    <svg class="h-10 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    </svg>
                 </div>
-                <h2 class="text-xl font-bold tracking-tight uppercase">Admin Control</h2>
-                <p class="text-xs text-graytext mt-1">Ecosistema Consegne Privato</p>
+                <h2 class="text-md font-bold tracking-widest uppercase text-white">Admin Authentication</h2>
             </div>
             <form id="login-form" class="space-y-4">
                 <div>
@@ -65,20 +103,22 @@
                     <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Password</label>
                     <input type="password" id="login-password" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none orange-glow-focus transition-all">
                 </div>
-                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg active:scale-95 mt-2">Accedi</button>
+                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95 mt-2">Accedi</button>
             </form>
         </div>
     </section>
 
-    <section id="section-admin-dashboard" class="hidden container mx-auto max-w-4xl px-4 py-8 flex-1">
+    <section id="section-admin-dashboard" class="hidden container mx-auto max-w-4xl px-4 py-8 flex-1 relative z-10">
         <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-            <div>
-                <h1 class="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
-                    <span class="text-accent">Teo</span> Macauda
-                </h1>
-                <p class="text-xs text-graytext">Hub di Consegna Video Automatizzato</p>
+            <div class="flex items-center gap-3">
+                <svg class="h-8 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+                <div class="w-[1px] h-6 bg-white/10 mx-1"></div>
+                <span class="text-xs font-bold uppercase tracking-widest text-accent mt-0.5">Delivery Hub</span>
             </div>
-            <button id="btn-open-create" class="h-10 bg-accent hover:bg-accentHover text-white font-bold px-4 rounded-xl text-xs transition-all flex items-center gap-2 active:scale-95 shadow-lg">
+            <button id="btn-open-create" class="h-10 bg-accent hover:bg-accentHover text-white font-bold px-4 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 active:scale-95 shadow-lg">
                 <i data-lucide="plus" class="w-4 h-4"></i> Nuova Consegna
             </button>
         </div>
@@ -87,30 +127,30 @@
             </div>
     </section>
 
-    <section id="section-admin-form" class="hidden container mx-auto max-w-3xl px-4 py-8 flex-1">
+    <section id="section-admin-form" class="hidden container mx-auto max-w-3xl px-4 py-8 flex-1 relative z-10">
         <div class="mb-6 flex items-center justify-between">
-            <button id="btn-back-to-dashboard" class="text-xs text-graytext hover:text-white transition-colors flex items-center gap-1.5 py-2">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Torna alla Dashboard
+            <button id="btn-back-to-dashboard" class="text-xs text-graytext hover:text-white transition-colors flex items-center gap-1.5 py-2 font-medium">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Pannello di Controllo
             </button>
-            <h2 id="form-action-title" class="text-xs font-bold uppercase tracking-widest text-accent">Crea Consegna</h2>
+            <h2 id="form-action-title" class="text-xs font-bold uppercase tracking-widest text-accent">Nuova Consegna</h2>
         </div>
 
         <form id="delivery-main-form" class="space-y-5">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 video-card p-5 rounded-xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card p-5 rounded-xl">
                 <div>
                     <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Nome Cliente</label>
-                    <input type="text" id="input-client-name" required placeholder="Es. Andrea Rossi" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent transition-all">
+                    <input type="text" id="input-client-name" required placeholder="Es. Client S.r.l." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent transition-all">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Titolo della Consegna</label>
-                    <input type="text" id="input-delivery-title" required placeholder="Es. Reels Content Marketing Maggio" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent transition-all">
+                    <input type="text" id="input-delivery-title" required placeholder="Es. Pack Video ADV Giugno" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent transition-all">
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-graytext">Video Inclusi</h3>
-                    <button type="button" id="btn-add-video-item" class="text-xs bg-white/5 hover:bg-white/10 text-white border border-white/10 h-8 px-3 rounded-lg transition-colors flex items-center gap-1">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-graytext">Contenuti Multimediali</h3>
+                    <button type="button" id="btn-add-video-item" class="text-xs bg-white/5 hover:bg-white/10 text-white border border-white/10 h-8 px-3 rounded-lg transition-colors flex items-center gap-1 font-medium">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Video
                     </button>
                 </div>
@@ -119,40 +159,45 @@
                     </div>
             </div>
 
-            <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg active:scale-95 mt-6">Pubblica Pagina Consegna</button>
+            <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95 mt-6">Pubblica Link Privato</button>
         </form>
     </section>
 
-    <section id="section-client-view" class="hidden w-full flex-1 flex flex-col">
-        <div id="admin-top-bar" class="hidden bg-neutral-900 border-b border-white/5 px-4 py-2.5 flex items-center justify-between text-xs">
+    <section id="section-client-view" class="hidden w-full flex-1 flex flex-col relative z-10">
+        <div id="admin-top-bar" class="hidden bg-neutral-900/90 backdrop-blur-md border-b border-white/5 px-4 py-2.5 flex items-center justify-between text-xs">
             <span class="text-accent font-bold flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Vista Cliente (Teo Admin)
+                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Pannello Admin Attivo
             </span>
-            <button id="btn-admin-return" class="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-lg text-[11px] font-medium transition-colors flex items-center gap-1">
-                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Torna alla Dashboard
+            <button id="btn-admin-return" class="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-lg text-[11px] font-semibold transition-colors flex items-center gap-1 text-white">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Esci da Vista Cliente
             </button>
         </div>
 
-        <div class="container mx-auto max-w-4xl px-4 pt-12 pb-4 text-center">
-            <p id="client-view-subtitle" class="text-[11px] font-extrabold text-accent uppercase tracking-widest mb-1.5"></p>
-            <h1 id="client-view-title" class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase leading-tight"></h1>
-            <div class="w-12 h-1 bg-accent mx-auto mt-4 rounded-full"></div>
+        <div class="container mx-auto max-w-4xl px-4 pt-14 pb-4 text-center flex flex-col items-center">
+            <div class="mb-6">
+                <svg class="h-10 md:h-12 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+            </div>
+            <p id="client-view-subtitle" class="text-[10px] font-extrabold text-accent uppercase tracking-widest mb-1.5"></p>
+            <h1 id="client-view-title" class="text-xl md:text-2xl font-black tracking-tight text-white uppercase leading-tight max-w-2xl"></h1>
+            <div class="w-10 h-[2px] bg-accent mt-4 rounded-full"></div>
         </div>
 
-        <div id="client-videos-render" class="container mx-auto max-w-4xl px-4 py-8 space-y-12 pb-28">
+        <div id="client-videos-render" class="container mx-auto max-w-4xl px-4 py-8 space-y-12 pb-32">
             </div>
 
-        <a id="whatsapp-badge" href="https://wa.me/393784142773" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl transition-all active:scale-90 flex items-center justify-center orange-glow-sm">
-            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <a id="whatsapp-badge" href="https://wa.me/393784142773" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl transition-all active:scale-90 flex items-center justify-center border border-white/10">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.455L0 24zm6.59-4.846c1.6.95 3.488 1.449 5.412 1.451 5.432.002 9.851-4.413 9.854-9.843.002-2.631-1.025-5.102-2.892-6.971C17.155 1.922 14.68 1.897 12.01 1.897c-5.437 0-9.857 4.415-9.86 9.846-.001 1.927.501 3.813 1.455 5.418l-.993 3.627 3.719-.975zm11.067-7.42c-.27-.135-1.597-.788-1.846-.878-.248-.09-.43-.135-.61.135-.18.27-.697.878-.854 1.057-.158.18-.315.202-.586.067-.27-.135-1.14-.42-2.172-1.34-1.023-.913-1.713-2.04-1.913-2.377-.202-.337-.022-.52.113-.653.122-.119.27-.315.405-.472.135-.158.18-.27.27-.45.09-.18.045-.337-.022-.472-.068-.135-.61-1.467-.834-2.01-.22-.526-.44-.454-.61-.462-.158-.007-.338-.008-.517-.008-.18 0-.472.067-.72.337-.247.27-.945.922-.945 2.248s.967 2.607 1.102 2.787c.135.18 1.902 2.904 4.607 4.07 1.58.682 2.16.743 2.936.627.46-.068 1.597-.652 1.822-1.282.225-.63.225-1.17.157-1.282-.067-.113-.248-.203-.518-.338z"/>
             </svg>
         </a>
     </section>
 
-    <footer class="py-6 text-center border-t border-white/5 bg-black mt-auto z-10">
-        <p class="text-graytext text-[11px] tracking-wide">
-            © <script>document.write(new Date().getFullYear())</script> 
-            Teo Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR)
+    <footer class="py-6 text-center border-t border-white/5 bg-black mt-auto relative z-10">
+        <p class="text-graytext text-[10px] tracking-wide uppercase opacity-60">
+            © <script>document.write(new Date().getFullYear())</script> Teo Macauda | P.IVA 02153520891
         </p>
     </footer>
 
