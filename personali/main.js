@@ -1,14 +1,13 @@
 // --- PORTFOLIO DATA (DATABASE LOCALE) ---
-// Modifica qui gli ID dei video inserendo codici REALI di YouTube (Es: 'DWQPP8C6h9E')
 const portfolioItems = [
     {
-        youtubeId: 'ZYBKlJY46wA', // Usa un ID reale esistente su YouTube altrimenti dà schermata d'errore
-        originalUrl: 'https://www.youtube.com/watch?v=ZYBKlJY46wA',
+        youtubeId: 'ZYBKlJY46wA', // Inserisci qui il codice dell'ID video reale di YouTube
+        originalUrl: 'https://www.youtube.com/watch?v=ZYBKlJY46wA', // Link originale (es. il Reel di Instagram)
         title: 'Reel Instagram 2026',
         category: 'Personal Projects',
         coverImg: 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/youtube1.webp',
-        views: '12.4K', 
-        isVertical: false // true = Formato verticale (9:16), false = Formato standard (16:9)
+        views: '2.5K', 
+        isVertical: false // true = Reel verticale (9:16), false = Vlog/Video orizzontale (16:9)
     }
 ];
 
@@ -25,7 +24,7 @@ function renderPortfolioGrid() {
         
         return `
             <div class="work-item group relative ${aspectClass} rounded-3xl overflow-hidden glass-card cursor-pointer" 
-                 onclick="openVideoModal('${item.youtubeId}', '${item.originalUrl}', '${item.title.replace(/'/g, "\'")}', ${item.isVertical})">
+                 onclick="openVideoModal('${item.youtubeId}', '${item.originalUrl}', '${item.title.replace(/'/g, "\\'")}', ${item.isVertical})">
                 ${badgeHtml}
                 <img src="${item.coverImg}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 flex items-center justify-center z-10">
@@ -42,7 +41,7 @@ function renderPortfolioGrid() {
     lucide.createIcons();
 }
 
-// --- LOGICA MODAL ADATTIVA DESKTOP / MOBILE ---
+// --- LOGICA MODAL ADATTIVA ---
 function openVideoModal(youtubeId, originalUrl, title, isVertical = false) {
     const modal = document.getElementById('videoModal');
     const content = document.getElementById('videoModalContent');
@@ -53,7 +52,6 @@ function openVideoModal(youtubeId, originalUrl, title, isVertical = false) {
     const consentStatus = localStorage.getItem('video_consent_teo');
     
     if (consentStatus === 'true') {
-        // --- LAYOUT CON CONSENSO ACCETTATO: CARICA IL VIDEO ---
         titleBar.classList.remove('hidden');
         if (isVertical) {
             content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full max-w-[340px] md:max-w-[360px] bg-[#0F0F0F] mx-auto";
@@ -64,9 +62,8 @@ function openVideoModal(youtubeId, originalUrl, title, isVertical = false) {
         }
         loadPlyrPlayer(youtubeId, originalUrl, container, isVertical);
     } else {
-        // --- LAYOUT SENZA CONSENSO: SCHERMATA COOKIE COMPATTA FLUIDA ---
         content.className = "relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full max-w-md bg-[#0F0F0F] mx-auto p-6 sm:p-8";
-        titleBar.classList.add('hidden'); // Nasconde il titolo per salvare spazio verticale su smartphone
+        titleBar.classList.add('hidden');
         container.className = "w-full flex flex-col items-center justify-center text-center py-4";
         
         container.innerHTML = `
@@ -116,6 +113,7 @@ function handleConsentDecision(isAccepted, youtubeId = null, originalUrl = null,
     }
 }
 
+// Generazione e iniezione sicura via DOM
 function loadPlyrPlayer(youtubeId, originalUrl, container, isVertical = false) {
     if (activePlayer) {
         activePlayer.destroy();
@@ -128,24 +126,29 @@ function loadPlyrPlayer(youtubeId, originalUrl, container, isVertical = false) {
         </div>
     `;
 
+    // Inizializzazione pulita senza oggetti custom nell'array controlli (Evita il crash di Plyr)
     activePlayer = new Plyr('#plyr-instance', {
         ratio: isVertical ? '9:16' : '16:9',
         youtube: { modestbranding: 1, rel: 0, showinfo: 0, iv_load_policy: 3, playsinline: 1 },
-        controls: [
-            'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen',
-            {
-                html: `
-                    <button type="button" class="plyr__control plyr-btn-original" onclick="window.open('${originalUrl}', '_blank')">
-                        <svg class="w-3.5 h-3.5 mr-1 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                        Originale
-                    </button>
-                `
-            }
-        ]
+        controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
+    });
+
+    // Iniettiamo via DOM il pulsante solo quando Plyr è pronto e stabile
+    activePlayer.on('ready', () => {
+        const plyrControls = container.querySelector('.plyr__controls');
+        if (plyrControls && !plyrControls.querySelector('.plyr-btn-original')) {
+            const btnHtml = `
+                <button type="button" class="plyr__control plyr-btn-original" onclick="window.open('${originalUrl}', '_blank')">
+                    <svg class="w-3.5 h-3.5 mr-1 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    Originale
+                </button>
+            `;
+            plyrControls.insertAdjacentHTML('beforeend', btnHtml);
+        }
     });
 }
 
@@ -165,7 +168,7 @@ function closeVideoModal() {
     }, 300);
 }
 
-// --- LOGICA CORE UI (MENU & CONTATTI) ---
+// --- LOGICA CORE UI ---
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     const menuContent = document.getElementById('mobileMenuContent');
@@ -210,7 +213,6 @@ function initScrollAnimations() {
     reveals.forEach(r => observer.observe(r));
 }
 
-// --- CICLI DI VITA INTERAZIONI ---
 document.addEventListener('DOMContentLoaded', () => {
     renderPortfolioGrid();
     initScrollAnimations();
