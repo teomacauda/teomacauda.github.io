@@ -1,0 +1,166 @@
+/* ==========================================
+   STILI SPECIFICI DELLA HOME PAGE (index.css)
+   ========================================== */
+
+/* Griglia ed elementi visivi Hero (Effetto Camera/Lente) */
+.hero-grid { 
+    position: absolute; 
+    inset: 0; 
+    background-image: radial-gradient(rgba(255,122,0,0.1) 1px, transparent 1px); 
+    background-size: 40px 40px; 
+    opacity: 0.3; 
+    z-index: 1; 
+}
+
+.hero-visual-container { 
+    position: absolute; 
+    inset: 0; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    overflow: hidden; 
+    pointer-events: none; 
+}
+
+.lens-ring { 
+    position: absolute; 
+    width: 80vh; 
+    height: 80vh; 
+    border: 1px solid rgba(255,255,255,0.05); 
+    border-radius: 50%; 
+}
+
+.lens-glow { 
+    position: absolute; 
+    width: 60vh; 
+    height: 60vh; 
+    background: radial-gradient(circle, rgba(255,122,0,0.08) 0%, transparent 70%); 
+    border-radius: 50%; 
+}
+
+/* Angoli del Mirino (Viewfinder) */
+.viewfinder-corner { 
+    position: absolute; 
+    width: 25px; 
+    height: 25px; 
+    border-color: rgba(255,122,0,0.4); 
+    z-index: 5; 
+}
+.corner-tl { top: 6rem; left: 1.25rem; border-top-width: 2px; border-left-width: 2px; }
+.corner-tr { top: 6rem; right: 1.25rem; border-top-width: 2px; border-right-width: 2px; }
+.corner-bl { bottom: 1.5rem; left: 1.25rem; border-bottom-width: 2px; border-left-width: 2px; }
+.corner-br { bottom: 1.5rem; right: 1.25rem; border-bottom-width: 2px; border-right-width: 2px; }
+
+@media (min-width: 768px) {
+    .viewfinder-corner { width: 40px; height: 40px; border-color: rgba(255,255,255,0.2); }
+    .corner-tl { top: 10vh; left: 10vw; }
+    .corner-tr { top: 10vh; right: 10vw; }
+    .corner-bl { bottom: 10vh; left: 10vw; }
+    .corner-br { bottom: 10vh; right: 10vw; }
+    
+    /* Menu di Navigazione (Link desktop) */
+    .nav-link { 
+        padding: 0.6rem 1.4rem;
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #AAAAAA;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+        background: rgba(255, 122, 0, 0.1);
+        color: #FF7A00;
+        border-color: rgba(255, 122, 0, 0.4);
+        box-shadow: 0 0 20px -5px rgba(255, 122, 0, 0.2);
+        font-weight: 600;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        transition: 0.5s;
+    }
+
+    .nav-link:hover::after {
+        left: 100%;
+    }
+}
+
+/* Struttura principale e Animazioni Reveal */
+main, footer { position: relative; z-index: 10; }
+.reveal { opacity: 0; transform: translateY(30px); will-change: transform, opacity; }
+
+.reveal.immediate-show {
+    opacity: 0.8 !important;
+    transform: translateY(0) !important;
+}
+
+@keyframes scroll-arrow-down { 
+    0% { transform: translateY(-10px); opacity: 0; } 
+    50% { transform: translateY(0); opacity: 1; } 
+    100% { transform: translateY(10px); opacity: 0; } 
+}
+.scroll-arrow-anim { animation: scroll-arrow-down 2s ease-in-out infinite; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Pulsante Chat Flottante */
+.chat-button { 
+    position: fixed; 
+    bottom: 1.5rem; 
+    right: 1.5rem; 
+    z-index: 130; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background-color: #FF7A00; 
+    color: white; 
+    border-radius: 9999px; 
+    text-decoration: none; 
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    min-width: 3.5rem; 
+    height: 3.5rem; 
+    box-shadow: 0 10px 25px rgba(255, 122, 0, 0.3); 
+    border: none; 
+    cursor: pointer; 
+}
+
+@media (min-width: 768px) {
+    .chat-button { bottom: 2rem; right: 2rem; height: 4rem; min-width: 4rem; }
+}
+
+.chat-button:hover { transform: scale(1.05); }
+#chat-text { max-width: 0; opacity: 0; font-size: 0px; transition: all 0.5s ease; font-family: 'Inter', sans-serif; font-weight: 600; }
+
+.chat-button.expanded { padding: 0 1.25rem; max-width: 350px; }
+.chat-button.expanded #chat-text { max-width: 250px; opacity: 1; font-size: 14px; margin-left: 10px; }
+
+@media (min-width: 768px) {
+    .chat-button.expanded { padding: 0 1.5rem; }
+    .chat-button.expanded #chat-text { font-size: 16px; margin-left: 12px; }
+}
+
+/* Tipografia Responsive */
+.hero-title-responsive {
+    font-size: clamp(2.4rem, 10vw, 5.5rem);
+    line-height: 1.1;
+}
+@media (min-width: 768px) {
+    .hero-title-responsive { line-height: 0.95; }
+}
