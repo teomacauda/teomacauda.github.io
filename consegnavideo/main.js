@@ -93,20 +93,23 @@ function renderClientView(data) {
         const card = document.createElement('div');
         const isVertical = video.aspectRatio === "9:16";
         
-        // Dimensione del badge unificata e speculare sia per orizzontale che verticale (max-w-3xl)
-        card.className = "glass-card p-6 md:p-8 rounded-3xl border border-white/10 max-w-3xl mx-auto w-full flex " + 
-                         (isVertical ? "flex-col sm:flex-row gap-6 items-center" : "flex-col gap-6 items-start");
+        // Layout flessibile: riga su desktop (max-w-4xl) e colonna su mobile
+        card.className = "glass-card p-6 md:p-8 rounded-3xl border border-white/10 max-w-4xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-6";
         
         const playerWrapperClass = isVertical 
-            ? "w-full sm:w-[45%] max-w-[260px] aspect-[9/16] bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0 mx-auto sm:mx-0"
-            : "w-full aspect-video bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0";
+            ? "w-[210px] md:w-[240px] aspect-[9/16] bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0 mx-auto md:mx-0"
+            : "w-full max-w-[340px] md:max-w-none md:w-[320px] aspect-video bg-[#0c0c0c] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative flex-shrink-0 mx-auto md:mx-0";
 
         card.innerHTML = `
+            <!-- Colonna 1: Anteprima Video YouTube -->
             <div class="${playerWrapperClass}">
                 <iframe class="w-full h-full absolute inset-0" src="https://www.youtube.com/embed/${video.youtubeId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
-            <div class="flex-1 w-full flex flex-col justify-between space-y-4 items-start text-left ${isVertical ? 'sm:self-stretch' : ''}">
-                <div class="space-y-3 w-full flex flex-col items-start">
+            
+            <!-- Colonna 2: Dettagli (sopra) e Pulsante di Download (in basso centrato) -->
+            <div class="flex-1 w-full flex flex-col justify-between gap-6 md:px-4">
+                <!-- Parte superiore: Testi e Metadati -->
+                <div class="w-full flex flex-col items-start text-left gap-3">
                     <div class="flex items-center gap-2 flex-wrap justify-start w-full">
                         <span class="inline-flex items-center justify-center w-fit px-2.5 py-1 rounded-md text-[10px] font-bold bg-accent/10 border border-accent/20 text-accent uppercase tracking-wider">${video.resolution}</span>
                         <span class="inline-flex items-center justify-center w-fit px-2.5 py-1 rounded-md text-[10px] font-bold bg-white/5 border border-white/10 text-graytext uppercase tracking-wider">${video.aspectRatio}</span>
@@ -114,21 +117,31 @@ function renderClientView(data) {
                     <h2 class="text-xl font-bold tracking-tight text-white leading-snug">${video.title}</h2>
                     <p class="text-xs text-graytext flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Durata: <span class="text-white font-medium">${video.duration}</span></p>
                     
-                    <p class="text-[11px] text-graytext/60 bg-white/[0.01] border border-white/5 p-3 rounded-xl mt-2 leading-relaxed w-full">
+                    <p class="text-[11px] text-graytext/60 bg-white/[0.01] border border-white/5 p-3 rounded-xl mt-1 leading-relaxed w-full">
                         <span class="text-accent font-semibold">Nota:</span> Se il file è di dimensioni superiori a 100 MB, Google Drive chiederà una conferma di sicurezza prima di avviare il download.
                     </p>
                 </div>
-                <a href="${video.driveLink}" target="_blank" class="w-fit h-9 px-5 bg-accent hover:bg-accentHover text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-md shadow-accent/10 group mt-2">
-                    <i data-lucide="download" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
-                    <span>Scarica</span>
-                </a>
+                
+                <!-- Parte inferiore: Pulsante Download centrato nello spazio rimanente -->
+                <div class="w-full flex items-center justify-center">
+                    <a href="${video.driveLink}" target="_blank" class="w-auto min-w-[150px] inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-accent/20 group">
+                        <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
+                        <span>Scarica</span>
+                    </a>
+                </div>
             </div>
         `;
         container.appendChild(card);
     });
 
     if(auth.currentUser) {
-        navActionZone.innerHTML = `<a href="/consegnavideo" class="text-xs text-accent border border-accent/20 bg-accent/5 px-4 h-9 flex items-center rounded-full hover:bg-accent hover:text-white transition-all">Pannello Cloud</a>`;
+        const basePath = window.location.pathname.startsWith('/consegnavideo') ? '/consegnavideo' : '';
+        navActionZone.innerHTML = `
+            <a href="${basePath || '/'}" class="text-xs font-bold text-accent border border-accent/20 bg-accent/5 hover:bg-accent hover:text-white px-4 h-9 rounded-xl flex items-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-accent/5 group">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></i>
+                <span>Pannello di Controllo</span>
+            </a>
+        `;
     }
 
     loaderEl.classList.add('hidden');
