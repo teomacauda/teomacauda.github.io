@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-blue-500 selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Generatore Preventivi | Teo Macauda</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        darkBg: '#050505',
+                        cardBg: '#0d0d0d',
+                        accent: '#3b82f6', // Puoi personalizzarlo con il tuo esatto colore accent
+                        accentHover: '#2563eb',
+                        grayText: '#a3a3a3'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; }
+    </style>
+</head>
+<body class="text-white min-h-full flex flex-col antialiased">
+
+    <div id="main-loader" class="fixed inset-0 bg-darkBg z-50 flex items-center justify-center transition-opacity duration-300">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-accent"></div>
+    </div>
+
+    <section id="section-auth" class="hidden fixed inset-0 bg-darkBg z-40 flex items-center justify-center px-4">
+        <div class="w-full max-w-md bg-cardBg border border-white/10 p-8 rounded-2xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-center tracking-tight">Accesso Amministrazione</h2>
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-grayText mb-2">Email</label>
+                    <input type="email" id="auth-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-grayText mb-2">Password</label>
+                    <input type="password" id="auth-password" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all shadow-lg mt-2">
+                    Accedi
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <main id="section-admin" class="hidden flex-grow container mx-auto max-w-4xl px-4 py-12">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight">Nuovo Preventivo</h1>
+                <p class="text-grayText text-sm mt-1">Inserisci i dati per generare il documento flat.</p>
+            </div>
+            <button id="btn-logout" class="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">
+                <i data-lucide="log-out" class="w-5 h-5 text-grayText"></i>
+            </button>
+        </div>
+
+        <form id="preventivo-form" class="space-y-6">
+            <div class="bg-cardBg border border-white/10 p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3">
+                    <i data-lucide="user" class="w-5 h-5 text-accent"></i> Dati Cliente
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-grayText mb-2">Nome Cliente / Azienda</label>
+                        <input type="text" id="client-name" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-grayText mb-2">Data Scadenza Preventivo</label>
+                        <input type="date" id="expiry-date" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-white/10 p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3">
+                    <i data-lucide="layers" class="w-5 h-5 text-accent"></i> Servizi & Prestazioni
+                </h3>
+                
+                <div id="services-container" class="space-y-3">
+                    <div class="service-row grid grid-cols-12 gap-3 items-center">
+                        <div class="col-span-8 md:col-span-9">
+                            <input type="text" placeholder="Descrizione del servizio (es. Riprese video in 4K 10-bit...)" required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div class="col-span-3 md:col-span-2">
+                            <input type="number" placeholder="Prezzo" required class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div class="col-span-1 flex justify-center">
+                            <button type="button" class="btn-remove-row text-red-400 hover:text-red-500 transition-colors">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="btn-add-service" class="flex items-center gap-2 text-sm font-medium text-accent hover:text-accentHover transition-colors pt-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Aggiungi un servizio
+                </button>
+            </div>
+
+            <button type="submit" class="w-full h-14 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2">
+                <i data-lucide="link" class="w-5 h-5"></i> Salva e Genera Link Cliente
+            </button>
+        </form>
+
+        <div id="output-link-box" class="hidden mt-6 bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl space-y-3">
+            <p class="text-emerald-400 text-sm font-semibold flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Preventivo salvato con successo!
+            </p>
+            <div class="flex gap-2">
+                <input type="text" id="generated-url" readonly class="flex-grow h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none">
+                <button id="btn-copy-link" class="h-12 px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-medium text-sm transition-all flex items-center gap-2">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copia
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <main id="section-client" class="hidden flex-grow container mx-auto max-w-2xl px-4 py-16 flex flex-col justify-center">
+        <div class="bg-cardBg border border-white/10 p-8 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r border-b border-white/5"></div>
+            
+            <div class="text-center space-y-2">
+                <div class="inline-flex p-3 bg-white/5 rounded-2xl border border-white/10 mb-2">
+                    <i data-lucide="file-text" class="w-8 h-8 text-accent"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight" id="client-view-title">Il tuo Preventivo</h1>
+                <p class="text-grayText text-sm" id="client-view-date">Scadenza: --/--/----</p>
+            </div>
+
+            <div class="border border-white/5 rounded-xl overflow-hidden bg-white/[0.02]">
+                <div class="grid grid-cols-12 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-grayText">
+                    <div class="col-span-9">Descrizione Servizio</div>
+                    <div class="col-span-3 text-right">Importo</div>
+                </div>
+                <div id="client-services-list" class="divide-y divide-white/5">
+                    </div>
+                <div class="grid grid-cols-12 px-4 py-4 bg-white/5 font-bold border-t border-white/10">
+                    <div class="col-span-9 text-base">Totale Preventivato</div>
+                    <div class="col-span-3 text-right text-base text-accent" id="client-view-total">€ 0,00</div>
+                </div>
+            </div>
+
+            <button id="btn-download-pdf" class="w-full h-14 bg-white text-black hover:bg-gray-200 rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2">
+                <i data-lucide="download" class="w-5 h-5"></i> Scarica Preventivo Ufficiale (PDF)
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center border-t border-white/5 relative z-10 mt-auto">
+        <p class="text-grayText text-xs">
+            © <script>document.write(new Date().getFullYear())</script> Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR)
+        </p>
+    </footer>
+
+    <script>lucide.createIcons();</script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
