@@ -3,7 +3,6 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from
 import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { PDFDocument, StandardFonts, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
 
-// Configurazione Firebase speculare al tuo progetto principale
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
     authDomain: "script-sito.firebaseapp.com",
@@ -17,31 +16,76 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Elementi DOM globale
+// Data structure per i 3 pacchetti predefiniti richiesti
+const pacchettiPredefiniti = {
+    start: {
+        titolo: "PACCHETTO START",
+        sottotitolo: "DIGITAL CORE",
+        descrizione: "L’essenziale per una presenza professionale e costante. Elimini il \"cosa pubblicare\" e garantisci al tuo brand un'immagine curata.",
+        voci: [
+            "4 Video (Reel/TikTok/Shorts)",
+            "Scrittura script completa",
+            "5 Foto Pro ottimizzate",
+            "ARTIGIANALITÀ PURA (NO AI)"
+        ],
+        valore: "Elimini il blocco creativo e deleghi la qualità visiva di alto livello.",
+        investimentoDefault: "€450 — €600"
+    },
+    pro: {
+        titolo: "PACCHETTO PRO",
+        sottotitolo: "CONVERSION STRATEGY",
+        descrizione: "Il sistema strategico per generare contatti. Perfetto per chi vuole scalare e usare i social per vendere ed acquisire clienti.",
+        voci: [
+            "8 Video (2 contenuti a settimana)",
+            "10 Foto Pro (Post/Caroselli)",
+            "Strategia e script orientati alla vendita",
+            "Analisi della concorrenza",
+            "ARTIGIANALITÀ PURA (NO AI)"
+        ],
+        valore: "Domini l'algoritmo e differenzi nettamente il tuo brand sul mercato.",
+        investimentoDefault: "€850 — €1.000"
+    },
+    elite: {
+        titolo: "PACCHETTO ELITE",
+        sottotitolo: "ALL-IN AUTHORITY",
+        descrizione: "Delega totale per una leadership assoluta. Trasformo la tua pagina in un punto di riferimento estetico e strategico.",
+        voci: [
+            "Include tutto il pacchetto PRO",
+            "12 Video + 10 Foto al mese",
+            "Extreme Page Makeover, restyling della pagina",
+            "Gestione Full (mi occuperò anche della pubblicazione)",
+            "ARTIGIANALITÀ PURA (NO AI)"
+        ],
+        valore: "Libertà totale. Tu pensi al lavoro, io ti rendo un'autorità premium.",
+        investimentoDefault: "€1.350 — €1.500"
+    }
+};
+
 const loaderEl = document.getElementById('main-loader');
 const authSection = document.getElementById('section-auth');
 const adminSection = document.getElementById('section-admin');
 const clientSection = document.getElementById('section-client');
+const packageTypeSelect = document.getElementById('package-type');
+const customServicesSection = document.getElementById('custom-services-section');
+const totalPriceInput = document.getElementById('total-price-input');
 
-// Analisi URL per Routing (?id=...)
 const urlParams = new URLSearchParams(window.location.search);
 const preventivoId = urlParams.get('id');
 
-let datiPreventivoCorrente = null; // Cache per i dati scaricati lato client
+let datiPreventivoCorrente = null; 
 
-// Controllo Stato Iniziale dell'Applicazione
 window.addEventListener('DOMContentLoaded', async () => {
     if (preventivoId) {
-        // Modalità Cliente: Carica i dati dal DB
         await caricaVistaCliente(preventivoId);
     } else {
-        // Modalità Admin: Verifica Autenticazione
         onAuthStateChanged(auth, (user) => {
             hideLoader();
             if (user) {
+                document.getElementById('admin-indicator').classList.remove('hidden');
                 showSection(adminSection);
                 setupAdminLogic();
             } else {
+                document.getElementById('admin-indicator').classList.add('hidden');
                 showSection(authSection);
                 setupAuthLogic();
             }
@@ -49,11 +93,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/* ==========================================================================
-   LOGICA DI ROUTING & UI UTILS
-   ========================================================================== */
-function hideLoader() { loaderEl.classList.add('opacity-0', 'pointer-events-none'); }
-function showLoader() { loaderEl.classList.remove('opacity-0', 'pointer-events-none'); }
+function hideLoader() { loaderEl.classList.add('opacity-0', 'pointer-events-none'); setTimeout(() => loaderEl.classList.add('hidden'), 300); }
+function showLoader() { loaderEl.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); }
 
 function showSection(section) {
     authSection.classList.add('hidden');
@@ -62,9 +103,6 @@ function showSection(section) {
     section.classList.remove('hidden');
 }
 
-/* ==========================================================================
-   LOGICA AUTH (ADMIN LOGIN)
-   ========================================================================== */
 function setupAuthLogic() {
     const form = document.getElementById('auth-form');
     form.addEventListener('submit', async (e) => {
@@ -75,110 +113,106 @@ function setupAuthLogic() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Credenziali non valide. Riprova.");
+            alert("Errore credenziali.");
             hideLoader();
         }
     });
 }
 
-/* ==========================================================================
-   LOGICA STRUTTURA ADMIN (CREAZIONE PREVENTIVI)
-   ========================================================================== */
 function setupAdminLogic() {
-    // Gestione Logout
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-    // Aggiunta dinamica righe servizi
+    packageTypeSelect.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === 'custom') {
+            customServicesSection.classList.remove('hidden');
+            totalPriceInput.value = "";
+            totalPriceInput.placeholder = "Totale preventivato complessivo";
+        } else {
+            customServicesSection.classList.add('hidden');
+            totalPriceInput.value = pacchettiPredefiniti[val].investimentoDefault;
+        }
+    });
+
     const container = document.getElementById('services-container');
     document.getElementById('btn-add-service').addEventListener('click', () => {
         const row = document.createElement('div');
-        row.className = "service-row grid grid-cols-12 gap-3 items-center animate-fade-in";
+        row.className = "service-row grid grid-cols-12 gap-3 items-center";
         row.innerHTML = `
             <div class="col-span-8 md:col-span-9">
                 <input type="text" placeholder="Descrizione del servizio..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
             </div>
             <div class="col-span-3 md:col-span-2">
-                <input type="number" placeholder="Prezzo" required class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
             </div>
             <div class="col-span-1 flex justify-center">
-                <button type="button" class="btn-remove-row text-red-400 hover:text-red-500 transition-colors">
+                <button type="button" class="btn-remove-row text-red-500 hover:text-red-400 transition-colors">
                     <i data-lucide="trash-2" class="w-5 h-5"></i>
                 </button>
             </div>
         `;
         container.appendChild(row);
         lucide.createIcons();
-        
-        // Listener eliminazione riga appena creata
         row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
     });
 
-    // Listener eliminazione prima riga di default
     document.querySelector('.btn-remove-row').addEventListener('click', (e) => {
         if(document.querySelectorAll('.service-row').length > 1) {
             e.currentTarget.closest('.service-row').remove();
         } else {
-            alert("Devi inserire almeno un servizio.");
+            alert("È richiesta almeno una riga.");
         }
     });
 
-    // Invio Form -> Salvataggio su Firestore
     document.getElementById('preventivo-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         showLoader();
 
         const clientName = document.getElementById('client-name').value;
         const expiryDate = document.getElementById('expiry-date').value;
-        
-        const rows = document.querySelectorAll('.service-row');
-        let listaServizi = [];
-        let totale = 0;
+        const packageType = packageTypeSelect.value;
+        const totaleStr = totalPriceInput.value;
 
-        rows.forEach(row => {
-            const desc = row.querySelector('.service-desc').value;
-            const price = parseFloat(row.querySelector('.service-price').value) || 0;
-            listaServizi.push({ descrizione: desc, prezzo: price });
-            totale += price;
-        });
+        let listaServizi = [];
+        if (packageType === 'custom') {
+            document.querySelectorAll('.service-row').forEach(row => {
+                const desc = row.querySelector('.service-desc').value;
+                const pVal = row.querySelector('.service-price').value;
+                const price = pVal !== "" ? parseFloat(pVal) : null;
+                listaServizi.push({ descrizione: desc, prezzo: price });
+            });
+        }
 
         try {
-            // Invio al database dei preventivi
             const docRef = await addDoc(collection(db, "preventivi"), {
                 clientName,
                 expiryDate,
+                packageType,
                 servizi: listaServizi,
-                totale: totale,
+                totale: totaleStr,
                 createdAt: new Date().toISOString()
             });
 
-            // Generazione URL Cliente
             const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
             document.getElementById('generated-url').value = shareableUrl;
             document.getElementById('output-link-box').classList.remove('hidden');
-            
-            // Auto-scroll sul link generato
             document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
-
         } catch (error) {
-            console.error("Errore salvataggio:", error);
-            alert("Errore durante il salvataggio del preventivo.");
+            console.error(error);
+            alert("Errore salvataggio firestore.");
         } finally {
             hideLoader();
         }
     });
 
-    // Copia Link rapida negli appunti
     document.getElementById('btn-copy-link').addEventListener('click', () => {
         const inputUrl = document.getElementById('generated-url');
         inputUrl.select();
         navigator.clipboard.writeText(inputUrl.value);
-        alert("Link copiato negli appunti!");
+        alert("Link copiato!");
     });
 }
 
-/* ==========================================================================
-   LOGICA STRUTTURA CLIENTE (FETCH & RENDER ANTEPRIMA)
-   ========================================================================== */
 async function caricaVistaCliente(id) {
     try {
         const docRef = doc(db, "preventivi", id);
@@ -188,110 +222,169 @@ async function caricaVistaCliente(id) {
             datiPreventivoCorrente = docSnap.data();
             showSection(clientSection);
 
-            // Popolamento UI ad alta leggibilità
             document.getElementById('client-view-title').innerText = `Piano Finanziario: ${datiPreventivoCorrente.clientName}`;
-            
             const dataFormattata = new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('client-view-date').innerText = `Validità fino al ${dataFormattata}`;
-            document.getElementById('client-view-total').innerText = `€ ${datiPreventivoCorrente.totale.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`.replace(/\,/g,'.');
+            document.getElementById('client-view-date').innerText = `Proposta valida fino al ${dataFormattata}`;
 
-            const listContainer = document.getElementById('client-services-list');
-            listContainer.innerHTML = '';
-            
-            datiPreventivoCorrente.servizi.forEach(servizio => {
-                const item = document.createElement('div');
-                item.className = "grid grid-cols-12 px-4 py-4 text-sm items-center hover:bg-white/[0.01] transition-colors";
-                item.innerHTML = `
-                    <div class="col-span-9 font-medium text-white/90 pr-2">${servizio.descrizione}</div>
-                    <div class="col-span-3 text-right text-grayText font-mono">€ ${servizio.prezzo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div>
+            const contentArea = document.getElementById('client-content-area');
+            contentArea.innerHTML = '';
+
+            if (datiPreventivoCorrente.packageType === 'custom') {
+                let tableHtml = `
+                    <div class="border border-white/10 rounded-xl overflow-hidden bg-white/[0.01]">
+                        <div class="grid grid-cols-12 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-graytext">
+                            <div class="col-span-9">Descrizione Servizio / Fornitura</div>
+                            <div class="col-span-3 text-right">Importo</div>
+                        </div>
+                        <div class="divide-y divide-white/5">
                 `;
-                listContainer.appendChild(item);
-            });
 
-            // Associa evento download al PDF flat overlay
+                datiPreventivoCorrente.servizi.forEach(s => {
+                    const prezzoTxt = (s.prezzo !== undefined && s.prezzo !== null) ? `€ ${s.prezzo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}` : `—`;
+                    tableHtml += `
+                        <div class="grid grid-cols-12 px-4 py-4 text-sm items-center hover:bg-white/[0.01] transition-colors">
+                            <div class="col-span-9 font-medium text-white/90 pr-2">${s.descrizione}</div>
+                            <div class="col-span-3 text-right text-graytext font-mono">${prezzoTxt}</div>
+                        </div>
+                    `;
+                });
+
+                tableHtml += `
+                        </div>
+                        <div class="grid grid-cols-12 px-4 py-4 bg-white/5 font-bold border-t border-white/10">
+                            <div class="col-span-9 text-base text-white uppercase tracking-wide">Investimento Totale</div>
+                            <div class="col-span-3 text-right text-base text-accent font-mono">${datiPreventivoCorrente.totale.includes('€') ? datiPreventivoCorrente.totale : '€ ' + parseFloat(datiPreventivoCorrente.totale).toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div>
+                        </div>
+                    </div>
+                `;
+                contentArea.innerHTML = tableHtml;
+            } else {
+                const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
+                let pkgHtml = `
+                    <div class="border border-white/10 rounded-2xl p-6 sm:p-8 bg-white/[0.01] space-y-6">
+                        <div class="flex justify-between items-start border-b border-white/5 pb-4">
+                            <div>
+                                <span class="text-[10px] font-bold tracking-widest text-accent uppercase bg-accent/10 px-3 py-1 rounded-full border border-accent/20">PIÙ SCELTO</span>
+                                <h2 class="text-2xl font-black text-white mt-3 tracking-tight">${pkg.titolo}</h2>
+                                <p class="text-xs font-semibold text-graytext tracking-wider uppercase mt-0.5">${pkg.sottotitolo}</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-white/80 italic leading-relaxed font-light">"${pkg.descrizione}"</p>
+                        
+                        <div class="space-y-3">
+                            <p class="text-xs font-bold uppercase tracking-wider text-graytext">Inclusione Fornitura:</p>
+                            <ul class="space-y-2">
+                `;
+
+                pkg.voci.forEach(v => {
+                    pkgHtml += `
+                        <li class="flex items-center gap-2.5 text-sm text-white/90">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                            <span>${v}</span>
+                        </li>
+                    `;
+                });
+
+                pkgHtml += `
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl space-y-1">
+                            <span class="text-[10px] font-bold tracking-wider text-accent uppercase">Il valore per te</span>
+                            <p class="text-sm text-white/95 font-medium">${pkg.valore}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-graytext">Investimento Richiesto</span>
+                            <span class="text-xl font-black text-accent tracking-tight">${datiPreventivoCorrente.totale}</span>
+                        </div>
+                    </div>
+                `;
+                contentArea.innerHTML = pkgHtml;
+            }
+
             document.getElementById('btn-download-pdf').addEventListener('click', generaFlatPDF);
-
         } else {
-            alert("Il preventivo richiesto non esiste o è scaduto.");
-            window.location.search = ""; // reset router
+            alert("Nessun documento trovato.");
+            window.location.search = "";
         }
     } catch (error) {
-        console.error("Errore fetch cliente:", error);
-        alert("Impossibile caricare il preventivo.");
+        console.error(error);
+        alert("Errore network client side.");
     } finally {
         hideLoader();
     }
 }
 
-/* ==========================================================================
-   CORE ENGINE: GENERAZIONE PDF FLAT-OVERLAY (pdf-lib)
-   ========================================================================== */
 async function generaFlatPDF() {
     if (!datiPreventivoCorrente) return;
     showLoader();
 
     try {
-        // 1. Scarica il template grafico (Assicurati di caricare il file 'template.pdf' nella stessa cartella)
         const templateUrl = "template.pdf"; 
         const existingPdfBytes = await fetch(templateUrl).then(res => {
-            if (!res.ok) throw new Error("Template PDF grafico non trovato sul server.");
+            if (!res.ok) throw new Error("Template non trovato.");
             return res.arrayBuffer();
         });
 
-        // 2. Inizializza pdf-lib caricando il file immodificabile
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
 
-        // Definizione Font nativi (Standard 14)
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-        /* ==================================================================
-           ATTENZIONE: COORDINATE (X, Y)
-           Nel sistema pdf-lib l'origine (0,0) si trova in BASSO A SINISTRA.
-           Un foglio A4 standard misura circa Larghezza: 595pt, Altezza: 842pt.
-           ================================================================== */
-        
-        // Scrittura Anagrafica Cliente
-        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 75, y: 640, size: 12, font: fontBold, color: rgb(0.05, 0.05, 0.05) });
-        
-        const scadenzaTxt = new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT');
-        firstPage.drawText(scadenzaTxt, { x: 75, y: 620, size: 10, font: fontReg, color: rgb(0.4, 0.4, 0.4) });
+        // Iniezione testi Flat-Overlay
+        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 75, y: 640, size: 12, font: fontBold, color: rgb(0, 0, 0) });
+        const scadenzaTxt = `Scadenza: ${new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT')}`;
+        firstPage.drawText(scadenzaTxt, { x: 75, y: 625, size: 9, font: fontReg, color: rgb(0.4, 0.4, 0.4) });
 
-        // Scrittura Dinamica delle Voci Servizio
-        let currentY = 540; // Punto iniziale di inizio tabella del tuo template grafico
-        const rigaSpazio = 25; // Spazio verticale (interlinea) tra le righe
+        let currentY = 540;
+        const rigaSpazio = 22;
 
-        datiPreventivoCorrente.servizi.forEach((servizio) => {
-            // Descrizione Servizio (Truncate se troppo lunga per non rompere il layout)
-            const descCorta = servicio.descrizione.length > 55 ? servizio.descrizione.substring(0, 52) + "..." : servizio.descrizione;
-            firstPage.drawText(descCorta, { x: 75, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
-            
-            // Prezzo Servizio (allineato a destra, es. coordinata X fissa a 480)
-            const prezzoTxt = `€ ${servizio.prezzo.toFixed(2)}`;
-            firstPage.drawText(prezzoTxt, { x: 480, y: currentY, size: 10, font: fontReg, color: rgb(0.2, 0.2, 0.2) });
+        if (datiPreventivoCorrente.packageType === 'custom') {
+            datiPreventivoCorrente.servizi.forEach((s) => {
+                if (currentY < 180) return;
+                const descCorta = s.descrizione.length > 60 ? s.descrizione.substring(0, 57) + "..." : s.descrizione;
+                firstPage.drawText(descCorta, { x: 75, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                
+                if (s.prezzo !== undefined && s.prezzo !== null) {
+                    const prezzoTxt = `€ ${parseFloat(s.prezzo).toFixed(2)}`;
+                    firstPage.drawText(prezzoTxt, { x: 480, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                }
+                currentY -= rigaSpazio;
+            });
+        } else {
+            const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
+            firstPage.drawText(`${pkg.titolo} — ${pkg.sottotitolo}`, { x: 75, y: currentY, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+            currentY -= rigaSpazio + 4;
 
-            currentY -= rigaSpazio; // Abbassa il cursore per la prossima riga
-        });
+            const descLines = pkg.descrizione.match(/.{1,65}(\s|$)/g) || [pkg.descrizione];
+            descLines.forEach(line => {
+                firstPage.drawText(line.trim(), { x: 75, y: currentY, size: 9, font: fontReg, color: rgb(0.3, 0.3, 0.3) });
+                currentY -= rigaSpazio - 6;
+            });
+            currentY -= 6;
 
-        // Scrittura Totale Finale (Posizionata in basso a destra sopra il blocco dedicato del template)
-        const totaleTxt = `€ ${datiPreventivoCorrente.totale.toFixed(2)}`;
-        firstPage.drawText(totaleTxt, { x: 480, y: 220, size: 14, font: fontBold, color: rgb(0.0, 0.33, 1.0) }); // Colore accent (RGB normalizzato 0-1)
+            pkg.voci.forEach(v => {
+                firstPage.drawText(`• ${v}`, { x: 85, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                currentY -= rigaSpazio;
+            });
+        }
 
-        // 3. Compila, appiattisce ed esporta il Blob finale
+        const totalTxt = datiPreventivoCorrente.totale.includes('€') ? datiPreventivoCorrente.totale : `€ ${parseFloat(datiPreventivoCorrente.totale).toFixed(2)}`;
+        firstPage.drawText(totalTxt, { x: 460, y: 220, size: 13, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+
         const pdfBytes = await pdfDoc.save();
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
 
-        // 4. Download automatico lato client
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `Preventivo_${datiPreventivoCorrente.clientName.replace(/\s+/g, '_')}.pdf`;
         link.click();
-
     } catch (error) {
-        console.error("Errore generazione PDF:", error);
-        alert("Errore durante l'iniezione dati nel PDF: " + error.message);
+        console.error(error);
+        alert("Errore rendering PDF.");
     } finally {
         hideLoader();
     }
