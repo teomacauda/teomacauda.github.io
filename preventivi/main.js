@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { PDFDocument, StandardFonts, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
 
 const firebaseConfig = {
@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Data structure per i 3 pacchetti predefiniti richiesti
+// Data mapping dei pacchetti con le correzioni testuali per l'Elite
 const pacchettiPredefiniti = {
     start: {
         titolo: "PACCHETTO START",
@@ -50,10 +50,11 @@ const pacchettiPredefiniti = {
         sottotitolo: "ALL-IN AUTHORITY",
         descrizione: "Delega totale per una leadership assoluta. Trasformo la tua pagina in un punto di riferimento estetico e strategico.",
         voci: [
-            "Include tutto il pacchetto PRO",
-            "12 Video + 10 Foto al mese",
+            "12 video + 10 foto al mese",
+            "Strategia e script orientati alla vendita",
+            "Analisi della concorrenza",
             "Extreme Page Makeover, restyling della pagina",
-            "Gestione Full (mi occuperò anche della pubblicazione)",
+            "Gestione full (mi occuperò anche della pubblicazione)",
             "ARTIGIANALITÀ PURA (NO AI)"
         ],
         valore: "Libertà totale. Tu pensi al lavoro, io ti rendo un'autorità premium.",
@@ -113,7 +114,7 @@ function setupAuthLogic() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Errore credenziali.");
+            alert("Autenticazione Fallita.");
             hideLoader();
         }
     });
@@ -160,7 +161,7 @@ function setupAdminLogic() {
         if(document.querySelectorAll('.service-row').length > 1) {
             e.currentTarget.closest('.service-row').remove();
         } else {
-            alert("È richiesta almeno una riga.");
+            alert("È richiesta almeno una voce.");
         }
     });
 
@@ -199,7 +200,7 @@ function setupAdminLogic() {
             document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             console.error(error);
-            alert("Errore salvataggio firestore.");
+            alert("Errore salvataggio database.");
         } finally {
             hideLoader();
         }
@@ -219,7 +220,18 @@ async function caricaVistaCliente(id) {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            datiPreventivoCorrente = docSnap.data();
+            const dataDoc = docSnap.data();
+            
+            // Logica di auto-cancellazione automatica se scaduto
+            const oggiStr = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            if (dataDoc.expiryDate && oggiStr > dataDoc.expiryDate) {
+                await deleteDoc(docRef); // Rimuove definitivamente dal DB cloud
+                alert("Questa proposta commerciale è scaduta ed è stata rimossa automaticamente dal sistema.");
+                window.location.search = ""; 
+                return;
+            }
+
+            datiPreventivoCorrente = dataDoc;
             showSection(clientSection);
 
             document.getElementById('client-view-title').innerText = `Piano Finanziario: ${datiPreventivoCorrente.clientName}`;
@@ -240,6 +252,7 @@ async function caricaVistaCliente(id) {
                 `;
 
                 datiPreventivoCorrente.servizi.forEach(s => {
+                    // Se il prezzo dell'elemento è null o vuoto, stampa il trattino elidendo lo zero numerico
                     const prezzoTxt = (s.prezzo !== undefined && s.prezzo !== null) ? `€ ${s.prezzo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}` : `—`;
                     tableHtml += `
                         <div class="grid grid-cols-12 px-4 py-4 text-sm items-center hover:bg-white/[0.01] transition-colors">
@@ -264,7 +277,7 @@ async function caricaVistaCliente(id) {
                     <div class="border border-white/10 rounded-2xl p-6 sm:p-8 bg-white/[0.01] space-y-6">
                         <div class="flex justify-between items-start border-b border-white/5 pb-4">
                             <div>
-                                <span class="text-[10px] font-bold tracking-widest text-accent uppercase bg-accent/10 px-3 py-1 rounded-full border border-accent/20">PIÙ SCELTO</span>
+                                <span class="text-[10px] font-bold tracking-widest text-accent uppercase bg-accent/10 px-3 py-1 rounded-full border border-accent/20">PIANO COMMERCIALE</span>
                                 <h2 class="text-2xl font-black text-white mt-3 tracking-tight">${pkg.titolo}</h2>
                                 <p class="text-xs font-semibold text-graytext tracking-wider uppercase mt-0.5">${pkg.sottotitolo}</p>
                             </div>
@@ -272,7 +285,7 @@ async function caricaVistaCliente(id) {
                         <p class="text-sm text-white/80 italic leading-relaxed font-light">"${pkg.descrizione}"</p>
                         
                         <div class="space-y-3">
-                            <p class="text-xs font-bold uppercase tracking-wider text-graytext">Inclusione Fornitura:</p>
+                            <p class="text-xs font-bold uppercase tracking-wider text-graytext">Specifiche del piano:</p>
                             <ul class="space-y-2">
                 `;
 
@@ -305,12 +318,12 @@ async function caricaVistaCliente(id) {
 
             document.getElementById('btn-download-pdf').addEventListener('click', generaFlatPDF);
         } else {
-            alert("Nessun documento trovato.");
+            alert("Il collegamento richiesto non esiste o è scaduto.");
             window.location.search = "";
         }
     } catch (error) {
         console.error(error);
-        alert("Errore network client side.");
+        alert("Errore caricamento dati cloud client side.");
     } finally {
         hideLoader();
     }
@@ -323,7 +336,7 @@ async function generaFlatPDF() {
     try {
         const templateUrl = "template.pdf"; 
         const existingPdfBytes = await fetch(templateUrl).then(res => {
-            if (!res.ok) throw new Error("Template non trovato.");
+            if (!res.ok) throw new Error("Template base grafico non trovato.");
             return res.arrayBuffer();
         });
 
@@ -334,7 +347,7 @@ async function generaFlatPDF() {
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-        // Iniezione testi Flat-Overlay
+        // Intestazioni
         firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 75, y: 640, size: 12, font: fontBold, color: rgb(0, 0, 0) });
         const scadenzaTxt = `Scadenza: ${new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT')}`;
         firstPage.drawText(scadenzaTxt, { x: 75, y: 625, size: 9, font: fontReg, color: rgb(0.4, 0.4, 0.4) });
@@ -384,7 +397,7 @@ async function generaFlatPDF() {
         link.click();
     } catch (error) {
         console.error(error);
-        alert("Errore rendering PDF.");
+        alert("Errore rendering PDF vettoriale overlay.");
     } finally {
         hideLoader();
     }
