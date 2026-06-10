@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { PDFDocument, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
+// RISOLUZIONE BUG COMPILAZIONE: Importiamo fontkit ESM per sbloccare i font TTF custom e caratteri speciali
+import fontkit from "https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/+esm";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -105,14 +107,6 @@ function showSection(section) {
     section.classList.remove('hidden');
 }
 
-function updateRequiredAttributes() {
-    const isCustom = packageTypeSelect.value === 'custom';
-    document.querySelectorAll('.service-desc').forEach(el => {
-        if (isCustom) el.setAttribute('required', 'true');
-        else el.removeAttribute('required');
-    });
-}
-
 function setupAuthLogic() {
     const form = document.getElementById('auth-form');
     form.addEventListener('submit', async (e) => {
@@ -132,22 +126,17 @@ function setupAuthLogic() {
 function setupAdminLogic() {
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-    // Monitoraggio tipo pacchetto e correzione bug attributi required nascosti
     packageTypeSelect.addEventListener('change', (e) => {
         const val = e.target.value;
         if (val === 'custom') {
             customServicesSection.classList.remove('hidden');
             totalPriceInput.value = "";
-            totalPriceInput.placeholder = "Totale preventivato complessivo";
+            totalPriceInput.placeholder = "Lascia vuoto per calcolo automatico o scrivi un range";
         } else {
             customServicesSection.classList.add('hidden');
             totalPriceInput.value = pacchettiPredefiniti[val].investimentoDefault;
         }
-        updateRequiredAttributes();
     });
-
-    // Inizializza gli attributi al caricamento base
-    updateRequiredAttributes();
 
     const container = document.getElementById('services-container');
     document.getElementById('btn-add-service').addEventListener('click', () => {
@@ -168,16 +157,7 @@ function setupAdminLogic() {
         `;
         container.appendChild(row);
         lucide.createIcons();
-        updateRequiredAttributes();
         row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
-    });
-
-    document.querySelector('.btn-remove-row').addEventListener('click', (e) => {
-        if(document.querySelectorAll('.service-row').length > 1) {
-            e.currentTarget.closest('.service-row').remove();
-        } else {
-            alert("È richiesta almeno una voce.");
-        }
     });
 
     document.getElementById('preventivo-form').addEventListener('submit', async (e) => {
@@ -196,23 +176,39 @@ function setupAdminLogic() {
         let listaServizi = [];
         let sommaCalcolata = 0;
 
+        // RISOLUZIONE BUG STRUTTURA BLOCCO: Validazione JS custom senza Required HTML nativi
         if (packageType === 'custom') {
+            let valid = true;
             document.querySelectorAll('.service-row').forEach(row => {
-                const desc = row.querySelector('.service-desc').value;
+                const descEl = row.querySelector('.service-desc');
+                const desc = descEl.value.trim();
                 const pVal = row.querySelector('.service-price').value;
                 const price = pVal !== "" ? parseFloat(pVal) : null;
-                listaServizi.push({ descrizione: desc, prezzo: price });
-                if (price) sommaCalcolata += price;
+                
+                if(!desc) {
+                    valid = false;
+                    descEl.classList.add('border-red-500');
+                } else {
+                    descEl.classList.remove('border-red-500');
+                    listaServizi.push({ descrizione: desc, prezzo: price });
+                    if (price) sommaCalcolata += price;
+                }
             });
 
-            // Se non inserisci il prezzo manualmente, esegui il calcolo aritmetico automatico delle righe
+            if(!valid) {
+                alert("Compila la descrizione di tutti i campi custom attivati.");
+                hideLoader();
+                return;
+            }
+
+            // SE non inserisci il prezzo manualmente, assegna la somma delle righe o lascia vuoto se non ci sono prezzi singoli
             if (totaleStr === "") {
                 totaleStr = sommaCalcolata > 0 ? "€ " + sommaCalcolata.toLocaleString('it-IT', { minimumFractionDigits: 2 }) : "";
             }
         }
 
         try {
-            const docRef = await addDoc(collection(db, "preventivi"), {
+            await addDoc(collection(db, "preventivi"), {
                 clientName,
                 clientResidence,
                 clientTaxId,
@@ -223,15 +219,15 @@ function setupAdminLogic() {
                 durata: durataStr,
                 mensile: mensileStr,
                 createdAt: new Date().toISOString()
+            }).then((docRef) => {
+                const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
+                document.getElementById('generated-url').value = shareableUrl;
+                document.getElementById('output-link-box').classList.remove('hidden');
+                document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
             });
-
-            const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
-            document.getElementById('generated-url').value = shareableUrl;
-            document.getElementById('output-link-box').classList.remove('hidden');
-            document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             console.error(error);
-            alert("Errore salvataggio cloud database.");
+            alert("Errore salvataggio database.");
         } finally {
             hideLoader();
         }
@@ -308,7 +304,7 @@ async function caricaVistaCliente(id) {
                 contentArea.innerHTML = pkgHtml;
             }
 
-            // Normalizzazione visualizzazione del blocco totale nell'anteprima
+            // Normalizzazione visualizzazione del prezzo totale dell'anteprima
             let totaleVisualizzato = datiPreventivoCorrente.totale || "—";
             if (totaleVisualizzato !== "—" && !totaleVisualizzato.includes('€') && !isNaN(totaleVisualizzato)) {
                 totaleVisualizzato = '€ ' + parseFloat(totaleVisualizzato).toLocaleString('it-IT', { minimumFractionDigits: 2 });
@@ -343,37 +339,34 @@ async function generaFlatPDF() {
         const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
 
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        
+        // RISOLUZIONE BUG FONTKIT CRITICAL: Registrazione modulo asincrono obbligatorio per embedding TTF
+        pdfDoc.registerFontkit(fontkit);
+
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
 
-        // Integrazione CDN sicura ed immediata dei file TTF di Inter per supportare i glifi estesi (€, lettere accentate)
-        const fontRegUrl = "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-400-normal.ttf";
+        // Caricamento dei file .ttf reali di Inter per eliminare l'errore caratteri speciali ed euro
         const fontBoldUrl = "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-700-normal.ttf";
-
-        const [fontRegBytes, fontBoldBytes] = await Promise.all([
-            fetch(fontRegUrl).then(res => res.arrayBuffer()),
-            fetch(fontBoldUrl).then(res => res.arrayBuffer())
-        ]);
-
-        const fontReg = await pdfDoc.embedFont(fontRegBytes);
+        const fontBoldBytes = await fetch(fontBoldUrl).then(res => res.arrayBuffer());
         const fontBold = await pdfDoc.embedFont(fontBoldBytes);
 
         /* ==================================================================
-           REGOLE DI LAYOUT RICHIESTE:
-           - Font fisso ovunque: Inter Bold, dimensione 14.
-           - Colore: Bianco (#ffffff) per le scritte, tranne il prezzo mensile finale che è Arancione (#FF7A00).
-           - Sistema di coordinate PDF: Origine (0,0) in basso a sinistra.
+           DIRETTIVE GRAFICHE IMPOSTATE AL 100%:
+           - Font fisso ovunque: Inter Bold.
+           - Dimensione fissa: Carattere 14.
+           - Colore: Bianco puro rgb(1,1,1), tranne l'investimento mensile che è Arancione rgb(1, 0.48, 0).
            ================================================================== */
         const textStyleWhite = { size: 14, font: fontBold, color: rgb(1, 1, 1) };
         const textStyleOrange = { size: 14, font: fontBold, color: rgb(1, 0.48, 0) };
 
-        // 1. Blocco Anagrafica Cliente esteso (Incolonnamento verticale ordinato)
+        // 1. Iniezione Dati Anagrafici Strutturati nel Box Cliente (Allineamento a Destra)
         let clientY = 685;
         firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
         
         if (datiPreventivoCorrente.clientResidence) {
             clientY -= 18;
-            firstPage.drawText(datiPreventivoCorrente.clientResidence, { x: 345, y: clientY, ...textStyleWhite });
+            firstPage.drawText(datiPreventivoCorrente.clientResidence.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
         }
         if (datiPreventivoCorrente.clientTaxId) {
             clientY -= 18;
@@ -384,7 +377,7 @@ async function generaFlatPDF() {
         const dataOggi = new Date().toLocaleDateString('it-IT');
         firstPage.drawText(dataOggi, { x: 345, y: 605, ...textStyleWhite });
 
-        // 3. Rendering Voci Centrali delle fornitura contenuti
+        // 3. Rendering Tabella delle Forniture Attività Centrali
         let currentY = 515;
         const rigaSpazio = 22;
 
@@ -392,7 +385,7 @@ async function generaFlatPDF() {
             datiPreventivoCorrente.servizi.forEach((s) => {
                 if (currentY < 230) return;
                 
-                const descCorta = s.descrizione.length > 55 ? s.descrizione.substring(0, 52) + "..." : s.descrizione;
+                const descCorta = s.descrizione.length > 52 ? s.descrizione.substring(0, 49) + "..." : s.descrizione;
                 firstPage.drawText(descCorta, { x: 75, y: currentY, ...textStyleWhite });
                 
                 if (s.prezzo !== undefined && s.prezzo !== null) {
@@ -413,7 +406,7 @@ async function generaFlatPDF() {
             });
         }
 
-        // 4. Iniezione Campi di Chiusura Economici
+        // 4. Iniezione Campi Economici di Chiusura
         // Durata complessiva dell'accordo:
         firstPage.drawText(datiPreventivoCorrente.durata, { x: 450, y: 155, ...textStyleWhite });
         
@@ -424,7 +417,7 @@ async function generaFlatPDF() {
         }
         firstPage.drawText(totaleFormattato, { x: 450, y: 133, ...textStyleWhite });
         
-        // Prezzo Mensile (IVA Incl.) -> Renderizzato in ARANCIONE #FF7A00
+        // Prezzo Mensile (IVA Incl.) -> ARANCIONE #FF7A00
         firstPage.drawText(datiPreventivoCorrente.mensile, { x: 450, y: 110, ...textStyleOrange });
 
         const pdfBytes = await pdfDoc.save();
