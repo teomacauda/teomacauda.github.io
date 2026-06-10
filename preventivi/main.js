@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { PDFDocument, StandardFonts, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
+import { PDFDocument, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -16,7 +16,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Data Mapping strutturato dei Pacchetti
 const pacchettiPredefiniti = {
     start: {
         titolo: "PACCHETTO START",
@@ -106,6 +105,14 @@ function showSection(section) {
     section.classList.remove('hidden');
 }
 
+function updateRequiredAttributes() {
+    const isCustom = packageTypeSelect.value === 'custom';
+    document.querySelectorAll('.service-desc').forEach(el => {
+        if (isCustom) el.setAttribute('required', 'true');
+        else el.removeAttribute('required');
+    });
+}
+
 function setupAuthLogic() {
     const form = document.getElementById('auth-form');
     form.addEventListener('submit', async (e) => {
@@ -116,7 +123,7 @@ function setupAuthLogic() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Rifiutato.");
+            alert("Autenticazione Fallita.");
             hideLoader();
         }
     });
@@ -125,16 +132,22 @@ function setupAuthLogic() {
 function setupAdminLogic() {
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
+    // Monitoraggio tipo pacchetto e correzione bug attributi required nascosti
     packageTypeSelect.addEventListener('change', (e) => {
         const val = e.target.value;
         if (val === 'custom') {
             customServicesSection.classList.remove('hidden');
             totalPriceInput.value = "";
+            totalPriceInput.placeholder = "Totale preventivato complessivo";
         } else {
             customServicesSection.classList.add('hidden');
             totalPriceInput.value = pacchettiPredefiniti[val].investimentoDefault;
         }
+        updateRequiredAttributes();
     });
+
+    // Inizializza gli attributi al caricamento base
+    updateRequiredAttributes();
 
     const container = document.getElementById('services-container');
     document.getElementById('btn-add-service').addEventListener('click', () => {
@@ -142,7 +155,7 @@ function setupAdminLogic() {
         row.className = "service-row grid grid-cols-12 gap-3 items-center";
         row.innerHTML = `
             <div class="col-span-8 md:col-span-9">
-                <input type="text" placeholder="Dettagli attività..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                <input type="text" placeholder="Descrivi il servizio o deliverable..." class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
             </div>
             <div class="col-span-3 md:col-span-2">
                 <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
@@ -155,7 +168,16 @@ function setupAdminLogic() {
         `;
         container.appendChild(row);
         lucide.createIcons();
+        updateRequiredAttributes();
         row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
+    });
+
+    document.querySelector('.btn-remove-row').addEventListener('click', (e) => {
+        if(document.querySelectorAll('.service-row').length > 1) {
+            e.currentTarget.closest('.service-row').remove();
+        } else {
+            alert("È richiesta almeno una voce.");
+        }
     });
 
     document.getElementById('preventivo-form').addEventListener('submit', async (e) => {
@@ -163,25 +185,37 @@ function setupAdminLogic() {
         showLoader();
 
         const clientName = document.getElementById('client-name').value;
+        const clientResidence = document.getElementById('client-residence').value;
+        const clientTaxId = document.getElementById('client-taxid').value;
         const expiryDate = document.getElementById('expiry-date').value;
         const packageType = packageTypeSelect.value;
-        const totaleStr = totalPriceInput.value;
+        let totaleStr = totalPriceInput.value.trim();
         const durataStr = durationInput.value;
         const mensileStr = monthlyPriceInput.value;
 
         let listaServizi = [];
+        let sommaCalcolata = 0;
+
         if (packageType === 'custom') {
             document.querySelectorAll('.service-row').forEach(row => {
                 const desc = row.querySelector('.service-desc').value;
                 const pVal = row.querySelector('.service-price').value;
                 const price = pVal !== "" ? parseFloat(pVal) : null;
                 listaServizi.push({ descrizione: desc, prezzo: price });
+                if (price) sommaCalcolata += price;
             });
+
+            // Se non inserisci il prezzo manualmente, esegui il calcolo aritmetico automatico delle righe
+            if (totaleStr === "") {
+                totaleStr = sommaCalcolata > 0 ? "€ " + sommaCalcolata.toLocaleString('it-IT', { minimumFractionDigits: 2 }) : "";
+            }
         }
 
         try {
             const docRef = await addDoc(collection(db, "preventivi"), {
                 clientName,
+                clientResidence,
+                clientTaxId,
                 expiryDate,
                 packageType,
                 servizi: listaServizi,
@@ -197,7 +231,7 @@ function setupAdminLogic() {
             document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             console.error(error);
-            alert("Errore Firestore.");
+            alert("Errore salvataggio cloud database.");
         } finally {
             hideLoader();
         }
@@ -207,7 +241,7 @@ function setupAdminLogic() {
         const inputUrl = document.getElementById('generated-url');
         inputUrl.select();
         navigator.clipboard.writeText(inputUrl.value);
-        alert("Copiato.");
+        alert("Link copiato!");
     });
 }
 
@@ -219,13 +253,11 @@ async function caricaVistaCliente(id) {
         if (docSnap.exists()) {
             const dataDoc = docSnap.data();
             
-            // Logica di auto-cancellazione nativa richiesta
             const oggiStr = new Date().toISOString().split('T')[0];
             if (dataDoc.expiryDate && oggiStr > dataDoc.expiryDate) {
-                await deleteDoc(docRef); // Distrugge il record cloud
-                contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Questo link di proposta commerciale è scaduto ed è stato rimosso.</p>`;
-                showSection(clientSection);
-                hideLoader();
+                await deleteDoc(docRef);
+                alert("Questo link è scaduto ed è stato rimosso automaticamente.");
+                window.location.search = ""; 
                 return;
             }
 
@@ -234,7 +266,7 @@ async function caricaVistaCliente(id) {
 
             document.getElementById('client-view-title').innerText = `Proposta per: ${datiPreventivoCorrente.clientName}`;
             const dataFormattata = new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('client-view-date').innerText = `Termini validi fino al ${dataFormattata}`;
+            document.getElementById('client-view-date').innerText = `Proposta valida fino al ${dataFormattata}`;
 
             const contentArea = document.getElementById('client-content-area');
             contentArea.innerHTML = '';
@@ -259,10 +291,7 @@ async function caricaVistaCliente(id) {
                     `;
                 });
 
-                tableHtml += `
-                        </div>
-                    </div>
-                `;
+                tableHtml += `</div></div>`;
                 contentArea.innerHTML = tableHtml;
             } else {
                 const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
@@ -279,19 +308,24 @@ async function caricaVistaCliente(id) {
                 contentArea.innerHTML = pkgHtml;
             }
 
-            // Box riassuntivo metriche dell'accordo corrispondente alle voci del PDF
+            // Normalizzazione visualizzazione del blocco totale nell'anteprima
+            let totaleVisualizzato = datiPreventivoCorrente.totale || "—";
+            if (totaleVisualizzato !== "—" && !totaleVisualizzato.includes('€') && !isNaN(totaleVisualizzato)) {
+                totaleVisualizzato = '€ ' + parseFloat(totaleVisualizzato).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+            }
+
             let summaryBox = `
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-xl text-sm">
                     <div><span class="text-xs text-graytext block uppercase">Durata Accordo</span><strong class="text-white">${datiPreventivoCorrente.durata}</strong></div>
                     <div><span class="text-xs text-graytext block uppercase">Prezzo Mensile</span><strong class="text-white">${datiPreventivoCorrente.mensile}</strong></div>
-                    <div><span class="text-xs text-graytext block uppercase">Valore Totale</span><strong class="text-accent text-base">${datiPreventivoCorrente.totale}</strong></div>
+                    <div><span class="text-xs text-graytext block uppercase">Valore Totale</span><strong class="text-accent text-base">${totaleVisualizzato}</strong></div>
                 </div>
             `;
             contentArea.insertAdjacentHTML('beforeend', summaryBox);
 
             document.getElementById('btn-download-pdf').addEventListener('click', generaFlatPDF);
         } else {
-            alert("Non trovato.");
+            alert("Documento inesistente.");
         }
     } catch (error) {
         console.error(error);
@@ -312,64 +346,87 @@ async function generaFlatPDF() {
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
 
-        // NOTA: Per un rendering pixel-perfect con i testi fissi esportati da Affinity,
-        // carica e incorpora qui i file Inter-Regular.ttf e Inter-Bold.ttf nativi.
-        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        // Integrazione CDN sicura ed immediata dei file TTF di Inter per supportare i glifi estesi (€, lettere accentate)
+        const fontRegUrl = "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-400-normal.ttf";
+        const fontBoldUrl = "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-700-normal.ttf";
+
+        const [fontRegBytes, fontBoldBytes] = await Promise.all([
+            fetch(fontRegUrl).then(res => res.arrayBuffer()),
+            fetch(fontBoldUrl).then(res => res.arrayBuffer())
+        ]);
+
+        const fontReg = await pdfDoc.embedFont(fontRegBytes);
+        const fontBold = await pdfDoc.embedFont(fontBoldBytes);
 
         /* ==================================================================
-           CONFIGURAZIONE COORDINATE METRICHE FLAT OVERLAY (SISTEMA BASE IN BASSO A SX)
-           Foglio A4 standard: 595 x 842 punti tipografici.
+           REGOLE DI LAYOUT RICHIESTE:
+           - Font fisso ovunque: Inter Bold, dimensione 14.
+           - Colore: Bianco (#ffffff) per le scritte, tranne il prezzo mensile finale che è Arancione (#FF7A00).
+           - Sistema di coordinate PDF: Origine (0,0) in basso a sinistra.
            ================================================================== */
-        
-        // 1. Iniezione dati Anagrafici del Cliente (Spazio Destinatario in Alto a DX)
-        // Regola i valori x e y per centrarlo perfettamente sopra la riga di Affinity
-        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 345, y: 685, size: 10, font: fontBold, color: rgb(0, 0, 0) });
-        
-        // 2. Iniezione Data di emissione dell'accordo
-        const dataOggi = new Date().toLocaleDateString('it-IT');
-        firstPage.drawText(dataOggi, { x: 345, y: 642, size: 9, font: fontReg, color: rgb(0.2, 0.2, 0.2) });
+        const textStyleWhite = { size: 14, font: fontBold, color: rgb(1, 1, 1) };
+        const textStyleOrange = { size: 14, font: fontBold, color: rgb(1, 0.48, 0) };
 
-        // 3. Rendering del Corpo Centrale (Descrizione Fornitura / Pacchetto)
+        // 1. Blocco Anagrafica Cliente esteso (Incolonnamento verticale ordinato)
+        let clientY = 685;
+        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
+        
+        if (datiPreventivoCorrente.clientResidence) {
+            clientY -= 18;
+            firstPage.drawText(datiPreventivoCorrente.clientResidence, { x: 345, y: clientY, ...textStyleWhite });
+        }
+        if (datiPreventivoCorrente.clientTaxId) {
+            clientY -= 18;
+            firstPage.drawText(datiPreventivoCorrente.clientTaxId.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
+        }
+        
+        // 2. Data di emissione
+        const dataOggi = new Date().toLocaleDateString('it-IT');
+        firstPage.drawText(dataOggi, { x: 345, y: 605, ...textStyleWhite });
+
+        // 3. Rendering Voci Centrali delle fornitura contenuti
         let currentY = 515;
-        const rigaSpazio = 20;
+        const rigaSpazio = 22;
 
         if (datiPreventivoCorrente.packageType === 'custom') {
             datiPreventivoCorrente.servizi.forEach((s) => {
-                if (currentY < 230) return; // Protezione per non collidere con i blocchi economici in basso
+                if (currentY < 230) return;
                 
-                const descCorta = s.descrizione.length > 65 ? s.descrizione.substring(0, 62) + "..." : s.descrizione;
-                firstPage.drawText(descCorta, { x: 75, y: currentY, size: 9.5, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                const descCorta = s.descrizione.length > 55 ? s.descrizione.substring(0, 52) + "..." : s.descrizione;
+                firstPage.drawText(descCorta, { x: 75, y: currentY, ...textStyleWhite });
                 
                 if (s.prezzo !== undefined && s.prezzo !== null) {
                     const prezzoTxt = `€ ${parseFloat(s.prezzo).toFixed(2)}`;
-                    firstPage.drawText(prezzoTxt, { x: 475, y: currentY, size: 9.5, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                    firstPage.drawText(prezzoTxt, { x: 465, y: currentY, ...textStyleWhite });
                 }
                 currentY -= rigaSpazio;
             });
         } else {
             const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
-            firstPage.drawText(`${pkg.titolo} — ${pkg.sottotitolo}`, { x: 75, y: currentY, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+            firstPage.drawText(`${pkg.titolo} — ${pkg.sottotitolo}`, { x: 75, y: currentY, ...textStyleWhite });
             currentY -= rigaSpazio + 5;
 
             pkg.voci.forEach(v => {
                 if (currentY < 230) return;
-                firstPage.drawText(`• ${v}`, { x: 82, y: currentY, size: 9.5, font: fontReg, color: rgb(0.15, 0.15, 0.15) });
+                firstPage.drawText(`• ${v}`, { x: 82, y: currentY, ...textStyleWhite });
                 currentY -= rigaSpazio;
             });
         }
 
-        // 4. Iniezione Campi Economici di Chiusura (Allineamento sopra i blocchi in basso a DX del template)
+        // 4. Iniezione Campi di Chiusura Economici
         // Durata complessiva dell'accordo:
-        firstPage.drawText(datiPreventivoCorrente.durata, { x: 450, y: 155, size: 10, font: fontBold, color: rgb(0, 0, 0) });
+        firstPage.drawText(datiPreventivoCorrente.durata, { x: 450, y: 155, ...textStyleWhite });
         
         // Totale:
-        firstPage.drawText(datiPreventivoCorrente.totale, { x: 450, y: 133, size: 10, font: fontBold, color: rgb(0, 0, 0) });
+        let totaleFormattato = datiPreventivoCorrente.totale || "";
+        if (totaleFormattato !== "" && !totaleFormattato.includes('€') && !isNaN(totaleFormattato)) {
+            totaleFormattato = `€ ${parseFloat(totaleFormattato).toFixed(2)}`;
+        }
+        firstPage.drawText(totaleFormattato, { x: 450, y: 133, ...textStyleWhite });
         
-        // Prezzo Mensile (IVA Incl.):
-        firstPage.drawText(datiPreventivoCorrente.mensile, { x: 450, y: 110, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+        // Prezzo Mensile (IVA Incl.) -> Renderizzato in ARANCIONE #FF7A00
+        firstPage.drawText(datiPreventivoCorrente.mensile, { x: 450, y: 110, ...textStyleOrange });
 
-        // Esportazione e Download del Blob flat finale
         const pdfBytes = await pdfDoc.save();
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
 
@@ -379,7 +436,7 @@ async function generaFlatPDF() {
         link.click();
     } catch (error) {
         console.error(error);
-        alert("Errore compilazione PDF.");
+        alert("Errore compilazione file PDF.");
     } finally {
         hideLoader();
     }
