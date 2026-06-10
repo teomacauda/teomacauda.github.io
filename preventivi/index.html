@@ -65,7 +65,7 @@
 
         <section id="section-auth" class="hidden fixed inset-0 bg-black z-40 flex items-center justify-center px-4">
             <div class="w-full max-w-md glass-modal p-8 rounded-2xl shadow-2xl">
-                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Cloud Accordi Commerciali</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Accesso Amministrazione</h2>
                 <form id="auth-form" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Email</label>
@@ -86,7 +86,7 @@
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-black tracking-tight text-white uppercase">Generazione Accordo</h1>
-                    <p class="text-graytext text-sm mt-1">Compila le metriche d'investimento variabili da sovrapporre al PDF.</p>
+                    <p class="text-graytext text-sm mt-1">Configura offerte o pacchetti predefiniti ad auto-distruzione.</p>
                 </div>
                 <button id="btn-logout" class="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">
                     <i data-lucide="log-out" class="w-5 h-5 text-graytext"></i>
@@ -111,7 +111,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Partita IVA / Codice Fiscale</label>
-                            <input type="text" id="client-taxid" required placeholder="Es: 01234567890 o RSSMRA80A01H501W" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <input type="text" id="client-taxid" required placeholder="Es: P.IVA o Codice Fiscale del cliente" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità Link (Auto-Distruzione)</label>
@@ -128,7 +128,7 @@
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Tipologia Offerta</label>
                             <select id="package-type" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent cursor-pointer">
-                                <option value="custom" class="bg-black text-white">Configurazione Su Misura</option>
+                                <option value="custom" class="bg-black text-white">Configurazione Su Misura (Custom)</option>
                                 <option value="start" class="bg-black text-white">PACCHETTO START (DIGITAL CORE)</option>
                                 <option value="pro" class="bg-black text-white">PACCHETTO PRO (CONVERSION STRATEGY)</option>
                                 <option value="elite" class="bg-black text-white">PACCHETTO ELITE (ALL-IN AUTHORITY)</option>
@@ -145,7 +145,7 @@
                     </div>
                     <div class="pt-2">
                         <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Investimento Complessivo (Lascia vuoto per calcolo automatico su Custom)</label>
-                        <input type="text" id="total-price-input" placeholder="Es: € 1.500,00" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        <input type="text" id="total-price-input" placeholder="Es: € 1.500,00 o range complessivo" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                     </div>
                 </div>
 
@@ -208,14 +208,6 @@
                 </button>
             </div>
         </main>
-
-        <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
-            <p class="text-graytext text-sm mb-4">
-                © <script>document.write(new Date().getFullYear())</script> 
-                Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-                <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
-            </p>
-        </footer>
     </div>
 
     <script>lucide.createIcons();</script>
