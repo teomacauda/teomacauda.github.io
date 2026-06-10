@@ -84,17 +84,20 @@
             fill: transparent;
             stroke: rgb(255, 122, 0); 
             stroke-width: 3;            
+            /* Fallback di sicurezza molto elevato per evitare che la linea si interrompa prima del completamento */
             stroke-dasharray: 8000; 
             stroke-dashoffset: 8000;
-            animation: 
-                drawLine 3s cubic-bezier(0.4, 0, 0.2, 1) forwards, 
-                fillLogo 1.5s ease-in-out 3s forwards;          
             filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.8));
         }
 
+        .start-animation .logo-path {
+            animation: 
+                drawLine 3s cubic-bezier(0.4, 0, 0.2, 1) forwards, 
+                fillLogo 1.5s ease-in-out 3s forwards;          
+        }
+
         @keyframes drawLine {
-            0% { stroke-dashoffset: 8000; }
-            100% { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: 0; }
         }
 
         @keyframes fillLogo {
@@ -119,6 +122,46 @@
             opacity: 0;
             transform: translateY(12px) scale(0.98);
             transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Transizioni fluide per elementi interni dei badge */
+        .tool-badge {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .tool-badge svg,
+        .tool-badge h2,
+        .tool-badge .rounded-full,
+        .tool-badge .absolute {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Animazioni al passaggio del mouse (Solo Desktop con cursore di precisione) */
+        @media (hover: hover) and (pointer: fine) {
+            .tool-badge:hover {
+                border-color: rgba(255, 122, 0, 0.8);
+                box-shadow: 
+                    inset 0 0 25px rgba(255, 122, 0, 0.15),
+                    0 0 35px rgba(255, 122, 0, 0.3),
+                    0 15px 35px rgba(0, 0, 0, 0.7);
+                transform: translateY(-8px) scale(1.03) !important;
+            }
+            .tool-badge:hover .rounded-full {
+                background-color: rgba(255, 122, 0, 0.2);
+                border-color: rgba(255, 122, 0, 0.6);
+                box-shadow: 0 0 20px rgba(255, 122, 0, 0.4);
+            }
+            .tool-badge:hover svg {
+                transform: scale(1.15) rotate(3deg);
+                filter: drop-shadow(0 0 10px rgba(255, 122, 0, 0.8));
+            }
+            .tool-badge:hover h2 {
+                color: #ff7a00;
+                text-shadow: 0 0 12px rgba(255, 122, 0, 0.6);
+                letter-spacing: 0.05em;
+            }
+            .tool-badge:hover .absolute {
+                opacity: 0.25;
+            }
         }
         
         .ready #header-element { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.0s; }
@@ -313,6 +356,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             const splash = document.getElementById('splashScreen');
             if (!splash) return;
+
+            // Inizializza dinamicamente la lunghezza dei path del logo per compatibilità cross-device totale
+            const paths = document.querySelectorAll('.logo-path');
+            paths.forEach(path => {
+                const length = Math.ceil(path.getTotalLength()) + 20; // Abbondante margine di sicurezza per evitare outline incomplete
+                path.style.strokeDasharray = length;
+                path.style.strokeDashoffset = length;
+            });
+            
+            // Forza il ricalcolo del layout prima di avviare l'animazione per evitare flash di rendering
+            void splash.offsetWidth;
+            
+            // Avvia l'animazione di disegno
+            splash.classList.add('start-animation');
 
             setTimeout(() => {
                 splash.classList.add('fade-out'); 
