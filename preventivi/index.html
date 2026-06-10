@@ -96,15 +96,25 @@
             <form id="preventivo-form" class="space-y-6">
                 <div class="glass-card p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Profilo Cliente
+                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Informazioni Anagrafiche Cliente
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Ragione Sociale / Nominativo Cliente</label>
-                            <input type="text" id="client-name" required placeholder="Es: Nome Azienda S.r.l." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Nome e Cognome / Ragione Sociale</label>
+                            <input type="text" id="client-name" required placeholder="Es: Mario Rossi / Azienda S.r.l." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità (Auto-Distruzione Link)</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Residenza / Sede Legale</label>
+                            <input type="text" id="client-residence" required placeholder="Es: Via Roma 15, Milano (MI)" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Partita IVA / Codice Fiscale</label>
+                            <input type="text" id="client-taxid" required placeholder="Es: 01234567890 o RSSMRA80A01H501W" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità Link (Auto-Distruzione)</label>
                             <input type="date" id="expiry-date" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                     </div>
@@ -134,8 +144,8 @@
                         </div>
                     </div>
                     <div class="pt-2">
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Investimento Complessivo / Range Totale</label>
-                        <input type="text" id="total-price-input" required placeholder="Es: € 1.500,00" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Investimento Complessivo (Lascia vuoto per calcolo automatico su Custom)</label>
+                        <input type="text" id="total-price-input" placeholder="Es: € 1.500,00" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                     </div>
                 </div>
 
@@ -146,7 +156,7 @@
                     <div id="services-container" class="space-y-3">
                         <div class="service-row grid grid-cols-12 gap-3 items-center">
                             <div class="col-span-8 md:col-span-9">
-                                <input type="text" placeholder="Descrivi il servizio o deliverable..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <input type="text" placeholder="Descrivi il servizio o deliverable..." class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                             </div>
                             <div class="col-span-3 md:col-span-2">
                                 <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
@@ -188,7 +198,7 @@
                         <i data-lucide="file-text" class="w-8 h-8 text-accent"></i>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase" id="client-view-title">Accordo Commerciale</h1>
-                    <p class="text-graytext text-sm font-light" id="client-view-date">Scadenza termini di accettazione: --/--/----</p>
+                    <p class="text-graytext text-sm font-light" id="client-view-date">Scadenza accettazione termini: --/--/----</p>
                 </div>
 
                 <div id="client-content-area"></div>
@@ -205,11 +215,6 @@
                 Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
                 <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
             </p>
-            <div class="px-6">
-                <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                    TUTTI I DIRITTI RISERVATI. IL CODICE SORGENTE E I PRESET DI GENERAZIONE SONO PROPRIETÀ INTELLETTUALE DI MATTEO MARIA MACAUDA.
-                </p>
-            </div>
         </footer>
     </div>
 
