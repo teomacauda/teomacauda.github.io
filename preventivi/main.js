@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Data mapping dei pacchetti con le correzioni testuali per l'Elite
+// Data Mapping strutturato dei Pacchetti
 const pacchettiPredefiniti = {
     start: {
         titolo: "PACCHETTO START",
@@ -29,7 +29,7 @@ const pacchettiPredefiniti = {
             "ARTIGIANALITÀ PURA (NO AI)"
         ],
         valore: "Elimini il blocco creativo e deleghi la qualità visiva di alto livello.",
-        investimentoDefault: "€450 — €600"
+        investimentoDefault: "€ 450,00 — € 600,00"
     },
     pro: {
         titolo: "PACCHETTO PRO",
@@ -43,7 +43,7 @@ const pacchettiPredefiniti = {
             "ARTIGIANALITÀ PURA (NO AI)"
         ],
         valore: "Domini l'algoritmo e differenzi nettamente il tuo brand sul mercato.",
-        investimentoDefault: "€850 — €1.000"
+        investimentoDefault: "€ 850,00 — € 1.000,00"
     },
     elite: {
         titolo: "PACCHETTO ELITE",
@@ -58,7 +58,7 @@ const pacchettiPredefiniti = {
             "ARTIGIANALITÀ PURA (NO AI)"
         ],
         valore: "Libertà totale. Tu pensi al lavoro, io ti rendo un'autorità premium.",
-        investimentoDefault: "€1.350 — €1.500"
+        investimentoDefault: "€ 1.350,00 — € 1.500,00"
     }
 };
 
@@ -69,6 +69,8 @@ const clientSection = document.getElementById('section-client');
 const packageTypeSelect = document.getElementById('package-type');
 const customServicesSection = document.getElementById('custom-services-section');
 const totalPriceInput = document.getElementById('total-price-input');
+const durationInput = document.getElementById('agreement-duration');
+const monthlyPriceInput = document.getElementById('monthly-price');
 
 const urlParams = new URLSearchParams(window.location.search);
 const preventivoId = urlParams.get('id');
@@ -114,7 +116,7 @@ function setupAuthLogic() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Autenticazione Fallita.");
+            alert("Rifiutato.");
             hideLoader();
         }
     });
@@ -128,7 +130,6 @@ function setupAdminLogic() {
         if (val === 'custom') {
             customServicesSection.classList.remove('hidden');
             totalPriceInput.value = "";
-            totalPriceInput.placeholder = "Totale preventivato complessivo";
         } else {
             customServicesSection.classList.add('hidden');
             totalPriceInput.value = pacchettiPredefiniti[val].investimentoDefault;
@@ -141,7 +142,7 @@ function setupAdminLogic() {
         row.className = "service-row grid grid-cols-12 gap-3 items-center";
         row.innerHTML = `
             <div class="col-span-8 md:col-span-9">
-                <input type="text" placeholder="Descrizione del servizio..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                <input type="text" placeholder="Dettagli attività..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
             </div>
             <div class="col-span-3 md:col-span-2">
                 <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
@@ -157,14 +158,6 @@ function setupAdminLogic() {
         row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
     });
 
-    document.querySelector('.btn-remove-row').addEventListener('click', (e) => {
-        if(document.querySelectorAll('.service-row').length > 1) {
-            e.currentTarget.closest('.service-row').remove();
-        } else {
-            alert("È richiesta almeno una voce.");
-        }
-    });
-
     document.getElementById('preventivo-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         showLoader();
@@ -173,6 +166,8 @@ function setupAdminLogic() {
         const expiryDate = document.getElementById('expiry-date').value;
         const packageType = packageTypeSelect.value;
         const totaleStr = totalPriceInput.value;
+        const durataStr = durationInput.value;
+        const mensileStr = monthlyPriceInput.value;
 
         let listaServizi = [];
         if (packageType === 'custom') {
@@ -191,6 +186,8 @@ function setupAdminLogic() {
                 packageType,
                 servizi: listaServizi,
                 totale: totaleStr,
+                durata: durataStr,
+                mensile: mensileStr,
                 createdAt: new Date().toISOString()
             });
 
@@ -200,7 +197,7 @@ function setupAdminLogic() {
             document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             console.error(error);
-            alert("Errore salvataggio database.");
+            alert("Errore Firestore.");
         } finally {
             hideLoader();
         }
@@ -210,7 +207,7 @@ function setupAdminLogic() {
         const inputUrl = document.getElementById('generated-url');
         inputUrl.select();
         navigator.clipboard.writeText(inputUrl.value);
-        alert("Link copiato!");
+        alert("Copiato.");
     });
 }
 
@@ -222,40 +219,40 @@ async function caricaVistaCliente(id) {
         if (docSnap.exists()) {
             const dataDoc = docSnap.data();
             
-            // Logica di auto-cancellazione automatica se scaduto
-            const oggiStr = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            // Logica di auto-cancellazione nativa richiesta
+            const oggiStr = new Date().toISOString().split('T')[0];
             if (dataDoc.expiryDate && oggiStr > dataDoc.expiryDate) {
-                await deleteDoc(docRef); // Rimuove definitivamente dal DB cloud
-                alert("Questa proposta commerciale è scaduta ed è stata rimossa automaticamente dal sistema.");
-                window.location.search = ""; 
+                await deleteDoc(docRef); // Distrugge il record cloud
+                contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Questo link di proposta commerciale è scaduto ed è stato rimosso.</p>`;
+                showSection(clientSection);
+                hideLoader();
                 return;
             }
 
             datiPreventivoCorrente = dataDoc;
             showSection(clientSection);
 
-            document.getElementById('client-view-title').innerText = `Piano Finanziario: ${datiPreventivoCorrente.clientName}`;
+            document.getElementById('client-view-title').innerText = `Proposta per: ${datiPreventivoCorrente.clientName}`;
             const dataFormattata = new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('client-view-date').innerText = `Proposta valida fino al ${dataFormattata}`;
+            document.getElementById('client-view-date').innerText = `Termini validi fino al ${dataFormattata}`;
 
             const contentArea = document.getElementById('client-content-area');
             contentArea.innerHTML = '';
 
             if (datiPreventivoCorrente.packageType === 'custom') {
                 let tableHtml = `
-                    <div class="border border-white/10 rounded-xl overflow-hidden bg-white/[0.01]">
+                    <div class="border border-white/10 rounded-xl overflow-hidden bg-white/[0.01] mb-4">
                         <div class="grid grid-cols-12 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-graytext">
-                            <div class="col-span-9">Descrizione Servizio / Fornitura</div>
+                            <div class="col-span-9">Descrizione Attività</div>
                             <div class="col-span-3 text-right">Importo</div>
                         </div>
                         <div class="divide-y divide-white/5">
                 `;
 
                 datiPreventivoCorrente.servizi.forEach(s => {
-                    // Se il prezzo dell'elemento è null o vuoto, stampa il trattino elidendo lo zero numerico
                     const prezzoTxt = (s.prezzo !== undefined && s.prezzo !== null) ? `€ ${s.prezzo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}` : `—`;
                     tableHtml += `
-                        <div class="grid grid-cols-12 px-4 py-4 text-sm items-center hover:bg-white/[0.01] transition-colors">
+                        <div class="grid grid-cols-12 px-4 py-4 text-sm items-center">
                             <div class="col-span-9 font-medium text-white/90 pr-2">${s.descrizione}</div>
                             <div class="col-span-3 text-right text-graytext font-mono">${prezzoTxt}</div>
                         </div>
@@ -264,66 +261,40 @@ async function caricaVistaCliente(id) {
 
                 tableHtml += `
                         </div>
-                        <div class="grid grid-cols-12 px-4 py-4 bg-white/5 font-bold border-t border-white/10">
-                            <div class="col-span-9 text-base text-white uppercase tracking-wide">Investimento Totale</div>
-                            <div class="col-span-3 text-right text-base text-accent font-mono">${datiPreventivoCorrente.totale.includes('€') ? datiPreventivoCorrente.totale : '€ ' + parseFloat(datiPreventivoCorrente.totale).toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div>
-                        </div>
                     </div>
                 `;
                 contentArea.innerHTML = tableHtml;
             } else {
                 const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
                 let pkgHtml = `
-                    <div class="border border-white/10 rounded-2xl p-6 sm:p-8 bg-white/[0.01] space-y-6">
-                        <div class="flex justify-between items-start border-b border-white/5 pb-4">
-                            <div>
-                                <span class="text-[10px] font-bold tracking-widest text-accent uppercase bg-accent/10 px-3 py-1 rounded-full border border-accent/20">PIANO COMMERCIALE</span>
-                                <h2 class="text-2xl font-black text-white mt-3 tracking-tight">${pkg.titolo}</h2>
-                                <p class="text-xs font-semibold text-graytext tracking-wider uppercase mt-0.5">${pkg.sottotitolo}</p>
-                            </div>
-                        </div>
-                        <p class="text-sm text-white/80 italic leading-relaxed font-light">"${pkg.descrizione}"</p>
-                        
-                        <div class="space-y-3">
-                            <p class="text-xs font-bold uppercase tracking-wider text-graytext">Specifiche del piano:</p>
-                            <ul class="space-y-2">
+                    <div class="border border-white/10 rounded-2xl p-6 bg-white/[0.01] space-y-4 mb-4">
+                        <h2 class="text-xl font-black text-white tracking-tight">${pkg.titolo} — <span class="text-accent">${pkg.sottotitolo}</span></h2>
+                        <p class="text-sm text-white/70 italic">"${pkg.descrizione}"</p>
+                        <ul class="space-y-2 pt-2">
                 `;
-
                 pkg.voci.forEach(v => {
-                    pkgHtml += `
-                        <li class="flex items-center gap-2.5 text-sm text-white/90">
-                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
-                            <span>${v}</span>
-                        </li>
-                    `;
+                    pkgHtml += `<li class="text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>${v}</li>`;
                 });
-
-                pkgHtml += `
-                            </ul>
-                        </div>
-
-                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl space-y-1">
-                            <span class="text-[10px] font-bold tracking-wider text-accent uppercase">Il valore per te</span>
-                            <p class="text-sm text-white/95 font-medium">${pkg.valore}</p>
-                        </div>
-
-                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                            <span class="text-xs font-bold uppercase tracking-wider text-graytext">Investimento Richiesto</span>
-                            <span class="text-xl font-black text-accent tracking-tight">${datiPreventivoCorrente.totale}</span>
-                        </div>
-                    </div>
-                `;
+                pkgHtml += `</ul></div>`;
                 contentArea.innerHTML = pkgHtml;
             }
 
+            // Box riassuntivo metriche dell'accordo corrispondente alle voci del PDF
+            let summaryBox = `
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-xl text-sm">
+                    <div><span class="text-xs text-graytext block uppercase">Durata Accordo</span><strong class="text-white">${datiPreventivoCorrente.durata}</strong></div>
+                    <div><span class="text-xs text-graytext block uppercase">Prezzo Mensile</span><strong class="text-white">${datiPreventivoCorrente.mensile}</strong></div>
+                    <div><span class="text-xs text-graytext block uppercase">Valore Totale</span><strong class="text-accent text-base">${datiPreventivoCorrente.totale}</strong></div>
+                </div>
+            `;
+            contentArea.insertAdjacentHTML('beforeend', summaryBox);
+
             document.getElementById('btn-download-pdf').addEventListener('click', generaFlatPDF);
         } else {
-            alert("Il collegamento richiesto non esiste o è scaduto.");
-            window.location.search = "";
+            alert("Non trovato.");
         }
     } catch (error) {
         console.error(error);
-        alert("Errore caricamento dati cloud client side.");
     } finally {
         hideLoader();
     }
@@ -335,69 +306,80 @@ async function generaFlatPDF() {
 
     try {
         const templateUrl = "template.pdf"; 
-        const existingPdfBytes = await fetch(templateUrl).then(res => {
-            if (!res.ok) throw new Error("Template base grafico non trovato.");
-            return res.arrayBuffer();
-        });
+        const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
 
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
 
+        // NOTA: Per un rendering pixel-perfect con i testi fissi esportati da Affinity,
+        // carica e incorpora qui i file Inter-Regular.ttf e Inter-Bold.ttf nativi.
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-        // Intestazioni
-        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 75, y: 640, size: 12, font: fontBold, color: rgb(0, 0, 0) });
-        const scadenzaTxt = `Scadenza: ${new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT')}`;
-        firstPage.drawText(scadenzaTxt, { x: 75, y: 625, size: 9, font: fontReg, color: rgb(0.4, 0.4, 0.4) });
+        /* ==================================================================
+           CONFIGURAZIONE COORDINATE METRICHE FLAT OVERLAY (SISTEMA BASE IN BASSO A SX)
+           Foglio A4 standard: 595 x 842 punti tipografici.
+           ================================================================== */
+        
+        // 1. Iniezione dati Anagrafici del Cliente (Spazio Destinatario in Alto a DX)
+        // Regola i valori x e y per centrarlo perfettamente sopra la riga di Affinity
+        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 345, y: 685, size: 10, font: fontBold, color: rgb(0, 0, 0) });
+        
+        // 2. Iniezione Data di emissione dell'accordo
+        const dataOggi = new Date().toLocaleDateString('it-IT');
+        firstPage.drawText(dataOggi, { x: 345, y: 642, size: 9, font: fontReg, color: rgb(0.2, 0.2, 0.2) });
 
-        let currentY = 540;
-        const rigaSpazio = 22;
+        // 3. Rendering del Corpo Centrale (Descrizione Fornitura / Pacchetto)
+        let currentY = 515;
+        const rigaSpazio = 20;
 
         if (datiPreventivoCorrente.packageType === 'custom') {
             datiPreventivoCorrente.servizi.forEach((s) => {
-                if (currentY < 180) return;
-                const descCorta = s.descrizione.length > 60 ? s.descrizione.substring(0, 57) + "..." : s.descrizione;
-                firstPage.drawText(descCorta, { x: 75, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                if (currentY < 230) return; // Protezione per non collidere con i blocchi economici in basso
+                
+                const descCorta = s.descrizione.length > 65 ? s.descrizione.substring(0, 62) + "..." : s.descrizione;
+                firstPage.drawText(descCorta, { x: 75, y: currentY, size: 9.5, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
                 
                 if (s.prezzo !== undefined && s.prezzo !== null) {
                     const prezzoTxt = `€ ${parseFloat(s.prezzo).toFixed(2)}`;
-                    firstPage.drawText(prezzoTxt, { x: 480, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                    firstPage.drawText(prezzoTxt, { x: 475, y: currentY, size: 9.5, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
                 }
                 currentY -= rigaSpazio;
             });
         } else {
             const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
             firstPage.drawText(`${pkg.titolo} — ${pkg.sottotitolo}`, { x: 75, y: currentY, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
-            currentY -= rigaSpazio + 4;
-
-            const descLines = pkg.descrizione.match(/.{1,65}(\s|$)/g) || [pkg.descrizione];
-            descLines.forEach(line => {
-                firstPage.drawText(line.trim(), { x: 75, y: currentY, size: 9, font: fontReg, color: rgb(0.3, 0.3, 0.3) });
-                currentY -= rigaSpazio - 6;
-            });
-            currentY -= 6;
+            currentY -= rigaSpazio + 5;
 
             pkg.voci.forEach(v => {
-                firstPage.drawText(`• ${v}`, { x: 85, y: currentY, size: 10, font: fontReg, color: rgb(0.1, 0.1, 0.1) });
+                if (currentY < 230) return;
+                firstPage.drawText(`• ${v}`, { x: 82, y: currentY, size: 9.5, font: fontReg, color: rgb(0.15, 0.15, 0.15) });
                 currentY -= rigaSpazio;
             });
         }
 
-        const totalTxt = datiPreventivoCorrente.totale.includes('€') ? datiPreventivoCorrente.totale : `€ ${parseFloat(datiPreventivoCorrente.totale).toFixed(2)}`;
-        firstPage.drawText(totalTxt, { x: 460, y: 220, size: 13, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+        // 4. Iniezione Campi Economici di Chiusura (Allineamento sopra i blocchi in basso a DX del template)
+        // Durata complessiva dell'accordo:
+        firstPage.drawText(datiPreventivoCorrente.durata, { x: 450, y: 155, size: 10, font: fontBold, color: rgb(0, 0, 0) });
+        
+        // Totale:
+        firstPage.drawText(datiPreventivoCorrente.totale, { x: 450, y: 133, size: 10, font: fontBold, color: rgb(0, 0, 0) });
+        
+        // Prezzo Mensile (IVA Incl.):
+        firstPage.drawText(datiPreventivoCorrente.mensile, { x: 450, y: 110, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
 
+        // Esportazione e Download del Blob flat finale
         const pdfBytes = await pdfDoc.save();
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
 
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `Preventivo_${datiPreventivoCorrente.clientName.replace(/\s+/g, '_')}.pdf`;
+        link.download = `Accordo_${datiPreventivoCorrente.clientName.replace(/\s+/g, '_')}.pdf`;
         link.click();
     } catch (error) {
         console.error(error);
-        alert("Errore rendering PDF vettoriale overlay.");
+        alert("Errore compilazione PDF.");
     } finally {
         hideLoader();
     }
