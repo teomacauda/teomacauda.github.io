@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Generatore Preventivi | Teo Macauda</title>
+    <title>Generatore Preventivi Accordi | Teo Macauda</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -65,7 +65,7 @@
 
         <section id="section-auth" class="hidden fixed inset-0 bg-black z-40 flex items-center justify-center px-4">
             <div class="w-full max-w-md glass-modal p-8 rounded-2xl shadow-2xl">
-                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Accesso Amministrazione</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Cloud Accordi Commerciali</h2>
                 <form id="auth-form" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Email</label>
@@ -76,7 +76,7 @@
                         <input type="password" id="auth-password" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                     </div>
                     <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all shadow-lg mt-2 uppercase tracking-wide">
-                        Accedi
+                        Entra nel Pannello
                     </button>
                 </form>
             </div>
@@ -85,8 +85,8 @@
         <main id="section-admin" class="hidden flex-grow container mx-auto max-w-4xl px-6 pt-32 pb-16 relative z-10">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-3xl font-black tracking-tight text-white uppercase">Nuova Proposta Commerciale</h1>
-                    <p class="text-graytext text-sm mt-1">Configura offerte variabili o pacchetti predefiniti ad auto-distruzione.</p>
+                    <h1 class="text-3xl font-black tracking-tight text-white uppercase">Generazione Accordo</h1>
+                    <p class="text-graytext text-sm mt-1">Compila le metriche d'investimento variabili da sovrapporre al PDF.</p>
                 </div>
                 <button id="btn-logout" class="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">
                     <i data-lucide="log-out" class="w-5 h-5 text-graytext"></i>
@@ -96,15 +96,15 @@
             <form id="preventivo-form" class="space-y-6">
                 <div class="glass-card p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Informazioni Cliente
+                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Profilo Cliente
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Nome Cliente / Azienda</label>
-                            <input type="text" id="client-name" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Ragione Sociale / Nominativo Cliente</label>
+                            <input type="text" id="client-name" required placeholder="Es: Nome Azienda S.r.l." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Data Scadenza (Auto-Cancellazione)</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità (Auto-Distruzione Link)</label>
                             <input type="date" id="expiry-date" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                     </div>
@@ -112,34 +112,41 @@
 
                 <div class="glass-card p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="box" class="w-5 h-5 text-accent"></i> Struttura Commerciale
+                        <i data-lucide="sliders" class="w-5 h-5 text-accent"></i> Quadro Economico & Scadenze
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Inquadramento Offerta</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Tipologia Offerta</label>
                             <select id="package-type" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent cursor-pointer">
-                                <option value="custom" class="bg-black text-white">Pacchetto Personalizzato (Elementi di costo variabili)</option>
+                                <option value="custom" class="bg-black text-white">Configurazione Su Misura</option>
                                 <option value="start" class="bg-black text-white">PACCHETTO START (DIGITAL CORE)</option>
                                 <option value="pro" class="bg-black text-white">PACCHETTO PRO (CONVERSION STRATEGY)</option>
                                 <option value="elite" class="bg-black text-white">PACCHETTO ELITE (ALL-IN AUTHORITY)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Investimento Complessivo Globale</label>
-                            <input type="text" id="total-price-input" required placeholder="Es: € 1.200,00 o range di prezzo" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Durata Accordo Contrattuale</label>
+                            <input type="text" id="agreement-duration" required placeholder="Es: 3 Mesi / Rinnovo Mensile" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Prezzo Mensile (IVA Incl.)</label>
+                            <input type="text" id="monthly-price" required placeholder="Es: € 500,00" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Investimento Complessivo / Range Totale</label>
+                        <input type="text" id="total-price-input" required placeholder="Es: € 1.500,00" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                     </div>
                 </div>
 
                 <div id="custom-services-section" class="glass-card p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="layers" class="w-5 h-5 text-accent"></i> Dettaglio Voci di Preventivo
+                        <i data-lucide="layers" class="w-5 h-5 text-accent"></i> Attività incluse nella fornitura
                     </h3>
-                    
                     <div id="services-container" class="space-y-3">
                         <div class="service-row grid grid-cols-12 gap-3 items-center">
                             <div class="col-span-8 md:col-span-9">
-                                <input type="text" placeholder="Descrizione della prestazione o deliverable..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <input type="text" placeholder="Descrivi il servizio o deliverable..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                             </div>
                             <div class="col-span-3 md:col-span-2">
                                 <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
@@ -151,20 +158,19 @@
                             </div>
                         </div>
                     </div>
-
                     <button type="button" id="btn-add-service" class="flex items-center gap-2 text-sm font-medium text-accent hover:text-accentHover transition-colors pt-2">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Aggiungi voce al preventivo
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Aggiungi voce di costo
                     </button>
                 </div>
 
                 <button type="submit" class="w-full h-14 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider">
-                    <i data-lucide="link" class="w-5 h-5"></i> Genera Collegamento Proposta
+                    <i data-lucide="link" class="w-5 h-5"></i> Archivia Proposta e Sincronizza Link
                 </button>
             </form>
 
             <div id="output-link-box" class="hidden mt-6 bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl space-y-3">
                 <p class="text-emerald-400 text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> Link di consultazione cloud generato con successo!
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Accordo registrato sul database cloud!
                 </p>
                 <div class="flex gap-2">
                     <input type="text" id="generated-url" readonly class="flex-grow h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none">
@@ -181,14 +187,14 @@
                     <div class="inline-flex p-3 bg-white/5 rounded-2xl border border-white/10 mb-1">
                         <i data-lucide="file-text" class="w-8 h-8 text-accent"></i>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase" id="client-view-title">Proposta Commerciale</h1>
-                    <p class="text-graytext text-sm font-light" id="client-view-date">Termini validi fino al: --/--/----</p>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase" id="client-view-title">Accordo Commerciale</h1>
+                    <p class="text-graytext text-sm font-light" id="client-view-date">Scadenza termini di accettazione: --/--/----</p>
                 </div>
 
                 <div id="client-content-area"></div>
 
                 <button id="btn-download-pdf" class="w-full h-14 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider">
-                    <i data-lucide="download" class="w-5 h-5"></i> Scarica Accordo Formato PDF
+                    <i data-lucide="download" class="w-5 h-5"></i> Genera ed Esporta Documento PDF Ufficiale
                 </button>
             </div>
         </main>
@@ -201,7 +207,7 @@
             </p>
             <div class="px-6">
                 <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                    TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DEL PROPRIETARIO.
+                    TUTTI I DIRITTI RISERVATI. IL CODICE SORGENTE E I PRESET DI GENERAZIONE SONO PROPRIETÀ INTELLETTUALE DI MATTEO MARIA MACAUDA.
                 </p>
             </div>
         </footer>
