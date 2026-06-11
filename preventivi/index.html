@@ -147,7 +147,7 @@
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
                         <i data-lucide="sliders" class="w-5 h-5 text-accent"></i> Quadro Economico & Scadenze
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Tipologia Offerta</label>
                             <select id="package-type" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent cursor-pointer">
@@ -158,8 +158,12 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Durata Accordo Contrattuale</label>
-                            <input type="text" id="agreement-duration" required placeholder="Es: 3 Mesi / Rinnovo Mensile" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Quantità di Mesi</label>
+                            <input type="text" id="agreement-months" required placeholder="Es: 6 Mesi" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Mesi Attivi</label>
+                            <input type="text" id="agreement-period" required placeholder="Es: da Settembre a Novembre 2026" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Prezzo Mensile (IVA Incl.)</label>
