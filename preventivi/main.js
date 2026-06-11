@@ -69,7 +69,8 @@ const adminSection = document.getElementById('section-admin');
 const clientSection = document.getElementById('section-client');
 const packageTypeSelect = document.getElementById('package-type');
 const customServicesSection = document.getElementById('custom-services-section');
-const durationInput = document.getElementById('agreement-duration');
+const durationMonthsInput = document.getElementById('agreement-months');
+const durationPeriodInput = document.getElementById('agreement-period');
 const monthlyPriceInput = document.getElementById('monthly-price');
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -194,7 +195,8 @@ function setupAdminLogic() {
         const expiryDate = document.getElementById('expiry-date').value;
         const packageType = packageTypeSelect.value;
         const mensileStr = monthlyPriceInput.value;
-        // Il totale equivale sempre al prezzo mensile configurato dall'admin
+        const durataMesi = durationMonthsInput.value;
+        const durataPeriodo = durationPeriodInput.value;
         const totaleStr = mensileStr;
 
         let listaServizi = [];
@@ -218,7 +220,9 @@ function setupAdminLogic() {
                 packageType,
                 servizi: listaServizi,
                 totale: totaleStr,
-                durata: durationInput.value,
+                durataMesi,
+                durataPeriodo,
+                durata: `${durataMesi} / ${durataPeriodo}`,
                 mensile: mensileStr,
                 createdAt: new Date().toISOString()
             });
@@ -331,10 +335,10 @@ async function caricaVistaCliente(id) {
                 contentArea.insertAdjacentHTML('beforeend', pkgHtml);
             }
 
-            // Box riassuntivo metriche dell'accordo corrispondente alle voci del PDF (Senza valore totale, solo Durata e Prezzo Mensile in Arancione)
+            const durataInfo = `${(datiPreventivoCorrente.durataMesi || '').toUpperCase()} / ${(datiPreventivoCorrente.durataPeriodo || '').toUpperCase()}`;
             let summaryBox = `
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-xl text-sm">
-                    <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Durata Accordo</span><strong class="text-accent text-lg">${datiPreventivoCorrente.durata.toUpperCase()}</strong></div>
+                    <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Durata Accordo</span><strong class="text-accent text-lg">${durataInfo}</strong></div>
                     <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Prezzo Mensile (IVA Incl.)</span><strong class="text-accent text-lg">${formattaPrezzo(datiPreventivoCorrente.mensile)}</strong></div>
                 </div>
             `;
@@ -440,12 +444,17 @@ async function generaFlatPDF() {
         }
 
         // 4. Iniezione Campi Economici di Chiusura
-        // Durata complessiva dell'accordo (Centrata orizzontalmente rispetto al rettangolo)
+        // Durata complessiva dell'accordo (Centrata orizzontalmente su due righe per evitare overflow)
         // Larghezza box: ~195 pt (da x=55 a x=250), Centro = 152.5
-        const durataText = datiPreventivoCorrente.durata.toUpperCase();
-        const textWidth = fontBold.widthOfTextAtSize(durataText, 13);
-        const xCentrato = 152.5 - (textWidth / 2);
-        firstPage.drawText(durataText, { x: xCentrato, y: 108, size: 13, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+        const durataMesiText = (datiPreventivoCorrente.durataMesi || "").toUpperCase();
+        const widthMesi = fontBold.widthOfTextAtSize(durataMesiText, 11);
+        const xCentratoMesi = 152.5 - (widthMesi / 2);
+        firstPage.drawText(durataMesiText, { x: xCentratoMesi, y: 115, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+
+        const durataPeriodoText = (datiPreventivoCorrente.durataPeriodo || "").toUpperCase();
+        const widthPeriodo = fontBold.widthOfTextAtSize(durataPeriodoText, 9.5);
+        const xCentratoPeriodo = 152.5 - (widthPeriodo / 2);
+        firstPage.drawText(durataPeriodoText, { x: xCentratoPeriodo, y: 98, size: 9.5, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
         
         // Totale:
         const xTotale = 520 - fontBold.widthOfTextAtSize(totaleValStr, 13);
