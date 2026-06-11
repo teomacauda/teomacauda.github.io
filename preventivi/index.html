@@ -63,9 +63,26 @@
             <div class="loader"></div>
         </div>
 
+        <section id="section-gate" class="hidden fixed inset-0 bg-black z-40 flex items-center justify-center px-4">
+            <div class="w-full max-w-md glass-modal p-8 rounded-2xl shadow-2xl text-center space-y-6">
+                <div class="inline-flex p-4 bg-accent/10 rounded-2xl border border-accent/20">
+                    <i data-lucide="lock" class="w-8 h-8 text-accent"></i>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-xl font-bold tracking-tight text-white uppercase">Area Riservata Preventivi</h2>
+                    <p class="text-graytext text-xs sm:text-sm max-w-xs mx-auto leading-relaxed">
+                        Questa sezione è accessibile solo tramite link diretto cliente o credenziali amministratore.
+                    </p>
+                </div>
+                <button id="btn-go-to-login" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all shadow-lg uppercase tracking-wide flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
+                </button>
+            </div>
+        </section>
+
         <section id="section-auth" class="hidden fixed inset-0 bg-black z-40 flex items-center justify-center px-4">
             <div class="w-full max-w-md glass-modal p-8 rounded-2xl shadow-2xl">
-                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Accesso Amministrazione</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Accedi come Admin</h2>
                 <form id="auth-form" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Email</label>
@@ -86,7 +103,7 @@
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-black tracking-tight text-white uppercase">Generazione Accordo</h1>
-                    <p class="text-graytext text-sm mt-1">Configura offerte o pacchetti predefiniti ad auto-distruzione.</p>
+                    <p class="text-graytext text-sm mt-1">Compila le metriche d'investimento variabili da sovrapporre al PDF.</p>
                 </div>
                 <button id="btn-logout" class="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">
                     <i data-lucide="log-out" class="w-5 h-5 text-graytext"></i>
@@ -94,33 +111,39 @@
             </div>
 
             <form id="preventivo-form" class="space-y-6">
-                <div class="glass-card p-6 rounded-2xl space-y-4">
+                <div class="glass-card p-4 sm:p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Informazioni Anagrafiche Cliente
+                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Profilo Cliente
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Nome e Cognome / Ragione Sociale</label>
-                            <input type="text" id="client-name" required placeholder="Es: Mario Rossi / Azienda S.r.l." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Ragione Sociale / Nominativo Cliente</label>
+                            <input type="text" id="client-name" required placeholder="Es: Nome Azienda S.r.l." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Residenza / Sede Legale</label>
-                            <input type="text" id="client-residence" required placeholder="Es: Via Roma 15, Milano (MI)" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Partita IVA / Codice Fiscale</label>
-                            <input type="text" id="client-taxid" required placeholder="Es: P.IVA o Codice Fiscale del cliente" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità Link (Auto-Distruzione)</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità (Auto-Distruzione Link)</label>
                             <input type="date" id="expiry-date" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Codice Fiscale Cliente</label>
+                            <input type="text" id="client-cf" required placeholder="Es: RSSMRA80A01H501U" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Partita IVA (Opzionale)</label>
+                            <input type="text" id="client-vat" placeholder="Es: 02153520891" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Via e Numero Civico</label>
+                            <input type="text" id="client-street" required placeholder="Es: Via Leonello Poletti 58" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">CAP, Città e Provincia</label>
+                            <input type="text" id="client-city-zip" required placeholder="Es: 44124 Ferrara (FE)" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                     </div>
                 </div>
 
-                <div class="glass-card p-6 rounded-2xl space-y-4">
+                <div class="glass-card p-4 sm:p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
                         <i data-lucide="sliders" class="w-5 h-5 text-accent"></i> Quadro Economico & Scadenze
                     </h3>
@@ -128,7 +151,7 @@
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Tipologia Offerta</label>
                             <select id="package-type" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent cursor-pointer">
-                                <option value="custom" class="bg-black text-white">Configurazione Su Misura (Custom)</option>
+                                <option value="custom" class="bg-black text-white">Configurazione Su Misura</option>
                                 <option value="start" class="bg-black text-white">PACCHETTO START (DIGITAL CORE)</option>
                                 <option value="pro" class="bg-black text-white">PACCHETTO PRO (CONVERSION STRATEGY)</option>
                                 <option value="elite" class="bg-black text-white">PACCHETTO ELITE (ALL-IN AUTHORITY)</option>
@@ -140,26 +163,22 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Prezzo Mensile (IVA Incl.)</label>
-                            <input type="text" id="monthly-price" required placeholder="Es: € 500,00" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <input type="text" id="monthly-price" required placeholder="Es: 500" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
-                    </div>
-                    <div class="pt-2">
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Investimento Complessivo (Lascia vuoto per calcolo automatico su Custom)</label>
-                        <input type="text" id="total-price-input" placeholder="Es: € 1.500,00 o range complessivo" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                     </div>
                 </div>
 
-                <div id="custom-services-section" class="glass-card p-6 rounded-2xl space-y-4">
+                <div id="custom-services-section" class="glass-card p-4 sm:p-6 rounded-2xl space-y-4">
                     <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
                         <i data-lucide="layers" class="w-5 h-5 text-accent"></i> Attività incluse nella fornitura
                     </h3>
                     <div id="services-container" class="space-y-3">
                         <div class="service-row grid grid-cols-12 gap-3 items-center">
-                            <div class="col-span-8 md:col-span-9">
-                                <input type="text" placeholder="Descrivi il servizio o deliverable..." class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <div class="col-span-7 sm:col-span-9">
+                                <input type="text" placeholder="Attività..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                             </div>
-                            <div class="col-span-3 md:col-span-2">
-                                <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <div class="col-span-4 sm:col-span-2">
+                                <input type="number" step="0.01" placeholder="Prezzo" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                             </div>
                             <div class="col-span-1 flex justify-center">
                                 <button type="button" class="btn-remove-row text-red-500 hover:text-red-400 transition-colors">
@@ -192,22 +211,35 @@
         </main>
 
         <main id="section-client" class="hidden flex-grow container mx-auto max-w-3xl px-6 pt-32 pb-16 flex flex-col justify-center relative z-10">
-            <div id="client-view-container" class="glass-card p-8 sm:p-10 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
+            <div id="client-view-container" class="glass-card p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
                 <div class="text-center space-y-3">
                     <div class="inline-flex p-3 bg-white/5 rounded-2xl border border-white/10 mb-1">
                         <i data-lucide="file-text" class="w-8 h-8 text-accent"></i>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase" id="client-view-title">Accordo Commerciale</h1>
-                    <p class="text-graytext text-sm font-light" id="client-view-date">Scadenza accettazione termini: --/--/----</p>
+                    <p class="text-graytext text-sm font-light" id="client-view-date">Scadenza termini di accettazione: --/--/----</p>
                 </div>
 
                 <div id="client-content-area"></div>
 
                 <button id="btn-download-pdf" class="w-full h-14 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider">
-                    <i data-lucide="download" class="w-5 h-5"></i> Genera ed Esporta Documento PDF Ufficiale
+                    <i data-lucide="download" class="w-5 h-5"></i> Scarica il Preventivo Ufficiale
                 </button>
             </div>
         </main>
+
+        <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+            <p class="text-graytext text-sm mb-4">
+                © <script>document.write(new Date().getFullYear())</script> 
+                Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+                <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+            </p>
+            <div class="px-6">
+                <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
+                    TUTTI I DIRITTI RISERVATI. IL CODICE SORGENTE E I PRESET DI GENERAZIONE SONO PROPRIETÀ INTELLETTUALE DI MATTEO MARIA MACAUDA.
+                </p>
+            </div>
+        </footer>
     </div>
 
     <script>lucide.createIcons();</script>
