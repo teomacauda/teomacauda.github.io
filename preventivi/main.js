@@ -1,9 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { PDFDocument, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
-// RISOLUZIONE BUG COMPILAZIONE: Importiamo fontkit ESM per sbloccare i font TTF custom e caratteri speciali
-import fontkit from "https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/+esm";
+import { PDFDocument, StandardFonts, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -18,6 +16,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Data Mapping strutturato dei Pacchetti
 const pacchettiPredefiniti = {
     start: {
         titolo: "PACCHETTO START",
@@ -64,12 +63,12 @@ const pacchettiPredefiniti = {
 };
 
 const loaderEl = document.getElementById('main-loader');
+const gateSection = document.getElementById('section-gate');
 const authSection = document.getElementById('section-auth');
 const adminSection = document.getElementById('section-admin');
 const clientSection = document.getElementById('section-client');
 const packageTypeSelect = document.getElementById('package-type');
 const customServicesSection = document.getElementById('custom-services-section');
-const totalPriceInput = document.getElementById('total-price-input');
 const durationInput = document.getElementById('agreement-duration');
 const monthlyPriceInput = document.getElementById('monthly-price');
 
@@ -77,6 +76,20 @@ const urlParams = new URLSearchParams(window.location.search);
 const preventivoId = urlParams.get('id');
 
 let datiPreventivoCorrente = null; 
+
+// Helper per formattare i prezzi in euro con ,00
+function formattaPrezzo(val) {
+    if (val === undefined || val === null || val === "") return "";
+    let s = val.toString().replace(/[\s€]/g, "");
+    if (s.includes('-') || s.includes('—')) {
+        let parts = s.split(/[-—]/);
+        return parts.map(p => formattaPrezzo(p.trim())).join(" — ");
+    }
+    s = s.replace(/,/g, '.');
+    let num = parseFloat(s);
+    if (isNaN(num)) return val;
+    return "€ " + num.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
     if (preventivoId) {
@@ -90,7 +103,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 setupAdminLogic();
             } else {
                 document.getElementById('admin-indicator').classList.add('hidden');
-                showSection(authSection);
+                showSection(gateSection);
                 setupAuthLogic();
             }
         });
@@ -101,6 +114,7 @@ function hideLoader() { loaderEl.classList.add('opacity-0', 'pointer-events-none
 function showLoader() { loaderEl.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); }
 
 function showSection(section) {
+    gateSection.classList.add('hidden');
     authSection.classList.add('hidden');
     adminSection.classList.add('hidden');
     clientSection.classList.add('hidden');
@@ -108,6 +122,14 @@ function showSection(section) {
 }
 
 function setupAuthLogic() {
+    // Gestione passaggio da schermata gate a form di login
+    const btnGoToLogin = document.getElementById('btn-go-to-login');
+    if (btnGoToLogin) {
+        btnGoToLogin.addEventListener('click', () => {
+            showSection(authSection);
+        });
+    }
+
     const form = document.getElementById('auth-form');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -117,7 +139,7 @@ function setupAuthLogic() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Autenticazione Fallita.");
+            alert("Rifiutato.");
             hideLoader();
         }
     });
@@ -128,13 +150,13 @@ function setupAdminLogic() {
 
     packageTypeSelect.addEventListener('change', (e) => {
         const val = e.target.value;
+        const descInputs = customServicesSection.querySelectorAll('.service-desc');
         if (val === 'custom') {
             customServicesSection.classList.remove('hidden');
-            totalPriceInput.value = "";
-            totalPriceInput.placeholder = "Lascia vuoto per calcolo automatico o scrivi un range";
+            descInputs.forEach(input => input.setAttribute('required', ''));
         } else {
             customServicesSection.classList.add('hidden');
-            totalPriceInput.value = pacchettiPredefiniti[val].investimentoDefault;
+            descInputs.forEach(input => input.removeAttribute('required'));
         }
     });
 
@@ -143,11 +165,11 @@ function setupAdminLogic() {
         const row = document.createElement('div');
         row.className = "service-row grid grid-cols-12 gap-3 items-center";
         row.innerHTML = `
-            <div class="col-span-8 md:col-span-9">
-                <input type="text" placeholder="Descrivi il servizio o deliverable..." class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+            <div class="col-span-7 sm:col-span-9">
+                <input type="text" placeholder="Attività..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
             </div>
-            <div class="col-span-3 md:col-span-2">
-                <input type="number" step="0.01" placeholder="Opzionale" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+            <div class="col-span-4 sm:col-span-2">
+                <input type="number" step="0.01" placeholder="Prezzo" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
             </div>
             <div class="col-span-1 flex justify-center">
                 <button type="button" class="btn-remove-row text-red-500 hover:text-red-400 transition-colors">
@@ -165,69 +187,49 @@ function setupAdminLogic() {
         showLoader();
 
         const clientName = document.getElementById('client-name').value;
-        const clientResidence = document.getElementById('client-residence').value;
-        const clientTaxId = document.getElementById('client-taxid').value;
+        const clientCf = document.getElementById('client-cf').value;
+        const clientVat = document.getElementById('client-vat').value;
+        const clientStreet = document.getElementById('client-street').value;
+        const clientCityZip = document.getElementById('client-city-zip').value;
         const expiryDate = document.getElementById('expiry-date').value;
         const packageType = packageTypeSelect.value;
-        let totaleStr = totalPriceInput.value.trim();
-        const durataStr = durationInput.value;
         const mensileStr = monthlyPriceInput.value;
+        // Il totale equivale sempre al prezzo mensile configurato dall'admin
+        const totaleStr = mensileStr;
 
         let listaServizi = [];
-        let sommaCalcolata = 0;
-
-        // RISOLUZIONE BUG STRUTTURA BLOCCO: Validazione JS custom senza Required HTML nativi
         if (packageType === 'custom') {
-            let valid = true;
             document.querySelectorAll('.service-row').forEach(row => {
-                const descEl = row.querySelector('.service-desc');
-                const desc = descEl.value.trim();
+                const desc = row.querySelector('.service-desc').value;
                 const pVal = row.querySelector('.service-price').value;
                 const price = pVal !== "" ? parseFloat(pVal) : null;
-                
-                if(!desc) {
-                    valid = false;
-                    descEl.classList.add('border-red-500');
-                } else {
-                    descEl.classList.remove('border-red-500');
-                    listaServizi.push({ descrizione: desc, prezzo: price });
-                    if (price) sommaCalcolata += price;
-                }
+                listaServizi.push({ descrizione: desc, prezzo: price });
             });
-
-            if(!valid) {
-                alert("Compila la descrizione di tutti i campi custom attivati.");
-                hideLoader();
-                return;
-            }
-
-            // SE non inserisci il prezzo manualmente, assegna la somma delle righe o lascia vuoto se non ci sono prezzi singoli
-            if (totaleStr === "") {
-                totaleStr = sommaCalcolata > 0 ? "€ " + sommaCalcolata.toLocaleString('it-IT', { minimumFractionDigits: 2 }) : "";
-            }
         }
 
         try {
-            await addDoc(collection(db, "preventivi"), {
+            const docRef = await addDoc(collection(db, "preventivi"), {
                 clientName,
-                clientResidence,
-                clientTaxId,
+                clientCf,
+                clientVat,
+                clientStreet,
+                clientCityZip,
                 expiryDate,
                 packageType,
                 servizi: listaServizi,
                 totale: totaleStr,
-                durata: durataStr,
+                durata: durationInput.value,
                 mensile: mensileStr,
                 createdAt: new Date().toISOString()
-            }).then((docRef) => {
-                const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
-                document.getElementById('generated-url').value = shareableUrl;
-                document.getElementById('output-link-box').classList.remove('hidden');
-                document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
             });
+
+            const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
+            document.getElementById('generated-url').value = shareableUrl;
+            document.getElementById('output-link-box').classList.remove('hidden');
+            document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             console.error(error);
-            alert("Errore salvataggio database.");
+            alert("Errore Firestore.");
         } finally {
             hideLoader();
         }
@@ -237,7 +239,7 @@ function setupAdminLogic() {
         const inputUrl = document.getElementById('generated-url');
         inputUrl.select();
         navigator.clipboard.writeText(inputUrl.value);
-        alert("Link copiato!");
+        alert("Copiato.");
     });
 }
 
@@ -245,15 +247,18 @@ async function caricaVistaCliente(id) {
     try {
         const docRef = doc(db, "preventivi", id);
         const docSnap = await getDoc(docRef);
+        const contentArea = document.getElementById('client-content-area');
 
         if (docSnap.exists()) {
             const dataDoc = docSnap.data();
             
-            const oggiStr = new Date().toISOString().split('T')[0];
+            // Utilizza la data locale (fuso orario italiano) per evitare che scada prima del tempo basandosi sul fuso UTC
+            const oggiStr = new Date().toLocaleDateString('sv-SE');
             if (dataDoc.expiryDate && oggiStr > dataDoc.expiryDate) {
                 await deleteDoc(docRef);
-                alert("Questo link è scaduto ed è stato rimosso automaticamente.");
-                window.location.search = ""; 
+                contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Questo link di proposta commerciale è scaduto ed è stato rimosso.</p>`;
+                showSection(clientSection);
+                hideLoader();
                 return;
             }
 
@@ -262,10 +267,29 @@ async function caricaVistaCliente(id) {
 
             document.getElementById('client-view-title').innerText = `Proposta per: ${datiPreventivoCorrente.clientName}`;
             const dataFormattata = new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('client-view-date').innerText = `Proposta valida fino al ${dataFormattata}`;
+            document.getElementById('client-view-date').innerText = `Termini validi fino al ${dataFormattata}`;
 
-            const contentArea = document.getElementById('client-content-area');
-            contentArea.innerHTML = '';
+            // Box riepilogativo dati anagrafici Fornitore & Cliente
+            let anagraficaHtml = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white/[0.01] border border-white/10 rounded-2xl text-sm mb-6">
+                    <div class="space-y-2">
+                        <span class="text-xs text-accent font-semibold uppercase tracking-wider block">Fornitore</span>
+                        <div class="text-white font-semibold">Matteo Maria Macauda</div>
+                        <div class="text-graytext text-xs">C.F.: MCDMTM04H18I754Q</div>
+                        <div class="text-graytext text-xs">P.IVA: 02153520891</div>
+                        <div class="text-graytext text-xs">Via teofane 2, 96100, Siracusa (SR)</div>
+                    </div>
+                    <div class="space-y-2 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
+                        <span class="text-xs text-accent font-semibold uppercase tracking-wider block">Cliente</span>
+                        <div class="text-white font-semibold">${datiPreventivoCorrente.clientName.toUpperCase()}</div>
+                        <div class="text-graytext text-xs">${datiPreventivoCorrente.clientCf ? `C.F.: ${datiPreventivoCorrente.clientCf.toUpperCase()}` : ''}</div>
+                        ${datiPreventivoCorrente.clientVat ? `<div class="text-graytext text-xs">P.IVA: ${datiPreventivoCorrente.clientVat.toUpperCase()}</div>` : ''}
+                        <div class="text-graytext text-xs">${datiPreventivoCorrente.clientStreet ? datiPreventivoCorrente.clientStreet.toUpperCase() : ''}</div>
+                        <div class="text-graytext text-xs">${datiPreventivoCorrente.clientCityZip ? datiPreventivoCorrente.clientCityZip.toUpperCase() : ''}</div>
+                    </div>
+                </div>
+            `;
+            contentArea.innerHTML = anagraficaHtml;
 
             if (datiPreventivoCorrente.packageType === 'custom') {
                 let tableHtml = `
@@ -278,7 +302,7 @@ async function caricaVistaCliente(id) {
                 `;
 
                 datiPreventivoCorrente.servizi.forEach(s => {
-                    const prezzoTxt = (s.prezzo !== undefined && s.prezzo !== null) ? `€ ${s.prezzo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}` : `—`;
+                    const prezzoTxt = (s.prezzo !== undefined && s.prezzo !== null) ? formattaPrezzo(s.prezzo) : `—`;
                     tableHtml += `
                         <div class="grid grid-cols-12 px-4 py-4 text-sm items-center">
                             <div class="col-span-9 font-medium text-white/90 pr-2">${s.descrizione}</div>
@@ -287,8 +311,11 @@ async function caricaVistaCliente(id) {
                     `;
                 });
 
-                tableHtml += `</div></div>`;
-                contentArea.innerHTML = tableHtml;
+                tableHtml += `
+                        </div>
+                    </div>
+                `;
+                contentArea.insertAdjacentHTML('beforeend', tableHtml);
             } else {
                 const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
                 let pkgHtml = `
@@ -301,27 +328,21 @@ async function caricaVistaCliente(id) {
                     pkgHtml += `<li class="text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>${v}</li>`;
                 });
                 pkgHtml += `</ul></div>`;
-                contentArea.innerHTML = pkgHtml;
+                contentArea.insertAdjacentHTML('beforeend', pkgHtml);
             }
 
-            // Normalizzazione visualizzazione del prezzo totale dell'anteprima
-            let totaleVisualizzato = datiPreventivoCorrente.totale || "—";
-            if (totaleVisualizzato !== "—" && !totaleVisualizzato.includes('€') && !isNaN(totaleVisualizzato)) {
-                totaleVisualizzato = '€ ' + parseFloat(totaleVisualizzato).toLocaleString('it-IT', { minimumFractionDigits: 2 });
-            }
-
+            // Box riassuntivo metriche dell'accordo corrispondente alle voci del PDF (Senza valore totale, solo Durata e Prezzo Mensile in Arancione)
             let summaryBox = `
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-xl text-sm">
-                    <div><span class="text-xs text-graytext block uppercase">Durata Accordo</span><strong class="text-white">${datiPreventivoCorrente.durata}</strong></div>
-                    <div><span class="text-xs text-graytext block uppercase">Prezzo Mensile</span><strong class="text-white">${datiPreventivoCorrente.mensile}</strong></div>
-                    <div><span class="text-xs text-graytext block uppercase">Valore Totale</span><strong class="text-accent text-base">${totaleVisualizzato}</strong></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-xl text-sm">
+                    <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Durata Accordo</span><strong class="text-accent text-lg">${datiPreventivoCorrente.durata.toUpperCase()}</strong></div>
+                    <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Prezzo Mensile (IVA Incl.)</span><strong class="text-accent text-lg">${formattaPrezzo(datiPreventivoCorrente.mensile)}</strong></div>
                 </div>
             `;
             contentArea.insertAdjacentHTML('beforeend', summaryBox);
 
             document.getElementById('btn-download-pdf').addEventListener('click', generaFlatPDF);
         } else {
-            alert("Documento inesistente.");
+            alert("Non trovato.");
         }
     } catch (error) {
         console.error(error);
@@ -339,87 +360,102 @@ async function generaFlatPDF() {
         const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
 
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
-        
-        // RISOLUZIONE BUG FONTKIT CRITICAL: Registrazione modulo asincrono obbligatorio per embedding TTF
-        pdfDoc.registerFontkit(fontkit);
-
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
 
-        // Caricamento dei file .ttf reali di Inter per eliminare l'errore caratteri speciali ed euro
-        const fontBoldUrl = "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-700-normal.ttf";
-        const fontBoldBytes = await fetch(fontBoldUrl).then(res => res.arrayBuffer());
-        const fontBold = await pdfDoc.embedFont(fontBoldBytes);
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
         /* ==================================================================
-           DIRETTIVE GRAFICHE IMPOSTATE AL 100%:
-           - Font fisso ovunque: Inter Bold.
-           - Dimensione fissa: Carattere 14.
-           - Colore: Bianco puro rgb(1,1,1), tranne l'investimento mensile che è Arancione rgb(1, 0.48, 0).
+           CONFIGURAZIONE COORDINATE METRICHE FLAT OVERLAY (SISTEMA BASE IN BASSO A SX)
+           Foglio A4 standard: 595 x 842 punti tipografici.
            ================================================================== */
-        const textStyleWhite = { size: 14, font: fontBold, color: rgb(1, 1, 1) };
-        const textStyleOrange = { size: 14, font: fontBold, color: rgb(1, 0.48, 0) };
-
-        // 1. Iniezione Dati Anagrafici Strutturati nel Box Cliente (Allineamento a Destra)
-        let clientY = 685;
-        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
         
-        if (datiPreventivoCorrente.clientResidence) {
-            clientY -= 18;
-            firstPage.drawText(datiPreventivoCorrente.clientResidence.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
+        // 1. Iniezione dati Anagrafici del Cliente (Spazio Destinatario in Alto a DX - tutti in grassetto)
+        // Nome Cliente
+        firstPage.drawText(datiPreventivoCorrente.clientName.toUpperCase(), { x: 350, y: 635, size: 11, font: fontBold, color: rgb(1, 1, 1) });
+        
+        let currentClientY = 610;
+        // Codice Fiscale
+        if (datiPreventivoCorrente.clientCf) {
+            firstPage.drawText(`C.F.: ${datiPreventivoCorrente.clientCf.toUpperCase()}`, { x: 350, y: currentClientY, size: 9.5, font: fontBold, color: rgb(1, 1, 1) });
+            currentClientY -= 25;
         }
-        if (datiPreventivoCorrente.clientTaxId) {
-            clientY -= 18;
-            firstPage.drawText(datiPreventivoCorrente.clientTaxId.toUpperCase(), { x: 345, y: clientY, ...textStyleWhite });
+        // Partita IVA (Opzionale)
+        if (datiPreventivoCorrente.clientVat) {
+            firstPage.drawText(`P.IVA: ${datiPreventivoCorrente.clientVat.toUpperCase()}`, { x: 350, y: currentClientY, size: 9.5, font: fontBold, color: rgb(1, 1, 1) });
+            currentClientY -= 25;
+        }
+        // Residenza / Sede Legale (Riga 1: Via e Civico)
+        if (datiPreventivoCorrente.clientStreet) {
+            firstPage.drawText(datiPreventivoCorrente.clientStreet.toUpperCase(), { x: 350, y: currentClientY, size: 9.5, font: fontBold, color: rgb(1, 1, 1) });
+            currentClientY -= 25;
+        }
+        // Residenza / Sede Legale (Riga 2: CAP, Città e Provincia)
+        if (datiPreventivoCorrente.clientCityZip) {
+            firstPage.drawText(datiPreventivoCorrente.clientCityZip.toUpperCase(), { x: 350, y: currentClientY, size: 9.5, font: fontBold, color: rgb(1, 1, 1) });
         }
         
-        // 2. Data di emissione
+        // 2. Iniezione Data di emissione dell'accordo (Centrata nel box e in grassetto)
         const dataOggi = new Date().toLocaleDateString('it-IT');
-        firstPage.drawText(dataOggi, { x: 345, y: 605, ...textStyleWhite });
+        const dateWidth = fontBold.widthOfTextAtSize(dataOggi, 10);
+        const xCentrataDate = 485 - (dateWidth / 2);
+        firstPage.drawText(dataOggi, { x: xCentrataDate, y: 718, size: 10, font: fontBold, color: rgb(1, 1, 1) });
 
-        // 3. Rendering Tabella delle Forniture Attività Centrali
-        let currentY = 515;
-        const rigaSpazio = 22;
+        // 3. Rendering del Corpo Centrale (Descrizione Fornitura / Pacchetto)
+        let currentY = 415;
+        const rigaSpazio = 26; 
+
+        // Il totale nel PDF corrisponde allo stesso valore del prezzo mensile
+        const prezzoMensileVal = formattaPrezzo(datiPreventivoCorrente.mensile);
+        const totaleValStr = prezzoMensileVal;
 
         if (datiPreventivoCorrente.packageType === 'custom') {
+            firstPage.drawText("PACCHETTO CUSTOM — CONFIGURAZIONE SU MISURA", { x: 75, y: currentY, size: 13, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+            currentY -= rigaSpazio;
+
             datiPreventivoCorrente.servizi.forEach((s) => {
-                if (currentY < 230) return;
+                if (currentY < 200) return; // Protezione per non collidere con i blocchi economici in basso
                 
-                const descCorta = s.descrizione.length > 52 ? s.descrizione.substring(0, 49) + "..." : s.descrizione;
-                firstPage.drawText(descCorta, { x: 75, y: currentY, ...textStyleWhite });
+                const descCorta = s.descrizione.length > 70 ? s.descrizione.substring(0, 67) + "..." : s.descrizione;
+                firstPage.drawText(`• ${descCorta}`, { x: 75, y: currentY, size: 11, font: fontBold, color: rgb(1, 1, 1) });
                 
                 if (s.prezzo !== undefined && s.prezzo !== null) {
-                    const prezzoTxt = `€ ${parseFloat(s.prezzo).toFixed(2)}`;
-                    firstPage.drawText(prezzoTxt, { x: 465, y: currentY, ...textStyleWhite });
+                    const prezzoTxt = formattaPrezzo(s.prezzo);
+                    const xPrice = 520 - fontBold.widthOfTextAtSize(prezzoTxt, 11);
+                    firstPage.drawText(prezzoTxt, { x: xPrice, y: currentY, size: 11, font: fontBold, color: rgb(0.66, 0.66, 0.66) });
                 }
                 currentY -= rigaSpazio;
             });
         } else {
             const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
-            firstPage.drawText(`${pkg.titolo} — ${pkg.sottotitolo}`, { x: 75, y: currentY, ...textStyleWhite });
-            currentY -= rigaSpazio + 5;
+            firstPage.drawText(`${pkg.titolo} — ${pkg.sottotitolo}`, { x: 75, y: currentY, size: 13, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
+            currentY -= rigaSpazio;
 
             pkg.voci.forEach(v => {
-                if (currentY < 230) return;
-                firstPage.drawText(`• ${v}`, { x: 82, y: currentY, ...textStyleWhite });
+                if (currentY < 200) return;
+                firstPage.drawText(`• ${v}`, { x: 75, y: currentY, size: 11, font: fontBold, color: rgb(1, 1, 1) });
                 currentY -= rigaSpazio;
             });
         }
 
         // 4. Iniezione Campi Economici di Chiusura
-        // Durata complessiva dell'accordo:
-        firstPage.drawText(datiPreventivoCorrente.durata, { x: 450, y: 155, ...textStyleWhite });
+        // Durata complessiva dell'accordo (Centrata orizzontalmente rispetto al rettangolo)
+        // Larghezza box: ~195 pt (da x=55 a x=250), Centro = 152.5
+        const durataText = datiPreventivoCorrente.durata.toUpperCase();
+        const textWidth = fontBold.widthOfTextAtSize(durataText, 13);
+        const xCentrato = 152.5 - (textWidth / 2);
+        firstPage.drawText(durataText, { x: xCentrato, y: 108, size: 13, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
         
         // Totale:
-        let totaleFormattato = datiPreventivoCorrente.totale || "";
-        if (totaleFormattato !== "" && !totaleFormattato.includes('€') && !isNaN(totaleFormattato)) {
-            totaleFormattato = `€ ${parseFloat(totaleFormattato).toFixed(2)}`;
-        }
-        firstPage.drawText(totaleFormattato, { x: 450, y: 133, ...textStyleWhite });
+        const xTotale = 520 - fontBold.widthOfTextAtSize(totaleValStr, 13);
+        firstPage.drawText(totaleValStr, { x: xTotale, y: 148, size: 13, font: fontBold, color: rgb(1, 1, 1) });
         
-        // Prezzo Mensile (IVA Incl.) -> ARANCIONE #FF7A00
-        firstPage.drawText(datiPreventivoCorrente.mensile, { x: 450, y: 110, ...textStyleOrange });
+        // Prezzo Mensile (IVA Incl.):
+        const xMensile = 520 - fontBold.widthOfTextAtSize(prezzoMensileVal, 14);
+        firstPage.drawText(prezzoMensileVal, { x: xMensile, y: 78, size: 14, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
 
+        // Esportazione e Download del Blob flat finale
         const pdfBytes = await pdfDoc.save();
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
 
@@ -429,7 +465,7 @@ async function generaFlatPDF() {
         link.click();
     } catch (error) {
         console.error(error);
-        alert("Errore compilazione file PDF.");
+        alert("Errore compilazione PDF.");
     } finally {
         hideLoader();
     }
