@@ -169,7 +169,8 @@
         .ready .tool-badge:nth-child(2) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.18s; }
         .ready .tool-badge:nth-child(3) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.26s; }
         .ready .tool-badge:nth-child(4) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.34s; }
-        .ready #footer-element { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.5s; }
+        .ready .tool-badge:nth-child(5) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.42s; }
+        .ready #footer-element { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.58s; }
 
         body {
             -webkit-tap-highlight-color: transparent;
@@ -199,54 +200,67 @@
             <p class="text-4xl md:text-5xl font-extrabold tracking-tighter text-white uppercase">RAW</p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
             
-            <a href="/consegnavideo" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
+            <a href="/consegnavideo" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
                 <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-6">
-                    <div class="p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
+                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12M6 21h12M4 6h16M4 18h16M10 9l5 3-5 3V9z"></path>
                         </svg>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white uppercase font-mono">Consegna</h2>
+                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Consegna</h2>
                 </div>
             </a>
 
-            <a href="/script" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
+            <a href="/script" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
                 <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-6">
-                    <div class="p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
+                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white uppercase font-mono">Script</h2>
+                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Script</h2>
                 </div>
             </a>
 
-            <a href="/pianieditoriali" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
+            <a href="/pianieditoriali" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
                 <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-6">
-                    <div class="p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
+                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path>
                             <circle cx="18" cy="18" r="2" stroke="currentColor" stroke-width="1.5"></circle>
                         </svg>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white uppercase font-mono">Piani</h2>
+                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Piani</h2>
                 </div>
             </a>
 
-            <a href="/report" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
+            <a href="/report" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
                 <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-6">
-                    <div class="p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
+                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white uppercase font-mono">Report</h2>
+                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Report</h2>
+                </div>
+            </a>
+
+            <a href="/preventivi" class="tool-badge ui-element col-span-2 justify-self-center w-[calc(50%-8px)] md:col-span-1 md:w-full relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
+                <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
+                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
+                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581a1.125 1.125 0 0 0 1.591 0l7.1-7.1a1.125 1.125 0 0 0 0-1.591L11.159 3.659A2.25 2.25 0 0 0 9.568 3Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Preventivi</h2>
                 </div>
             </a>
 
