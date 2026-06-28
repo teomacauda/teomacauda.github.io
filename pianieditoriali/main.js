@@ -34,6 +34,7 @@ const btnCancelTitle = document.getElementById('btn-cancel-title');
 
 let currentClientDocId = null;
 let editingVideoIndex = null; 
+let draggedIndex = null;
 
 function createSlug(text) {
     return text.toString().toLowerCase().trim()
@@ -102,6 +103,18 @@ function renderVideoTable(videos, isAdmin) {
     
     tbody.innerHTML = '';
     if (mobileContainer) mobileContainer.innerHTML = '';
+
+    const headerRow = document.getElementById('video-table-header-row');
+    if (headerRow) {
+        const hasDragHeader = headerRow.querySelector('.drag-header');
+        if (isAdmin && !hasDragHeader) {
+            const th = document.createElement('th');
+            th.className = 'p-5 w-10 text-center drag-header';
+            headerRow.insertBefore(th, headerRow.firstChild);
+        } else if (!isAdmin && hasDragHeader) {
+            hasDragHeader.remove();
+        }
+    }
 
     // --- COSTRUZIONE BLOCCHI DI RIEPILOGO PREMIUM (SQUARE & CENTERED) ---
     const statsContainer = document.getElementById('stats-dashboard');
@@ -175,7 +188,16 @@ function renderVideoTable(videos, isAdmin) {
         // DESKTOP ROW
         const tr = document.createElement('tr');
         tr.className = "hover:bg-white/[0.01] transition-colors group";
+        const cleanTitle = (video.title || '').replace(/[^a-zA-Z0-9]/g, '');
+        tr.style.viewTransitionName = `row-${cleanTitle || index}`;
         tr.innerHTML = `
+            ${isAdmin ? `
+                <td class="p-5 text-center whitespace-nowrap drag-handle select-none">
+                    <button class="inline-flex h-8 w-8 hover:bg-white/5 hover:text-accent rounded-lg items-center justify-center text-graytext/30 cursor-grab active:cursor-grabbing transition-all" title="Trascina per riordinare">
+                        <i data-lucide="grip-vertical" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            ` : ''}
             <td class="p-5 font-medium whitespace-nowrap">
                 <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border px-2.5 py-0.5 rounded-full ${badgeStyle}">
                     <span>${emoji}</span><span>${video.status}</span>
@@ -206,6 +228,84 @@ function renderVideoTable(videos, isAdmin) {
             </td>
         `;
         tbody.appendChild(tr);
+
+        if (isAdmin) {
+            tr.dataset.index = index;
+            const handleBtn = tr.querySelector('.drag-handle button');
+            
+            handleBtn.addEventListener('mousedown', () => {
+                tr.setAttribute('draggable', 'true');
+            });
+            handleBtn.addEventListener('mouseup', () => {
+                tr.removeAttribute('draggable');
+            });
+            
+            tr.addEventListener('dragstart', (e) => {
+                draggedIndex = index;
+                e.dataTransfer.effectAllowed = 'move';
+                tr.classList.add('opacity-40');
+            });
+            
+            tr.addEventListener('dragend', () => {
+                tr.classList.remove('opacity-40');
+                document.querySelectorAll('#video-table-body tr').forEach(row => {
+                    row.classList.remove('drag-over-top', 'drag-over-bottom');
+                });
+                tr.removeAttribute('draggable');
+            });
+            
+            tr.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const rect = tr.getBoundingClientRect();
+                const relY = e.clientY - rect.top;
+                
+                document.querySelectorAll('#video-table-body tr').forEach(row => {
+                    row.classList.remove('drag-over-top', 'drag-over-bottom');
+                });
+                
+                if (relY < rect.height / 2) {
+                    tr.classList.add('drag-over-top');
+                } else {
+                    tr.classList.add('drag-over-bottom');
+                }
+            });
+            
+            tr.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                const rect = tr.getBoundingClientRect();
+                const relY = e.clientY - rect.top;
+                let targetIndex = index;
+                
+                if (relY >= rect.height / 2) {
+                    targetIndex = index + 1;
+                }
+                
+                if (draggedIndex !== null && draggedIndex !== targetIndex && draggedIndex !== targetIndex - 1) {
+                    const movedItem = videos.splice(draggedIndex, 1)[0];
+                    let finalTargetIndex = targetIndex;
+                    if (draggedIndex < targetIndex) {
+                        finalTargetIndex--;
+                    }
+                    videos.splice(finalTargetIndex, 0, movedItem);
+                    
+                    try {
+                        const docRef = doc(db, "pianiEditoriali", currentClientDocId);
+                        await updateDoc(docRef, { videos: videos });
+                        
+                        if (document.startViewTransition) {
+                            document.startViewTransition(() => {
+                                renderVideoTable(videos, isAdmin);
+                            });
+                        } else {
+                            renderVideoTable(videos, isAdmin);
+                        }
+                    } catch (error) {
+                        console.error("Errore nel riordinamento:", error);
+                        alert("Errore nel salvataggio dell'ordine.");
+                    }
+                }
+            });
+        }
 
         // MOBILE CARD
         if (mobileContainer) {
