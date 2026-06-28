@@ -42,6 +42,8 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .drag-over-top td { border-top: 2px solid #FF7A00 !important; box-shadow: inset 0 4px 6px -4px rgba(255, 122, 0, 0.3); }
+        .drag-over-bottom td { border-bottom: 2px solid #FF7A00 !important; box-shadow: inset 0 -4px 6px -4px rgba(255, 122, 0, 0.3); }
     </style>
 </head>
 <body class="antialiased">
@@ -129,7 +131,7 @@
             <div class="hidden md:block w-full overflow-x-auto glass-card rounded-2xl border border-white/5 no-scrollbar">
                 <table class="w-full text-left border-collapse min-w-[800px]">
                     <thead>
-                        <tr class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
+                        <tr id="video-table-header-row" class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
                             <th class="p-5">Stato</th>
                             <th class="p-5">Formato</th>
                             <th class="p-5">Contenuto / Concept</th>
