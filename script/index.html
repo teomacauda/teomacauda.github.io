@@ -114,35 +114,12 @@
                 </svg>
             </a>
             
-            <nav class="hidden md:flex gap-1 items-center bg-white/5 p-1.5 rounded-full border border-white/5">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/lavori.html" class="nav-link">Lavori</a>
-                <a href="/#servizi" class="nav-link">Servizi</a>
-                <a href="/script" class="nav-link active">Script</a>
-            </nav>
-
-            <div id="admin-indicator" class="hidden text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-1.5 md:mr-2">
+            <div id="admin-indicator" class="hidden text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>Admin
             </div>
-
-            <button onclick="toggleMobileMenu()" class="md:hidden text-graytext hover:text-white p-2 focus:outline-none relative z-[150] active:scale-90 transition-transform">
-                <i data-lucide="menu" id="icon-menu" class="w-7 h-7 block"></i>
-                <i data-lucide="x" id="icon-x" class="w-7 h-7 hidden"></i>
-            </button>
         </div>
     </header>
 
-    <div id="mobileMenu" class="fixed inset-0 z-[140] flex items-start justify-center px-5 pt-24 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/95 backdrop-blur-2xl" onclick="toggleMobileMenu()"></div>
-        <div id="mobileMenuContent" class="bg-[#0F0F0F] border border-white/10 w-full max-w-sm p-6 rounded-3xl relative transform -translate-y-6 transition-transform duration-500">
-            <nav class="flex flex-col gap-5 text-left">
-                <a href="/" class="flex items-center gap-4 text-lg font-bold text-white"><i data-lucide="home" class="text-accent/50 w-5 h-5"></i> Home</a>
-                <a href="/lavori.html" class="flex items-center gap-4 text-lg font-bold text-white"><i data-lucide="folder-kanban" class="text-accent/50 w-5 h-5"></i> Lavori</a>
-                <a href="/#servizi" class="flex items-center gap-4 text-lg font-bold text-white"><i data-lucide="layers" class="text-accent/50 w-5 h-5"></i> Servizi</a>
-                <a href="/script" class="flex items-center gap-4 text-lg font-bold text-accent"><i data-lucide="file-text" class="text-accent w-5 h-5"></i> Script</a>
-            </nav>
-        </div>
-    </div>
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10">
         
@@ -177,6 +154,9 @@
                 </a>
                 
                 <div id="admin-script-tools" class="hidden flex items-center gap-2.5">
+                    <button id="btn-copy-link" class="inline-flex items-center gap-2 text-xs h-10 px-4 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white text-emerald-400 rounded-full transition-all font-medium active:scale-95 duration-200">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copia Link</span>
+                    </button>
                     <button id="btn-edit-script" class="inline-flex items-center gap-2 text-xs h-10 px-4 bg-white/5 border border-white/10 hover:border-accent hover:text-white rounded-full transition-all font-medium active:scale-95 duration-200">
                         <i data-lucide="pencil" class="w-3.5 h-3.5 text-accent"></i> Modifica Script
                     </button>
