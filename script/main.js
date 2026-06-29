@@ -265,7 +265,8 @@ async function triggerDeleteScript() {
 
 function triggerCopyLink() {
     const link = window.location.href;
-    navigator.clipboard.writeText(link).then(() => {
+    
+    const doFeedback = () => {
         const btn = document.getElementById('btn-copy-link');
         if (!btn) return;
         const iconSpan = btn.querySelector('i');
@@ -286,9 +287,46 @@ function triggerCopyLink() {
                 lucide.createIcons();
             }
         }, 2000);
-    }).catch(err => {
-        console.error('Errore durante la copia del link:', err);
-    });
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(link).then(() => {
+            doFeedback();
+        }).catch(err => {
+            console.error('Errore durante la copia del link:', err);
+            fallbackCopyText(link, doFeedback);
+        });
+    } else {
+        fallbackCopyText(link, doFeedback);
+    }
+}
+
+function fallbackCopyText(text, callback) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            callback();
+        } else {
+            console.error('Fallback: Copia fallita');
+        }
+    } catch (err) {
+        console.error('Fallback: Impossibile copiare', err);
+    }
+
+    document.body.removeChild(textArea);
 }
 
 function openAuthModal() {
