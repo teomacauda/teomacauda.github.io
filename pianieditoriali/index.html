@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Report Performance Mensili | Teo Macauda</title>
+    <title>Piani Editoriali | Teo Macauda</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
         tailwind.config = {
@@ -32,14 +33,17 @@
         .glass-nav { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.4s ease; margin-top: env(safe-area-inset-top); }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
+        .plus-card { border: 1px dashed rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.01); }
+        .plus-card:hover { border-color: rgba(255, 122, 0, 0.5); background: rgba(255, 122, 0, 0.02); }
         .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.03) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
-        .client-bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 122, 0, 0.14) 0%, rgba(255, 122, 0, 0.02) 65%, rgba(0, 0, 0, 0) 100%); z-index: 0; pointer-events: none; }
-        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.01) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.4; z-index: 1; pointer-events: none; }
+        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.2) 0%, rgba(255, 122, 0, 0.04) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; z-index: 1; pointer-events: none; }
         .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .drag-over-top td { border-top: 2px solid #FF7A00 !important; box-shadow: inset 0 4px 6px -4px rgba(255, 122, 0, 0.3); }
+        .drag-over-bottom td { border-bottom: 2px solid #FF7A00 !important; box-shadow: inset 0 -4px 6px -4px rgba(255, 122, 0, 0.3); }
     </style>
 </head>
 <body class="antialiased">
@@ -69,379 +73,199 @@
         </div>
     </header>
 
-    <main class="flex-1 w-full mx-auto relative z-10">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10">
         
-        <div id="main-loader" class="flex justify-center items-center py-40">
+        <div id="main-loader" class="flex justify-center items-center py-32">
             <div class="loader !w-9 !h-9"></div>
         </div>
 
-        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-24 px-6 flex flex-col items-center">
+        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-20 flex flex-col items-center">
             <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                <i data-lucide="lock" class="w-7 h-7 text-white"></i>
             </div>
-            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Analisi Performance</h1>
-            <p class="text-graytext text-sm font-light mb-8">Questa sezione raccoglie i report mensili di posizionamento ed è accessibile tramite link diretto cliente.</p>
+            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Piani Editoriali</h1>
+            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link directo cliente o credenziali amministratore.</p>
             <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
-                Accedi come Admin
+                <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
             </button>
         </div>
 
-        <div id="section-admin-catalog" class="hidden max-w-7xl mx-auto px-6 pt-32 pb-16">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-                <div>
-                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Analisi <span class="text-accent">Mensili</span></h1>
-                    <p class="text-graytext text-sm font-light mt-1">Gestisci, aggiorna e genera i report di performance mobile per i clienti.</p>
-                </div>
-                <button onclick="openCreateReportModal()" class="h-11 px-5 bg-white/5 border border-white/10 hover:bg-accent hover:border-accentHover text-white text-sm font-bold rounded-xl flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-accent/30 self-start sm:self-auto">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Nuovo Report
-                </button>
+        <div id="section-admin-catalog" class="hidden">
+            <div class="mb-10 text-left">
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Gestione <span class="text-accent">Piani Editoriali</span></h1>
+                <p class="text-graytext text-sm font-light mt-1">Seleziona un cliente o creane uno nuovo da configurare.</p>
             </div>
-            <div id="report-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+            <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            </div>
         </div>
 
-        <div id="section-admin-report-detail" class="hidden max-w-7xl mx-auto px-6 pt-32 pb-16">
-            <div id="admin-tools-banner" class="glass-card p-4 rounded-2xl border-accent/20 mb-8 bg-accent/5 flex flex-wrap items-center justify-between gap-4">
+        <div id="section-client-plan" class="hidden">
+            <div id="admin-plan-tools" class="hidden glass-card p-4 rounded-2xl border-accent/20 mb-8 bg-accent/5 flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-2 text-sm font-medium text-white">
-                    Gestione Report Mensile
+                    <i data-lucide="sliders" class="text-accent w-4 h-4"></i> Pannello Controllo Piano
                 </div>
                 <div class="flex items-center gap-3">
-                    <button id="btn-add-item" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
-                        Aggiungi Contenuto
+                    <button id="btn-add-video" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Contenuto
                     </button>
-                    <button id="btn-clear-all" class="h-9 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
-                        Svuota Tutto
-                    </button>
-                    <button id="btn-copy-link" class="h-9 px-4 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 border border-white/10 transition-all">
-                        Copia Link Cliente
+                    <button id="btn-delete-plan" class="h-9 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Elimina Intero Piano
                     </button>
                 </div>
             </div>
 
-            <div class="mb-10 text-left flex flex-col gap-1.5">
-                <span class="inline-block px-3 py-1 self-start rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent">Performance Report</span>
-                <div class="flex items-center gap-4">
-                    <button onclick="window.location.search = ''" class="p-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl transition-all flex items-center justify-center group" title="Torna al catalogo">
-                        <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+            <div class="mb-10 text-left">
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-3">Content Strategy</span>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h1 id="client-title" class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Piano Editoriale</h1>
+                    <button id="btn-edit-title" class="hidden h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-xl flex items-center justify-center text-graytext hover:text-white transition-all" title="Modifica Titolo Piano">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
                     </button>
-                    <h1 id="report-title-display" class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">Caricamento...</h1>
-                    <button id="btn-edit-report-title" class="p-2 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-lg transition-all text-graytext"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/></svg></button>
-                </div>
-                <div id="edit-title-field-container" class="hidden flex items-center gap-2 mt-2 max-w-md">
-                    <input type="text" id="input-report-title" class="flex-1 h-10 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                    <button id="btn-save-report-title" class="h-10 px-4 bg-accent text-white text-xs font-bold rounded-xl">Salva</button>
-                    <button id="btn-cancel-report-title" class="h-10 px-4 bg-white/5 text-graytext text-xs font-bold rounded-xl">Annulla</button>
-                </div>
-            </div>
-
-            <div class="glass-card p-6 rounded-2xl border-white/5 mb-8">
-                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">Impostazioni e KPI del Cliente</h2>
-                <form id="form-report-followers" class="space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div class="sm:col-span-4">
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">URL Immagine Profilo Cliente (Asset Repository GitHub)</label>
-                            <input type="url" id="client-avatar-url" placeholder="https://raw.githubusercontent.com/username/repo/main/immagine.png" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">Instagram Followers (Usa meno '-' se negativi)</label>
-                            <input type="number" id="followers-instagram" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">TikTok Followers</label>
-                            <input type="number" id="followers-tiktok" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-2">YouTube Iscritti</label>
-                            <input type="number" id="followers-youtube" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                    </div>
-
-                    <div class="border-t border-white/5 pt-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Account Raggiunti (Totale)</label>
-                            <input type="number" id="kpi-reached-count" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Account % (Es: +15% o -4%)</label>
-                            <input type="text" id="kpi-reached-pct" placeholder="Es: +15%" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Visite al Profilo (Totale)</label>
-                            <input type="number" id="kpi-visits-count" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Visite % (Es: +24% o -8%)</label>
-                            <input type="text" id="kpi-visits-pct" placeholder="Es: +24%" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end pt-2">
-                        <button type="submit" class="h-10 px-5 bg-white/5 hover:bg-accent/10 border border-white/10 hover:border-accent/40 text-xs font-bold text-white rounded-xl transition-all">Salva Configurazione Report</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 class="text-xl font-bold text-white tracking-tight">Catalogo Video e Post Inseriti</h2>
-                <div class="flex items-center gap-1.5 bg-white/5 border border-white/10 p-1 rounded-xl self-start sm:self-auto">
-                    <button id="sort-btn-global" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white">Classifica Totale (Views ↓)</button>
-                    <button id="sort-btn-grouped" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-graytext hover:text-white">Raggruppati per Piattaforma</button>
-                </div>
-            </div>
-
-            <div id="admin-report-contents-layout" class="space-y-8"></div>
-        </div>
-
-        <div id="section-client-report-view" class="hidden fixed inset-0 z-[150] bg-black w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory scroll-smooth no-scrollbar select-none">
-            
-            <div class="client-bg-glow"></div>
-
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center text-center p-6 relative z-10">
-                <div class="max-w-xl flex flex-col items-center gap-4">
-                    
-                    <div id="client-avatar-wrapper" class="hidden mb-2">
-                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl p-1 bg-black border-2 border-accent shadow-lg shadow-accent/20 overflow-hidden">
-                            <img id="client-avatar-img" src="" alt="Client Asset" class="w-full h-full object-cover rounded-xl">
-                        </div>
-                    </div>
-
-                    <span class="px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-accent/10 border border-accent/20 text-accent">Performance Review</span>
-                    <h1 id="client-hero-title" class="text-4xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none">REPORT PERFORMANCE</h1>
-                    <p id="client-hero-subtitle" class="text-graytext text-sm md:text-lg font-light tracking-wide max-w-sm">Analisi strategica e risultati dei contenuti posizionati nel mese.</p>
-                </div>
-                <div class="absolute bottom-8 flex flex-col items-center gap-1.5 opacity-40 animate-bounce">
-                    <span class="text-[8px] uppercase tracking-widest font-bold text-graytext">Scorri per esplorare</span>
-                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
-                </div>
-            </section>
-
-            <section id="slide-client-followers" class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
-                <div class="w-full max-w-sm mx-auto flex flex-col justify-center h-full">
-                    <div class="mb-6 text-center">
-                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Crescita dei Canali</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Nuovo Pubblico Acquisito</h2>
-                    </div>
-
-                    <div id="client-followers-macro-card" class="glass-card p-6 rounded-3xl text-center mb-5 relative overflow-hidden transition-all border-accent/20 bg-accent/[0.01]">
-                        <div class="text-[9px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Totale Aggregata</div>
-                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none flex items-center justify-center gap-1">
-                            <span id="client-stat-total-sign"></span><span class="counter-anim" id="client-stat-total-followers" data-target="0">0</span>
-                        </div>
-                        <div class="mt-3 inline-flex items-center justify-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" id="client-followers-macro-badge">
-                            <span id="client-followers-macro-arrow-box"></span> <span id="client-followers-macro-text-status">CRESCITA</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2.5" id="client-followers-rows-container">
-                        <div id="row-client-ig-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 id-svg-ig"></div>
-                                <span class="text-xs font-semibold text-white">Instagram Followers</span>
-                            </div>
-                            <div class="text-lg font-bold id-text-color-ig"></div>
-                        </div>
-                        <div id="row-client-tt-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 id-svg-tt"></div>
-                                <span class="text-xs font-semibold text-white">TikTok Followers</span>
-                            </div>
-                            <div class="text-lg font-bold id-text-color-tt"></div>
-                        </div>
-                        <div id="row-client-yt-followers" class="hidden glass-card p-4 rounded-xl flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 id-svg-yt"></div>
-                                <span class="text-xs font-semibold text-white">YouTube Iscritti</span>
-                            </div>
-                            <div class="text-lg font-bold id-text-color-yt"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="slide-client-reached" class="hidden snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
-                <div class="w-full max-w-sm mx-auto flex flex-col justify-center h-full">
-                    <div class="mb-6 text-center">
-                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Diffusione del Brand</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Account Raggiunti</h2>
-                    </div>
-                    <div class="glass-card p-8 rounded-3xl border-white/5 text-center relative overflow-hidden">
-                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none mb-4"><span class="counter-anim" id="client-stat-reached-count" data-target="0">0</span></div>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mx-auto" id="client-stat-reached-badge">
-                            <span id="client-stat-reached-arrow-box"></span>
-                            <span id="client-stat-reached-pct">0%</span> rispetto al mese precedente
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="slide-client-visits" class="hidden snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
-                <div class="w-full max-w-sm mx-auto flex flex-col justify-center h-full">
-                    <div class="mb-6 text-center">
-                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Interazione Diretta</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Visite al Profilo</h2>
-                    </div>
-                    <div class="glass-card p-8 rounded-3xl border-white/5 text-center relative overflow-hidden">
-                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none mb-4"><span class="counter-anim" id="client-stat-visits-count" data-target="0">0</span></div>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mx-auto" id="client-stat-visits-badge">
-                            <span id="client-stat-visits-arrow-box"></span>
-                            <span id="client-stat-visits-pct">0%</span> rispetto al mese precedente
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
-                <div class="w-full max-w-md mx-auto flex flex-col justify-center h-full">
-                    <div class="mb-5 text-center">
-                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Massimo Traguardo Visivo</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Contenuto con più Views</h2>
-                    </div>
-
-                    <a id="client-views-king-link" href="#" target="_blank" class="block group glass-card p-6 rounded-3xl border-emerald-500/20 bg-emerald-500/[0.01] hover:border-accent transition-all duration-500 relative overflow-hidden">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-2.5 py-1 rounded-xl">
-                                <span id="client-king-views-icon"></span>
-                                <span id="client-king-views-platform" class="text-[10px] font-bold text-white uppercase tracking-wider">PLATFORM</span>
-                            </div>
-                            <span class="text-[9px] text-graytext font-bold uppercase flex items-center gap-1 group-hover:text-accent transition-colors">Vedi Video <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></span>
-                        </div>
-                        <h3 id="client-king-views-title" class="text-lg md:text-xl font-black text-white leading-snug tracking-tight mb-6 group-hover:text-accent transition-colors">Titolo Video</h3>
-                        <div class="border-t border-white/5 pt-4 flex items-center justify-between">
-                            <span class="text-xs text-graytext">Visualizzazioni Registrate</span>
-                            <div class="text-2xl font-black text-white tracking-tight"><span class="counter-anim" id="client-stat-king-views-count" data-target="0">0</span></div>
-                        </div>
-                    </a>
-                </div>
-            </section>
-
-            <section class="snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
-                <div class="w-full max-w-md mx-auto flex flex-col justify-center h-full">
-                    <div class="mb-5 text-center">
-                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Massimo Coinvolgimento</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Contenuto con più Like</h2>
-                    </div>
-
-                    <a id="client-likes-king-link" href="#" target="_blank" class="block group glass-card p-6 rounded-3xl border-pink-500/20 bg-pink-500/[0.01] hover:border-accent transition-all duration-500 relative overflow-hidden">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-2.5 py-1 rounded-xl">
-                                <span id="client-king-likes-icon"></span>
-                                <span id="client-king-likes-platform" class="text-[10px] font-bold text-white uppercase tracking-wider">PLATFORM</span>
-                            </div>
-                            <span class="text-[9px] text-graytext font-bold uppercase flex items-center gap-1 group-hover:text-accent transition-colors">Vedi Video <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></span>
-                        </div>
-                        <h3 id="client-king-likes-title" class="text-lg md:text-xl font-black text-white leading-snug tracking-tight mb-6 group-hover:text-accent transition-colors">Titolo Video</h3>
-                        <div class="border-t border-white/5 pt-4 flex items-center justify-between">
-                            <span class="text-xs text-graytext">Mi Piace Ricevuti</span>
-                            <div class="text-2xl font-black text-pink-400 tracking-tight flex items-center gap-1.5"><svg class="w-5 h-5 fill-pink-400 text-pink-400" viewBox="0 0 24 24" fill="currentColor"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3c1.749 0 3.3 1.01 4.312 2.522C13.012 4.01 14.563 3 16.312 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg> <span class="counter-anim" id="client-stat-king-likes-count" data-target="0">0</span></div>
-                        </div>
-                    </a>
-                </div>
-            </section>
-
-            <section class="snap-start min-h-[100dvh] h-auto w-full flex flex-col justify-start items-center p-6 pt-16 relative z-10 overflow-y-auto">
-                <div class="w-full max-w-2xl mx-auto mb-8 text-center">
-                    <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Catalogo Analitico</span>
-                    <h2 class="text-2xl font-extrabold text-white tracking-tight">Riepilogo Dettagliato Mensile</h2>
                 </div>
                 
-                <div id="client-full-breakdown-layout" class="w-full max-w-2xl space-y-8 pb-4"></div>
+                <div id="edit-title-container" class="hidden mt-4 flex items-center gap-2 max-w-md">
+                    <input type="text" id="input-client-title" class="h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent flex-1">
+                    <button id="btn-save-title" class="h-11 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-xl flex items-center justify-center transition-all">Salva</button>
+                    <button id="btn-cancel-title" class="h-11 px-3 bg-white/5 text-graytext rounded-xl text-xs hover:text-white flex items-center justify-center">Annulla</button>
+                </div>
+                <p class="text-graytext text-sm font-light mt-1">Tracciamento della produzione e del rilascio dei contenuti del brand.</p>
+            </div>
 
-            </section>
+            <div id="stats-dashboard" class="flex flex-wrap justify-center items-center gap-3 mb-10">
+            </div>
+
+            <div class="hidden md:block w-full overflow-x-auto glass-card rounded-2xl border border-white/5 no-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr id="video-table-header-row" class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
+                            <th class="p-5">Stato</th>
+                            <th class="p-5">Formato</th>
+                            <th class="p-5">Contenuto / Concept</th>
+                            <th class="p-5">Data Pubblicazione</th>
+                            <th class="p-5">Note / Briefing</th>
+                            <th class="p-5 text-right">Azioni / Script</th>
+                        </tr>
+                    </thead>
+                    <tbody id="video-table-body" class="text-sm divide-y divide-white/5">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="video-cards-container" class="block md:hidden space-y-4">
+            </div>
         </div>
     </main>
 
-    <div id="auth-modal" class="fixed inset-0 z-[250] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closeAuthModal()"></div>
-        <div class="glass-modal w-full max-w-sm rounded-2xl p-6 relative z-10 transform translate-y-10 transition-transform duration-300">
-            <h3 class="text-lg font-bold text-white mb-4">Credenziali Amministratore</h3>
-            <form id="form-admin-login" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Email</label>
-                    <input type="email" id="login-email" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Password</label>
-                    <input type="password" id="login-password" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg">Accedi</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="create-report-modal" class="fixed inset-0 z-[250] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closeCreateReportModal()"></div>
-        <div class="glass-modal w-full max-w-sm rounded-2xl p-6 relative z-10 transform translate-y-10 transition-transform duration-300">
-            <h3 class="text-lg font-bold text-white mb-4">Inizializza Nuovo Report</h3>
-            <form id="form-create-report" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Cliente e Mese (Es: Aprile 2026 - Brand X)</label>
-                    <input type="text" id="report-client-name" required placeholder="Inserisci titolo report..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg">Inizializza</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="add-item-modal" class="fixed inset-0 z-[250] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closeAddItemModal()"></div>
-        <div class="glass-modal w-full max-w-md rounded-2xl p-6 relative z-10 transform translate-y-10 transition-transform duration-300 max-h-[90vh] overflow-y-auto no-scrollbar">
-            <h3 id="add-item-modal-title" class="text-lg font-bold text-white mb-4">Inserisci Contenuto</h3>
-            <form id="form-report-item" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Titolo del Video / Post</label>
-                    <input type="text" id="item-title" required class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
+    <div id="auth-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
+        
+        <div class="glass-modal w-full sm:max-w-xl p-6 md:p-8 rounded-t-[2rem] sm:rounded-3xl relative transform translate-y-full sm:translate-y-10 transition-transform duration-400 max-h-[88vh] overflow-y-auto no-scrollbar pb-10">
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            
+            <div id="modal-step-auth">
+                <h3 class="text-xl font-bold mb-1 text-white">Autenticazione Admin</h3>
+                <p class="text-xs text-graytext mb-5">Inserisci i tuoi dati per sbloccare la gestione dei piani editoriali.</p>
+                <form id="form-login" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Formato</label>
-                        <select id="item-type" class="w-full h-11 bg-[#101010] border border-white/10 rounded-xl px-3 text-xs text-white focus:outline-none focus:border-accent">
-                            <option value="Reel">📸 Reel</option>
-                            <option value="Post">🖼️ Post</option>
-                            <option value="Storia">⏳ Storia</option>
-                            <option value="Video YT">📺 Video YT</option>
-                            <option value="YT Shorts">🩳 YT Shorts</option>
-                            <option value="TikTok">🎵 TikTok</option>
-                        </select>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email</label>
+                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-graytext uppercase tracking-wider mb-1">Link (Manuale)</label>
-                        <input type="url" id="item-link" placeholder="https://..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-3 text-xs text-white focus:outline-none focus:border-accent">
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
+                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
                     </div>
-                </div>
-                <div class="border-t border-white/5 pt-3">
-                    <h4 class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Metriche Riscontrate</h4>
-                    <div class="grid grid-cols-2 gap-2.5">
+                    <div id="auth-error" class="text-xs text-red-500 hidden font-medium"></div>
+                    <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2">
+                        <span>Accedi</span><div id="login-loader" class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div id="modal-step-create-client" class="hidden">
+                <h3 class="text-xl font-bold mb-0.5 text-white">Nuovo <span class="text-accent">Piano Cliente</span></h3>
+                <p class="text-xs text-graytext mb-4">Verrà creata una mappa vuota pronta per l'inserimento dei contenuti.</p>
+                <form id="form-create-client" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Nome Cliente / Azienda</label>
+                        <input type="text" id="client-name-input" required placeholder="Es. Rossi Luxury Brand" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2 shadow-lg">
+                        <i data-lucide="send" class="w-4 h-4"></i> Crea Spazio Cliente
+                    </button>
+                </form>
+            </div>
+
+            <div id="modal-step-add-video" class="hidden">
+                <h3 class="text-xl font-bold mb-0.5 text-white">Aggiungi <span class="text-accent">al Piano Editoriale</span></h3>
+                <p class="text-xs text-graytext mb-4">Configura le informazioni relative al prossimo contenuto programmato.</p>
+                <form id="form-add-video" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Titolo del Contenuto / Hook Principale</label>
+                        <input type="text" id="video-title" required placeholder="Es. 3 Errori che uccidono la tua Retention" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Views</label>
-                            <input type="number" id="metric-views" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Tipo di Pubblicazione / Formato</label>
+                            <select id="video-type" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <option value="Reel">📸 Reel (IG/FB)</option>
+                                <option value="TikTok">🎵 TikTok</option>
+                                <option value="YT Shorts">🩳 YT Shorts</option>
+                                <option value="Video YT">📺 Video YT</option>
+                                <option value="Storia">⏳ Storia</option>
+                                <option value="Post">🖼️ Post</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Like</label>
-                            <input type="number" id="metric-likes" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Commenti</label>
-                            <input type="number" id="metric-comments" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-semibold text-graytext uppercase mb-0.5">Condivisioni / Repost</label>
-                            <input type="number" id="metric-shares" value="0" min="0" class="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-3 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Stato di Avanzamento</label>
+                            <select id="video-status" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                                <option value="Idea">💡 Idea / Concept</option>
+                                <option value="Scrittura">📝 In Scrittura</option>
+                                <option value="In Produzione">🎥 In Produzione</option>
+                                <option value="Pronto">✅ Pronto per Pubblicare</option>
+                                <option value="Pubblicato">🚀 Pubblicato</option>
+                            </select>
                         </div>
                     </div>
-                </div>
-                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg mt-2">Salva Contenuto</button>
-            </form>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Data di Rilascio Prevista</label>
+                        <input type="text" id="video-date" placeholder="Es. 15 Giugno o ASAP" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Note di Regia / Briefing (Opzionale)</label>
+                        <textarea id="video-notes" rows="3" placeholder="Info su inquadrature, copy da usare, hashtag o scadenze..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Link Diretto allo Script (Opzionale)</label>
+                        <input type="text" id="video-script-link" placeholder="Es. /script/?v=tagli-veloci" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                    </div>
+
+                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2 shadow-lg">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Inserisci nel Piano
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <footer id="main-footer" class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+    <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
         <p class="text-graytext text-sm mb-4">
             © <script>document.write(new Date().getFullYear())</script> 
             Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
             <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
         </p>
+        <div class="px-6">
+            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
+                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
+            </p>
+        </div>
     </footer>
 </div>
 
-<script type="module" src="main.js"></script>
+<script type="module" src="./main.js"></script>
+
 </body>
 </html>
