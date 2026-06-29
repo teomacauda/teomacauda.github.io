@@ -263,25 +263,32 @@ async function triggerDeleteScript() {
     }
 }
 
-function toggleMobileMenu() {
-    const menu = document.getElementById('mobileMenu');
-    const menuContent = document.getElementById('mobileMenuContent');
-    const iconMenu = document.getElementById('icon-menu');
-    const iconX = document.getElementById('icon-x');
-    const isOpen = menu.classList.contains('opacity-100');
-    if (!isOpen) {
-        menu.classList.remove('opacity-0', 'pointer-events-none');
-        menu.classList.add('opacity-100', 'pointer-events-auto');
-        menuContent.classList.replace('-translate-y-6', 'translate-y-0');
-        iconMenu.classList.add('hidden');
-        iconX.classList.remove('hidden');
-    } else {
-        menu.classList.add('opacity-0', 'pointer-events-none');
-        menu.classList.remove('opacity-100', 'pointer-events-auto');
-        menuContent.classList.replace('translate-y-0', '-translate-y-6');
-        iconX.classList.add('hidden');
-        iconMenu.classList.remove('hidden');
-    }
+function triggerCopyLink() {
+    const link = window.location.href;
+    navigator.clipboard.writeText(link).then(() => {
+        const btn = document.getElementById('btn-copy-link');
+        if (!btn) return;
+        const iconSpan = btn.querySelector('i');
+        const textSpan = btn.querySelector('span');
+        
+        const originalText = textSpan.innerText;
+        
+        textSpan.innerText = "Link Copiato!";
+        if (iconSpan) {
+            iconSpan.setAttribute('data-lucide', 'check');
+            lucide.createIcons();
+        }
+        
+        setTimeout(() => {
+            textSpan.innerText = originalText;
+            if (iconSpan) {
+                iconSpan.setAttribute('data-lucide', 'copy');
+                lucide.createIcons();
+            }
+        }, 2000);
+    }).catch(err => {
+        console.error('Errore durante la copia del link:', err);
+    });
 }
 
 function openAuthModal() {
@@ -304,11 +311,11 @@ function closeAuthModal() {
     }
 }
 
-window.toggleMobileMenu = toggleMobileMenu;
 window.openAuthModal = openAuthModal;
 window.closeAuthModal = closeAuthModal;
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btn-copy-link')?.addEventListener('click', triggerCopyLink);
     document.getElementById('btn-edit-script')?.addEventListener('click', triggerEditScript);
     document.getElementById('btn-delete-script')?.addEventListener('click', triggerDeleteScript);
     lucide.createIcons();
