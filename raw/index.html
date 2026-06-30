@@ -9,14 +9,17 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RAW">
     
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
+    <link class="fav-icon" rel="apple-touch-icon" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
+    <link class="fav-icon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;500;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -27,10 +30,10 @@
                     },
                     colors: { 
                         dark: '#000000', 
-                        console: '#080809',
+                        console: '#08080a',
                         accent: '#FF7A00', 
                         accentHover: '#E56D00',
-                        graytext: '#636366',
+                        graytext: '#8E8E93',
                     }
                 }
             }
@@ -70,10 +73,9 @@
             transition: opacity 0.4s ease, visibility 0.4s;
         }
 
-        /* Dimensioni ridotte e centratura assoluta */
         .logo-wrapper {
-            width: 320px; /* Ridotto per un look più premium e bilanciato */
-            max-width: 60%; /* Ottimizzato per display mobile stretti */
+            width: 320px;
+            max-width: 60%;
             height: auto;
             display: flex;
             justify-content: center;
@@ -84,7 +86,6 @@
             fill: transparent;
             stroke: rgb(255, 122, 0); 
             stroke-width: 3;            
-            /* Fallback di sicurezza molto elevato per evitare che la linea si interrompa prima del completamento */
             stroke-dasharray: 8000; 
             stroke-dashoffset: 8000;
             filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.8));
@@ -117,73 +118,215 @@
             visibility: hidden;
         }
 
-        /* --- APPARIZIONE SEQUENZIALE INTERFACCIA HUB --- */
-        .ui-element {
+        /* --- FINTO CARICAMENTO CINEMATICO A RIPPLE EXPAND --- */
+        .custom-loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 4, 6, 0.98);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             opacity: 0;
-            transform: translateY(12px) scale(0.98);
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            clip-path: circle(0px at 50% 50%); /* Modificato dinamicamente da GSAP */
+            overflow: hidden;
+        }
+        .custom-loader-overlay.active {
+            pointer-events: auto;
         }
 
-        /* Transizioni fluide per elementi interni dei badge */
-        .tool-badge {
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-        .tool-badge svg,
-        .tool-badge h2,
-        .tool-badge .rounded-full,
-        .tool-badge .absolute {
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        .laser-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #FF7A00, transparent);
+            box-shadow: 0 0 20px #FF7A00, 0 0 40px #FF7A00;
+            width: 0%;
+            transition: width 0.04s linear;
         }
 
-        /* Animazioni al passaggio del mouse (Solo Desktop con cursore di precisione) */
-        @media (hover: hover) and (pointer: fine) {
-            .tool-badge:hover {
-                border-color: rgba(255, 122, 0, 0.8);
-                box-shadow: 
-                    inset 0 0 25px rgba(255, 122, 0, 0.15),
-                    0 0 35px rgba(255, 122, 0, 0.3),
-                    0 15px 35px rgba(0, 0, 0, 0.7);
-                transform: translateY(-8px) scale(1.03) !important;
-            }
-            .tool-badge:hover .rounded-full {
-                background-color: rgba(255, 122, 0, 0.2);
-                border-color: rgba(255, 122, 0, 0.6);
-                box-shadow: 0 0 20px rgba(255, 122, 0, 0.4);
-            }
-            .tool-badge:hover svg {
-                transform: scale(1.15) rotate(3deg);
-                filter: drop-shadow(0 0 10px rgba(255, 122, 0, 0.8));
-            }
-            .tool-badge:hover h2 {
-                color: #ff7a00;
-                text-shadow: 0 0 12px rgba(255, 122, 0, 0.6);
-                letter-spacing: 0.05em;
-            }
-            .tool-badge:hover .absolute {
-                opacity: 0.25;
-            }
+        /* --- CONCEZIONE BADGE: FLOATING SCI-FI TABLETS --- */
+        .cards-container {
+            perspective: 1500px;
+        }
+
+        .futuristic-blade {
+            position: relative;
+            background: rgba(8, 8, 10, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-radius: 2.25rem;
+            transition: border-color 0.4s, background-color 0.4s, box-shadow 0.4s;
+            transform-style: preserve-3d;
+            will-change: transform, border-color, box-shadow;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Spot di luce dinamico */
+        .futuristic-blade::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(250px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 122, 0, 0.15), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .futuristic-blade:hover::before {
+            opacity: 1;
+        }
+
+        .futuristic-blade:hover {
+            border-color: rgba(255, 122, 0, 0.45);
+            background: rgba(12, 12, 16, 0.97);
+            box-shadow: 
+                0 15px 45px rgba(255, 122, 0, 0.12),
+                inset 0 0 20px rgba(255, 122, 0, 0.02);
+        }
+
+        .inner-content {
+            transform: translateZ(40px);
+            z-index: 10;
+        }
+
+        /* --- ANIMAZIONI LOGHI SVG (UNA VOLTA SOLA AD OGNI HOVER) --- */
+        .icon-container-svg {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 1. Consegna: Play/Pause Morphing */
+        .play-icon, .pause-icon {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: 12px 12px;
+        }
+        .futuristic-blade:hover .play-icon {
+            transform: scale(0);
+            opacity: 0;
+        }
+        .futuristic-blade:hover .pause-icon {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* 2. Script: Scrittura delle linee con penna occlusiva */
+        .script-line {
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .futuristic-blade:hover .script-line-1 { stroke-dashoffset: 0; transition-delay: 0.05s; }
+        .futuristic-blade:hover .script-line-2 { stroke-dashoffset: 0; transition-delay: 0.15s; }
+        .futuristic-blade:hover .script-line-3 { stroke-dashoffset: 0; transition-delay: 0.25s; }
+
+        .pen-group {
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translate(-5px, 5px) scale(0.9);
+            opacity: 0;
+        }
+        .futuristic-blade:hover .pen-group {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+        }
+
+        /* 3. Piani: Cerchi del calendario che compaiono in sequenza all'hover ed escono in ordine inverso al leave */
+        .calendar-dot {
+            transform: scale(0);
+            transform-origin: center;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.25);
         }
         
-        .ready #header-element { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.0s; }
-        .ready .tool-badge:nth-child(1) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.1s; }
-        .ready .tool-badge:nth-child(2) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.18s; }
-        .ready .tool-badge:nth-child(3) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.26s; }
-        .ready .tool-badge:nth-child(4) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.34s; }
-        .ready .tool-badge:nth-child(5) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.42s; }
-        .ready #footer-element { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.58s; }
+        .dot-1 { transition-delay: 0.20s; }
+        .dot-2 { transition-delay: 0.15s; }
+        .dot-3 { transition-delay: 0.10s; }
+        .dot-4 { transition-delay: 0.05s; }
+        .dot-active { transition-delay: 0s; }
 
-        body {
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior: none;
+        .futuristic-blade:hover .dot-1 { transform: scale(1); transition-delay: 0.04s; }
+        .futuristic-blade:hover .dot-2 { transform: scale(1); transition-delay: 0.08s; }
+        .futuristic-blade:hover .dot-3 { transform: scale(1); transition-delay: 0.12s; }
+        .futuristic-blade:hover .dot-4 { transform: scale(1); transition-delay: 0.16s; }
+        .futuristic-blade:hover .dot-active { transform: scale(1); transition-delay: 0.22s; }
+
+        /* 4. Report: Allungamento freccia verso l'alto a destra */
+        .futuristic-blade[data-id="report"]:hover .graph-line-path {
+            animation: animGraphStretch 0.6s cubic-bezier(0.25, 1, 0.5, 1) 1;
+        }
+        @keyframes animGraphStretch {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.08) translate(1px, -1px); }
+            100% { transform: scale(1) translate(0, 0); }
+        }
+
+        /* 5. Preventivi: Euro che sale e appare & oscillazione */
+        .euro-draw {
+            opacity: 0;
+            transform: translateY(5px) scale(0.7);
+            transform-origin: 12px 13px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+        }
+        .tag-path-wrapper {
+            transition: transform 0.4s ease;
+            transform-origin: 12px 2px;
+        }
+        .futuristic-blade:hover .tag-path-wrapper {
+            transform: rotate(-12deg);
+        }
+        .futuristic-blade:hover .euro-draw {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition-delay: 0.12s;
+        }
+
+        /* 6. Revisioni: Disegno del checkmark sullo schermo */
+        .check-draw-path {
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            transition: stroke-dashoffset 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .futuristic-blade:hover .check-draw-path {
+            stroke-dashoffset: 0;
+            transition-delay: 0.15s;
+        }
+
+        /* Ingressi GSAP */
+        .ui-element-gsap {
+            opacity: 0;
+            transform: translateY(24px) scale(0.96);
+        }
+
+        /* Sfondo reticolo */
+        .sci-fi-grid {
+            position: absolute;
+            inset: 0;
+            background-size: 60px 60px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 122, 0, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 122, 0, 0.015) 1px, transparent 1px);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body class="min-h-screen bg-dark text-white font-sans flex flex-col justify-between overflow-x-hidden select-none antialiased relative">
 
+    <!-- Canvas Shader di Sfondo -->
     <div class="shader-container">
-        <canvas id="shader-nurvdz8xx" style="width: 100%; height: 100%; display: block; filter: blur(100px); opacity: 1; mix-blend-mode: normal;"></canvas>
+        <canvas id="shader-nurvdz8xx" style="width: 100%; height: 100%; display: block; filter: blur(100px); opacity: 0.95; mix-blend-mode: normal;"></canvas>
     </div>
 
+    <div class="sci-fi-grid"></div>
+
+    <!-- INTRO SPLASH SCREEN (PERFETTAMENTE INVARIATO) -->
     <div class="splash-overlay" id="splashScreen">
         <div class="logo-wrapper">
             <svg width="100%" height="100%" viewBox="-30 -30 1078 783" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;overflow:visible;">
@@ -193,86 +336,205 @@
         </div>
     </div>
 
-    <main class="w-full max-w-5xl mx-auto px-6 flex-grow flex flex-col justify-center relative z-10 py-12 md:py-20">
+    <!-- SCHERMATA DI CARICAMENTO FINTA (MINIMALISTA E LUSSUOSA CON RIPPLE EXPAND) -->
+    <div id="loaderOverlay" class="custom-loader-overlay">
+        <div class="laser-progress-bar" id="laserBar"></div>
         
-        <div id="header-element" class="ui-element text-center mb-16 md:mb-24 space-y-1">
-            <h1 class="text-xs font-mono font-bold tracking-[0.3em] text-accent uppercase">Central OS</h1>
-            <p class="text-4xl md:text-5xl font-extrabold tracking-tighter text-white uppercase">RAW</p>
+        <div class="z-10 flex flex-col items-center space-y-4">
+            <div class="relative flex items-center justify-center mb-2">
+                <svg width="90" height="90" viewBox="0 0 100 100" class="transform -rotate-90">
+                    <circle cx="50" cy="50" r="42" stroke="rgba(255,122,0,0.06)" stroke-width="1.5" fill="transparent"/>
+                    <circle id="progressCircle" cx="50" cy="50" r="42" stroke="#FF7A00" stroke-width="2" fill="transparent" 
+                            stroke-dasharray="263.89" stroke-dashoffset="263.89" style="transition: stroke-dashoffset 0.04s linear; filter: drop-shadow(0 0 6px #FF7A00);"/>
+                </svg>
+                <div class="absolute text-xs font-mono font-bold tracking-widest text-white" id="loaderPercentage">0%</div>
+            </div>
+            
+            <h2 id="loaderTitle" class="text-xl font-bold tracking-[0.4em] text-white uppercase font-sans">CONSEGNA</h2>
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping"></span>
+                <span id="loaderMessage" class="text-[10px] font-mono tracking-widest text-graytext uppercase">INITIALIZING...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENUTO CENTRAL HUB -->
+    <main class="w-full max-w-6xl mx-auto px-6 flex-grow flex flex-col justify-center relative z-10 py-16 md:py-24">
+        
+        <!-- Header -->
+        <div id="header-element" class="ui-element-gsap text-center mb-16 md:mb-20 space-y-3">
+            <h1 class="text-xs font-mono font-black tracking-[0.5em] text-[#FF7A00] uppercase" style="text-shadow: 0 0 12px rgba(255, 122, 0, 0.65);">Central OS</h1>
+            <p class="text-5xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">RAW</p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
+        <!-- Grid dei Floating Tablets -->
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-6 w-full cards-container" id="cardsGrid">
             
-            <a href="/consegnavideo" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
-                <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
-                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12M6 21h12M4 6h16M4 18h16M10 9l5 3-5 3V9z"></path>
-                        </svg>
+            <!-- Badge 1: Consegna -->
+            <a href="/consegnavideo" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="consegna">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
                     </div>
-                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Consegna</h2>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="16" rx="3" stroke-linecap="round" stroke-linejoin="round" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 9h4M17 9h4M3 15h4M17 15h4" />
+                                <path class="play-icon" stroke-linecap="round" stroke-linejoin="round" d="M10.5 9.5l4 2.5-4 2.5V9.5z" />
+                                <path class="pause-icon opacity-0 scale-0" stroke-linecap="round" stroke-linejoin="round" d="M10 9h1v6h-1zm3 0h1v6h-1z" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Consegna</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Video hub</p>
+                        </div>
+                    </div>
                 </div>
             </a>
 
-            <a href="/script" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
-                <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
-                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
+            <!-- Badge 2: Script -->
+            <a href="/script" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="script">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
                     </div>
-                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Script</h2>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent relative">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-6 3h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                <path class="script-line script-line-1" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h3" />
+                                <path class="script-line script-line-2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 10h6" />
+                                <path class="script-line script-line-3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h4" />
+                                
+                                <g class="pen-group">
+                                    <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" fill="none" stroke="#08080a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Script</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Copywriting</p>
+                        </div>
+                    </div>
                 </div>
             </a>
 
-            <a href="/pianieditoriali" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
-                <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
-                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path>
-                            <circle cx="18" cy="18" r="2" stroke="currentColor" stroke-width="1.5"></circle>
-                        </svg>
+            <!-- Badge 3: Piani -->
+            <a href="/pianieditoriali" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="piani">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
                     </div>
-                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Piani</h2>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="15" rx="3" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M16 2v4M8 2v4M3 9h18" stroke-linecap="round" stroke-linejoin="round" />
+                                <circle class="calendar-dot dot-1" cx="7" cy="12" r="0.75" fill="currentColor" />
+                                <circle class="calendar-dot dot-2" cx="12" cy="12" r="0.75" fill="currentColor" />
+                                <circle class="calendar-dot dot-3" cx="17" cy="12" r="0.75" fill="currentColor" />
+                                <circle class="calendar-dot dot-4" cx="7" cy="16" r="0.75" fill="currentColor" />
+                                <circle class="calendar-dot dot-active" cx="12" cy="16" r="0.75" fill="#FF7A00" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Piani</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Editorial grid</p>
+                        </div>
+                    </div>
                 </div>
             </a>
 
-            <a href="/report" class="tool-badge ui-element relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
-                <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
-                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
+            <!-- Badge 4: Report -->
+            <a href="/report" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="report">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
                     </div>
-                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Report</h2>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 20h16M4 4v16" />
+                                <g class="graph-line-path">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l5-5 4 3 7-9" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 5h4v4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Report</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Performance</p>
+                        </div>
+                    </div>
                 </div>
             </a>
 
-            <a href="/preventivi" class="tool-badge ui-element col-span-2 justify-self-center w-[calc(50%-8px)] md:col-span-1 md:w-full relative bg-console/90 border border-accent/30 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center aspect-square text-center transition-all duration-200 active:scale-95 active:bg-accent/10 shadow-[inset_0_0_15px_rgba(255,122,0,0.04),0_10px_30px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
-                <div class="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent"></div>
-                <div class="relative z-10 flex flex-col items-center space-y-3 sm:space-y-6">
-                    <div class="p-3 sm:p-4 rounded-full bg-accent/5 border border-accent/20">
-                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581a1.125 1.125 0 0 0 1.591 0l7.1-7.1a1.125 1.125 0 0 0 0-1.591L11.159 3.659A2.25 2.25 0 0 0 9.568 3Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
-                        </svg>
+            <!-- Badge 5: Preventivi -->
+            <a href="/preventivi" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="preventivi">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
                     </div>
-                    <h2 class="text-xs sm:text-sm font-semibold tracking-tight text-white uppercase font-mono">Preventivi</h2>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg">
+                                <g class="tag-path-wrapper">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L5 8v11a2 2 0 002 2h10a2 2 0 002-2V8l-7-6z" />
+                                    <circle cx="12" cy="6" r="1" fill="currentColor" />
+                                    <g class="euro-draw">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.5 11.5a2.2 2.2 0 00-3.5 1.8 2.2 2.2 0 003.5 1.8m-4.2-2.5h3.5m-3.5 1.2h3" />
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Preventivi</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Budgeting</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Badge 6: Revisioni -->
+            <a href="/revisioni" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="revisioni">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2" y="4" width="20" height="12" rx="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M7 20h10M12 16v4" stroke-linecap="round" stroke-linejoin="round" />
+                                <path class="check-draw-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 9.5l2 2 4-4" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Revisioni</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Approval</p>
+                        </div>
+                    </div>
                 </div>
             </a>
 
         </div>
     </main>
 
-    <footer id="footer-element" class="ui-element py-6 text-center text-[9px] font-mono text-graytext/40 tracking-[0.2em] uppercase relative z-10">
-        Privileged Access // &copy; <script>document.write(new Date().getFullYear())</script> // Teo Macauda
+    <!-- Footer Aggiornato -->
+    <footer id="footer-element" class="ui-element-gsap py-8 text-center text-[9px] font-mono text-graytext/40 tracking-[0.25em] uppercase relative z-10">
+        Accesso privato / 2026 / Teo Macauda - Videomaker
     </footer>
 
     <script>
-        // 1. MOTORE SHADER CANVAS LISCIO
+        // --- 1. SHADER DI SFONDO CANVAS ---
         (function() {
           const canvas = document.getElementById('shader-nurvdz8xx');
           if (!canvas) return;
@@ -281,8 +543,7 @@
           let w, h;
           let time = 0;
           
-          const speed = 5 * 0.002;
-          const isInteractive = true;
+          const speed = 0.01;
           const blendMode = 'overlay';
           
           const blobs = [
@@ -292,65 +553,28 @@
             { color: '#ff7a00', x: 0, y: 0, vx: 1, vy: -1, s: 1, t: 6 }
           ];
 
-          let mouse = { x: 0, y: 0 };
-          let targetMouse = { x: 0, y: 0 };
-          let hasMouse = false;
-
           function resize() {
             if (!canvas.parentElement) return;
-            w = canvas.parentElement.offsetWidth;
-            h = canvas.parentElement.offsetHeight;
             canvas.width = 128; 
             canvas.height = 128;
           }
 
           window.addEventListener('resize', resize);
           resize();
-          setTimeout(resize, 0);
-
-          if (isInteractive) {
-            canvas.addEventListener('mousemove', (e) => {
-               hasMouse = true;
-               const rect = canvas.getBoundingClientRect();
-               targetMouse.x = (e.clientX - rect.left) / rect.width * canvas.width;
-               targetMouse.y = (e.clientY - rect.top) / rect.height * canvas.height;
-            });
-            canvas.addEventListener('mouseleave', () => { hasMouse = false; });
-          }
 
           function animate() {
-            if (!document.getElementById('shader-nurvdz8xx')) return;
-
             time += speed;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = blendMode;
-
-            if (isInteractive && hasMouse) {
-                mouse.x += (targetMouse.x - mouse.x) * 0.05;
-                mouse.y += (targetMouse.y - mouse.y) * 0.05;
-            }
 
             blobs.forEach((b) => {
               const movementX = Math.sin(time + b.t) * 0.5 + Math.sin(time * 0.5 + b.t * 2) * 0.5;
               const movementY = Math.cos(time + b.t) * 0.5 + Math.cos(time * 0.6 + b.t * 2) * 0.5;
               
-              let x = (canvas.width / 2) + movementX * (canvas.width * 0.3);
-              let y = (canvas.height / 2) + movementY * (canvas.height * 0.3);
+              const x = (canvas.width / 2) + movementX * (canvas.width * 0.35);
+              const y = (canvas.height / 2) + movementY * (canvas.height * 0.35);
 
-              if (isInteractive && hasMouse) {
-                 const dx = mouse.x - x;
-                 const dy = mouse.y - y;
-                 const dist = Math.sqrt(dx*dx + dy*dy);
-                 const maxDist = canvas.width * 0.6;
-                 
-                 if (dist < maxDist) {
-                    const force = (maxDist - dist) / maxDist;
-                    x += dx * force * 0.2;
-                    y += dy * force * 0.2;
-                 }
-              }
-
-              const radius = canvas.width * 0.5; 
+              const radius = canvas.width * 0.55; 
               const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
               g.addColorStop(0, b.color);
               g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -366,23 +590,19 @@
           animate();
         })();
 
-        // 2. GESTIONE SINCRONIZZAZIONE SEQUENZIALE PERFETTA
+        // --- 2. LOGO SPLASH SCREEN INITIALIZATION (INVARIATO) ---
         document.addEventListener('DOMContentLoaded', () => {
             const splash = document.getElementById('splashScreen');
             if (!splash) return;
 
-            // Inizializza dinamicamente la lunghezza dei path del logo per compatibilità cross-device totale
             const paths = document.querySelectorAll('.logo-path');
             paths.forEach(path => {
-                const length = Math.ceil(path.getTotalLength()) + 20; // Abbondante margine di sicurezza per evitare outline incomplete
+                const length = Math.ceil(path.getTotalLength()) + 20;
                 path.style.strokeDasharray = length;
                 path.style.strokeDashoffset = length;
             });
             
-            // Forza il ricalcolo del layout prima di avviare l'animazione per evitare flash di rendering
             void splash.offsetWidth;
-            
-            // Avvia l'animazione di disegno
             splash.classList.add('start-animation');
 
             setTimeout(() => {
@@ -390,10 +610,144 @@
                 
                 setTimeout(() => {
                     splash.remove();
-                    document.body.classList.add('ready');
+                    
+                    // Inizio animazione d'ingresso GSAP dei vari elementi
+                    gsap.to(".ui-element-gsap", {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 1.2,
+                        stagger: 0.1,
+                        ease: "power4.out"
+                    });
                 }, 400); 
             }, 4500); 
         });
+
+        // --- 3. EFFETTO MOUSE GLOW & 3D TILT PARALLAX (GSAP) ---
+        const blades = document.querySelectorAll('.futuristic-blade');
+        
+        blades.forEach(blade => {
+            blade.addEventListener('mousemove', (e) => {
+                const rect = blade.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                blade.style.setProperty('--mouse-x', `${x}px`);
+                blade.style.setProperty('--mouse-y', `${y}px`);
+                
+                const width = rect.width;
+                const height = rect.height;
+                const rotateX = ((y - height / 2) / height) * -12;
+                const rotateY = ((x - width / 2) / width) * 12;
+                
+                gsap.to(blade, {
+                    rotateX: rotateX,
+                    rotateY: rotateY,
+                    y: -10,
+                    transformPerspective: 1500,
+                    duration: 0.35,
+                    ease: "power2.out",
+                    overwrite: "auto"
+                });
+            });
+            
+            blade.addEventListener('mouseleave', () => {
+                gsap.to(blade, {
+                    rotateX: 0,
+                    rotateY: 0,
+                    y: 0,
+                    transformPerspective: 1500,
+                    duration: 0.5,
+                    ease: "power2.out",
+                    overwrite: "auto"
+                });
+            });
+        });
+
+        // --- 4. FLUSSO SCHERMATA DI CARICAMENTO FINTA CON RIPPLE EXPAND (DALLA POSIZIONE DEL CLICK) ---
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        const loaderTitle = document.getElementById('loaderTitle');
+        const loaderMessage = document.getElementById('loaderMessage');
+        const loaderPercentage = document.getElementById('loaderPercentage');
+        const progressCircle = document.getElementById('progressCircle');
+
+        const loadersConfig = {
+            consegna: { title: "Consegna", msg: "Connecting delivery pipeline..." },
+            script: { title: "Script", msg: "Allocating script editor..." },
+            piani: { title: "Piani", msg: "Loading editorial scheduler..." },
+            report: { title: "Report", msg: "Calculating metric data..." },
+            preventivi: { title: "Preventivi", msg: "Running financial models..." },
+            revisioni: { title: "Revisioni", msg: "Syncing review database..." }
+        };
+
+        blades.forEach(blade => {
+            blade.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetUrl = blade.getAttribute('href');
+                const id = blade.getAttribute('data-id');
+                const config = loadersConfig[id] || { title: "Central OS", msg: "Loading..." };
+                
+                // Cattura le coordinate esatte del click del mouse
+                const clickX = e.clientX;
+                const clickY = e.clientY;
+
+                // Configura i testi
+                loaderTitle.innerText = config.title;
+                loaderMessage.innerText = config.msg;
+                loaderPercentage.innerText = "0%";
+                progressCircle.style.strokeDashoffset = "263.89";
+
+                // Imposta lo stato iniziale del clip-path concentrato sul click
+                gsap.set(loaderOverlay, {
+                    opacity: 0,
+                    clipPath: `circle(0px at ${clickX}px ${clickY}px)`
+                });
+
+                loaderOverlay.classList.add('active');
+
+                // Calcola il raggio di espansione necessario per coprire tutto lo schermo
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const maxRadius = Math.sqrt(Math.pow(Math.max(clickX, w - clickX), 2) + Math.pow(Math.max(clickY, h - clickY), 2)) + 50;
+
+                // Animazione di espansione clip-path (Ripple Expand)
+                gsap.to(loaderOverlay, {
+                    opacity: 1,
+                    clipPath: `circle(${maxRadius}px at ${clickX}px ${clickY}px)`,
+                    duration: 0.75,
+                    ease: "power3.inOut"
+                });
+
+                // Fade-in ritardato e morbido del contenuto interno del loader
+                gsap.fromTo(loaderOverlay.querySelector('.z-10'), 
+                    { opacity: 0, y: 15 },
+                    { opacity: 1, y: 0, duration: 0.4, delay: 0.25, ease: "power2.out" }
+                );
+
+                let progress = 0;
+                const totalLength = 263.89; // 2 * PI * r (r=42)
+
+                const progressInterval = setInterval(() => {
+                    progress += Math.floor(Math.random() * 8) + 4;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(progressInterval);
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 250);
+                    }
+                    
+                    loaderPercentage.innerText = `${progress}%`;
+                    const offset = totalLength - (progress / 100) * totalLength;
+                    progressCircle.style.strokeDashoffset = offset;
+                    document.getElementById('laserBar').style.width = `${progress}%`;
+                }, 35);
+            });
+        });
+        
+        // Inizializza icone Lucide
+        lucide.createIcons();
     </script>
 </body>
 </html>
