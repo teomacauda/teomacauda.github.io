@@ -314,10 +314,10 @@ let reviewsUnsubscribe = null;
 function listenToReviews(projectId) {
     if (reviewsUnsubscribe) reviewsUnsubscribe();
     
+    // Rimuoviamo orderBy dalla query per evitare l'obbligo di un indice composito su Firestore
     const q = query(
         collection(db, "reviews"),
-        where("projectId", "==", projectId),
-        orderBy("timestamp", "asc")
+        where("projectId", "==", projectId)
     );
     
     reviewsUnsubscribe = onSnapshot(q, (snapshot) => {
@@ -332,10 +332,21 @@ function listenToReviews(projectId) {
             return;
         }
         
+        // Estraiamo i dati dei commenti
+        const reviews = [];
         snapshot.forEach((docSnapshot) => {
-            const data = docSnapshot.data();
-            const docId = docSnapshot.id;
-            
+            reviews.push({
+                id: docSnapshot.id,
+                ...docSnapshot.data()
+            });
+        });
+        
+        // Ordiniamo in memoria per timestamp crescente (secondo esatto del video)
+        reviews.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        
+        // Renderizziamo i commenti ordinati
+        reviews.forEach((data) => {
+            const docId = data.id;
             const item = document.createElement('div');
             item.className = "flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 transition-colors";
             
@@ -368,6 +379,7 @@ function listenToReviews(projectId) {
         lucide.createIcons();
     }, (error) => {
         console.error("Error listening to reviews: ", error);
+        alert("Errore nel caricamento dei commenti: " + error.message);
     });
 }
 
