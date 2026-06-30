@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Revisioni Video | Teo Macauda</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Teo Revisioni">
+    <link rel="apple-touch-icon" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/AppleIcon2.png">
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
+        
+        #page-wrapper { 
+            overflow-x: hidden; 
+            width: 100%; 
+            position: relative; 
+            min-height: 100vh;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .glass-nav { 
+            background: transparent; 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            transition: all 0.4s ease;
+            margin-top: env(safe-area-inset-top);
+        }
+        
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; 
+            backface-visibility: hidden; 
+            transform-style: preserve-3d;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card:hover { 
+            transform: translateY(-4px); 
+            border-color: rgba(255, 122, 0, 0.3); 
+            box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); 
+        }
+        .glass-card:active {
+            transform: translateY(-1px) scale(0.99);
+        }
+        
+        .plus-card {
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .plus-card:hover {
+            border-color: rgba(255, 122, 0, 0.5);
+            background: rgba(255, 122, 0, 0.02);
+        }
+        
+        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.2) 0%, rgba(255, 122, 0, 0.04) 40%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.03) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; z-index: 1; pointer-events: none; }
+
+        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+
+        /* Stili per il player video YouTube responsivo */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-accent selection:text-white">
+
+<div id="page-wrapper" class="flex flex-col">
+    <div class="ambient-glow"></div>
+    <div class="hero-grid"></div>
+
+    <!-- Header / Navbar -->
+    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center">
+        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
+                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+            </a>
+            
+            <div class="flex items-center gap-3">
+                <!-- Tasto Home con puntatore rigido /raw -->
+                <a href="/raw" class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:text-accent transition-all text-xs sm:text-sm font-medium text-white backdrop-blur-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Home</span>
+                </a>
+                <div id="admin-indicator" class="hidden text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>Admin
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10">
+        <!-- Loader Globale -->
+        <div id="main-loader" class="flex justify-center items-center py-32">
+            <div class="loader !w-9 !h-9"></div>
+        </div>
+
+        <!-- SEZIONE PROTETTA (Richiede Login Admin) -->
+        <div id="section-lock" class="hidden flex flex-col items-center justify-center py-24 text-center max-w-md mx-auto">
+            <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-accent mb-6 shadow-xl">
+                <i data-lucide="lock" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold tracking-tight text-white mb-2">Pannello Amministratore</h2>
+            <p class="text-graytext text-sm font-light mb-8 leading-relaxed">Per gestire i progetti di revisione e creare nuovi link dedicati, effettua l'autenticazione.</p>
+            <button onclick="openAuthModal()" class="h-12 px-8 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all duration-300 shadow-lg flex items-center gap-2">
+                <i data-lucide="key-round" class="w-4 h-4"></i> Accedi come Admin
+            </button>
+        </div>
+
+        <!-- DASHBOARD AMMINISTRATORE (Gestione & Creazione Progetti) -->
+        <div id="section-admin" class="hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Dashboard <span class="text-accent">Revisioni</span></h1>
+                    <p class="text-graytext text-sm md:text-base font-light mt-1">Genera e gestisci gli hub di revisione per i creator.</p>
+                </div>
+                <button onclick="openCreateModal()" class="h-12 px-6 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all duration-300 shadow-lg flex items-center gap-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i> Nuovo Progetto
+                </button>
+            </div>
+
+            <!-- Lista Progetti -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
+                <!-- Caricati dinamicamente -->
+            </div>
+        </div>
+
+        <!-- SEZIONE CLIENTE (Player Video + Feedback + Revisioni Live) -->
+        <div id="section-client" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <span id="client-project-user" class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-2">CLIENTE</span>
+                    <h1 id="client-project-title" class="text-2xl md:text-4xl font-extrabold tracking-tight text-white">Titolo del Video</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-admin-login-direct" onclick="openAuthModal()" class="text-xs h-10 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all font-medium flex items-center gap-1.5">
+                        <i data-lucide="user" class="w-4 h-4"></i> Accedi Admin
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Colonna Player e Box Feedback (2/3 larghezza su schermi grandi) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- YouTube Player Wrapper -->
+                    <div class="video-container shadow-2xl">
+                        <div id="yt-player"></div>
+                    </div>
+
+                    <!-- Box Commento (Focalizzato alla pausa del video) -->
+                    <div id="feedback-box" class="glass-card p-6 rounded-2xl border-l-4 border-l-accent hidden transform scale-95 opacity-0 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-accent uppercase tracking-widest flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                                Video Pausato a <span id="feedback-timestamp" class="underline">00:00</span>
+                            </span>
+                            <span class="text-[10px] text-graytext">Scrivi il commento e premi Invio</span>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="feedback-input" placeholder="Inserisci nota o correzione (es. taglia qui, abbassa volume)..." 
+                                   class="w-full h-14 bg-white/5 border border-white/10 rounded-xl pl-4 pr-12 text-white focus:outline-none focus:border-accent text-sm md:text-base">
+                            <button id="btn-submit-feedback" class="absolute right-2.5 top-2.5 w-9 h-9 bg-accent hover:bg-accentHover text-white rounded-lg flex items-center justify-center transition-all">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registro Revisioni (1/3 larghezza) -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-[400px] lg:h-[550px]">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="clipboard-list" class="text-accent w-5 h-5"></i> Registro Revisioni
+                        </h2>
+                        <span id="comment-counter" class="text-xs bg-white/10 text-white px-2 py-0.5 rounded-full font-semibold">0</span>
+                    </div>
+
+                    <!-- Lista Feedback -->
+                    <div id="reviews-list" class="flex-1 overflow-y-auto space-y-3 pr-2 no-scrollbar">
+                        <!-- Caricati dinamicamente da Firestore -->
+                        <div class="text-center text-graytext text-sm py-8 font-light">Nessun feedback inviato per questa revisione.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modale Autenticazione / Nuovo Progetto -->
+    <div id="auth-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
+        
+        <div class="glass-modal w-full sm:max-w-xl p-6 md:p-8 rounded-t-[2rem] sm:rounded-3xl relative transform translate-y-full sm:translate-y-10 transition-transform duration-400 max-h-[88vh] overflow-y-auto no-scrollbar pb-10 sm:pb-8">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 sm:hidden"></div>
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            
+            <!-- Step Login -->
+            <div id="modal-step-auth">
+                <h3 class="text-xl font-bold mb-1 text-white">Autenticazione Admin</h3>
+                <p class="text-xs text-graytext mb-5">Accedi per gestire ed abilitare i controlli della todo-list.</p>
+                <form id="form-login" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email</label>
+                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
+                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div id="auth-error" class="text-xs text-red-500 hidden font-medium"></div>
+                    <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2">
+                        <span>Accedi</span><div id="login-loader" class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step Creazione Progetto -->
+            <div id="modal-step-create" class="hidden">
+                <h3 class="text-xl font-bold mb-0.5 text-white">Nuova <span class="text-accent">Revisione Video</span></h3>
+                <p class="text-xs text-graytext mb-4">Crea una sessione interattiva di revisione per il creator.</p>
+                <form id="form-create-project" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Titolo Video</label>
+                        <input type="text" id="project-title" required placeholder="Es. Video Astro Viktor 03" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Nome Cliente</label>
+                        <input type="text" id="project-client" required placeholder="Es. Astro Viktor" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">ID o Link Video YouTube</label>
+                        <input type="text" id="project-youtube" required placeholder="Es. dQw4w9WgXcQ o link completo" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Slug Personalizzato (Opzionale)</label>
+                        <input type="text" id="project-slug" placeholder="Es. astro-viktor-03 (lascia vuoto per auto-generare)" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <button type="submit" id="btn-submit-project" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2 shadow-lg">
+                        <i data-lucide="send" class="w-4 h-4"></i> Salva e Genera Link
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+        <p class="text-graytext text-sm mb-4">
+            © <script>document.write(new Date().getFullYear())</script> 
+            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+        </p>
+        <div class="px-6">
+            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
+                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE.
+            </p>
+        </div>
+    </footer>
+</div>
+
+<!-- SDK YouTube Iframe API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<!-- Script Principale -->
+<script type="module" src="./main.js"></script>
+
+</body>
+</html>
