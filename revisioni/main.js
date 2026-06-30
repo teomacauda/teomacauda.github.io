@@ -35,7 +35,6 @@ let currentProjectData = null;
 // YouTube Player Instance
 let ytPlayer = null;
 let currentPausedTime = 0;
-let isSeeking = false;
 
 // ----------------------------------------------------
 // UTILS
@@ -166,11 +165,12 @@ async function initRouter(user) {
                 clientSection.classList.remove('hidden');
                 lucide.createIcons();
             } else {
-                // If slug not found, redirect to home/admin
+                alert("Progetto di revisione non trovato.");
                 window.location.search = '';
             }
         } catch (error) {
             console.error("Error loading project:", error);
+            alert("Errore nel caricamento del progetto: " + error.message);
             loaderEl.classList.add('hidden');
             lockSection.classList.remove('hidden');
         }
@@ -192,41 +192,45 @@ async function initRouter(user) {
 // ----------------------------------------------------
 
 function initYoutubePlayer(youtubeId) {
-    // If the YT library is already loaded, we instantiate immediately, otherwise it will run via global callback
     if (window.YT && window.YT.Player) {
         createYTPlayer(youtubeId);
     } else {
-        window.onYouTubeIframeAPIReady = () => {
-            createYTPlayer(youtubeId);
-        };
+        // Evita problemi di caricamento asincrono della libreria YouTube
+        const checkYT = setInterval(() => {
+            if (window.YT && window.YT.Player) {
+                clearInterval(checkYT);
+                createYTPlayer(youtubeId);
+            }
+        }, 100);
     }
 }
 
 function createYTPlayer(youtubeId) {
-    if (ytPlayer) {
-        ytPlayer.destroy();
+    try {
+        ytPlayer = new YT.Player('yt-player', {
+            videoId: youtubeId,
+            playerVars: {
+                'playsinline': 1,
+                'rel': 0,
+                'modestbranding': 1
+            },
+            events: {
+                'onStateChange': onPlayerStateChange,
+                'onError': (e) => {
+                    console.error("YouTube Player Error:", e);
+                    alert("Errore nel caricamento del video di YouTube.");
+                }
+            }
+        });
+    } catch (e) {
+        console.error("Errore creazione player YT:", e);
     }
-    
-    ytPlayer = new YT.Player('yt-player', {
-        videoId: youtubeId,
-        playerVars: {
-            'playsinline': 1,
-            'rel': 0,
-            'modestbranding': 1
-        },
-        events: {
-            'onStateChange': onPlayerStateChange
-        }
-    });
 }
 
 function onPlayerStateChange(event) {
-    // Check if the video is paused
     if (event.data === YT.PlayerState.PAUSED) {
-        // Retrieve seconds at pause moment
         currentPausedTime = ytPlayer.getCurrentTime();
         
-        // Show comment dialog
         const feedbackBox = document.getElementById('feedback-box');
         document.getElementById('feedback-timestamp').innerText = formatTime(currentPausedTime);
         
@@ -246,7 +250,15 @@ function onPlayerStateChange(event) {
 async function submitFeedback() {
     const inputEl = document.getElementById('feedback-input');
     const commentText = inputEl.value.trim();
-    if (!commentText || !currentProjectId) return;
+    
+    if (!commentText) {
+        alert("Inserisci un commento prima di inviare.");
+        return;
+    }
+    if (!currentProjectId) {
+        alert("Errore: ID Progetto non valido. Ricarica la pagina.");
+        return;
+    }
     
     try {
         await addDoc(collection(db, "reviews"), {
@@ -257,10 +269,8 @@ async function submitFeedback() {
             createdAt: serverTimestamp()
         });
         
-        // Reset field
         inputEl.value = "";
         
-        // Hide box
         const feedbackBox = document.getElementById('feedback-box');
         gsap.to(feedbackBox, {
             scale: 0.95,
@@ -268,14 +278,14 @@ async function submitFeedback() {
             duration: 0.2,
             onComplete: () => {
                 feedbackBox.classList.add('hidden');
-                // Auto-resume video playing
                 if (ytPlayer && ytPlayer.playVideo) {
                     ytPlayer.playVideo();
                 }
             }
         });
     } catch (e) {
-        console.error("Error adding feedback:", e);
+        console.error("Errore durante l'invio del feedback:", e);
+        alert("Errore nell'inviare il commento: " + e.message);
     }
 }
 
@@ -330,8 +340,6 @@ function listenToReviews(projectId) {
             item.className = "flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 transition-colors";
             
             const isCompleted = data.completed === true;
-            
-            // Checkbox display condition (only for Admin)
             const checkboxHTML = currentUser ? `
                 <input type="checkbox" ${isCompleted ? 'checked' : ''} 
                        onchange="toggleReviewComplete('${docId}', this.checked)" 
@@ -436,8 +444,6 @@ async function loadAdminProjects() {
 window.copyToClipboard = function(link, buttonEl) {
     navigator.clipboard.writeText(link).then(() => {
         const textSpan = buttonEl.querySelector('span');
-        const iconContainer = buttonEl.querySelector('i');
-        
         const originalText = textSpan.innerText;
         
         textSpan.innerText = "Copiato!";
@@ -500,7 +506,7 @@ document.getElementById('form-create-project')?.addEventListener('submit', async
         loadAdminProjects();
     } catch (err) {
         console.error("Error creating project:", err);
-        alert("Errore durante il salvataggio.");
+        alert("Errore durante il salvataggio: " + err.message);
     }
 });
 
