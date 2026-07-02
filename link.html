@@ -11,7 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -47,7 +47,7 @@
             position: fixed; 
             width: 100%; 
             height: 100vh; 
-            background: radial-gradient(circle at 50% -10%, rgba(255, 122, 0, 0.15) 0%, rgba(0, 0, 0, 0) 80%); 
+            background: radial-gradient(circle at 50% -10%, rgba(255, 122, 0, 0.18) 0%, rgba(0, 0, 0, 0) 80%); 
             top: 0; left: 0; z-index: 0; pointer-events: none; 
         }
 
@@ -66,21 +66,31 @@
         }
         .glass-button:active { transform: scale(0.98); }
 
-        /* Pulsazione Magnetica per il Portfolio */
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.3); border-color: rgba(255, 122, 0, 0.2); }
-            50% { box-shadow: 0 0 20px 2px rgba(255, 122, 0, 0.15); border-color: rgba(255, 122, 0, 0.6); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.3); border-color: rgba(255, 122, 0, 0.2); }
-        }
-
-        .pulse-featured {
-            animation: pulse-glow 2.5s infinite ease-in-out;
-            background: rgba(255, 122, 0, 0.04) !important;
+        /* Stile fisso arancione (per Guarda i miei lavori) */
+        .orange-featured {
+            background: linear-gradient(135deg, rgba(255, 122, 0, 0.06) 0%, rgba(255, 122, 0, 0.02) 100%) !important;
             border: 1px solid rgba(255, 122, 0, 0.3) !important;
         }
-        .pulse-featured:hover {
-            background: rgba(255, 122, 0, 0.08) !important;
+        .orange-featured:hover {
+            background: linear-gradient(135deg, rgba(255, 122, 0, 0.1) 0%, rgba(255, 122, 0, 0.04) 100%) !important;
             border-color: rgba(255, 122, 0, 0.8) !important;
+        }
+
+        /* Pulsazione per i Contatti (Grigio/Argento) */
+        @keyframes pulse-white-glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); }
+            50% { box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.35); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); }
+        }
+
+        .pulse-contact {
+            animation: pulse-white-glow 2.5s infinite ease-in-out;
+            background: rgba(255, 255, 255, 0.02) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        }
+        .pulse-contact:hover {
+            background: rgba(255, 255, 255, 0.06) !important;
+            border-color: rgba(255, 255, 255, 0.6) !important;
         }
 
         .profile-border {
@@ -94,6 +104,14 @@
         
         /* Nascondi scrollbar */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* Modal Blur */
+        .modal-glass {
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -101,113 +119,177 @@
     <div class="ambient-glow"></div>
 
     <!-- Main Container -->
-    <main class="relative z-10 w-full max-w-md mx-auto px-6 pt-8 md:pt-12 pb-16 flex flex-col items-center min-h-screen">
+    <main class="relative z-10 w-full max-w-md mx-auto px-6 pt-8 md:pt-12 pb-16 flex flex-col items-center min-h-screen justify-between">
         
-        <!-- Logo Header -->
-        <header class="w-full flex justify-start items-center mb-10 reveal">
-            <a href="/" class="w-10 h-auto opacity-80 hover:opacity-100 transition-opacity">
-                <svg viewBox="0 0 1018 723" fill="white" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/>
-                </svg>
-            </a>
-        </header>
+        <div class="w-full flex flex-col items-center">
+            <!-- Logo Header -->
+            <header class="w-full flex justify-center items-center mb-8 reveal">
+                <a href="/" class="w-10 h-auto opacity-80 hover:opacity-100 transition-opacity">
+                    <svg viewBox="0 0 1018 723" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/>
+                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/>
+                    </svg>
+                </a>
+            </header>
 
-        <!-- Profile Section -->
-        <div class="flex flex-col items-center mb-10 text-center reveal">
-            <div class="profile-border mb-5 shadow-2xl shadow-accent/10">
-                <div class="w-24 h-24 rounded-full bg-dark overflow-hidden border-2 border-black">
-                    <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" 
-                         alt="Teo Macauda" 
-                         class="w-full h-full object-cover">
+            <!-- Profile Section -->
+            <div class="flex flex-col items-center mb-8 text-center reveal">
+                <div class="profile-border mb-4 shadow-2xl shadow-accent/10">
+                    <div class="w-24 h-24 rounded-full bg-dark overflow-hidden border-2 border-black">
+                        <img src="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/immagineprofilo.webp" 
+                             alt="Teo Macauda" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-tight mb-1">Teo Macauda</h1>
+                <p class="text-accent text-sm font-bold tracking-widest uppercase">Videomaker & Content Marketing</p>
+                
+                <!-- Status Badge (Scarcity / Urgency) -->
+                <div id="urgency-badge" class="opacity-0 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 mt-4">
+                    <span class="relative flex h-2 w-2 rounded-full bg-red-500"></span>
+                    <span class="text-[10px] text-red-400 font-bold uppercase tracking-widest">Solo 2 posti disponibili questo mese</span>
                 </div>
             </div>
-            <h1 class="text-2xl font-extrabold tracking-tight mb-1">Teo Macauda</h1>
-            <p class="text-accent text-sm font-bold tracking-widest uppercase">Videomaker & Content Marketing</p>
-            <p class="text-graytext text-xs mt-4 max-w-[280px] font-medium leading-relaxed opacity-80">
-                Trasformo le tue idee in contenuti video concreti. Ottimizzazione, strategia e alta qualità.
-            </p>
+
+            <!-- Main UX stack -->
+            <div class="w-full space-y-4 reveal">
+                
+                <!-- Action 1: Portfolio (Orange Accent, Fixed) -->
+                <a href="/" class="glass-button orange-featured w-full p-5 rounded-2xl flex items-center justify-between group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center text-accent shrink-0">
+                            <i data-lucide="play-circle" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex flex-col items-start text-left">
+                            <span class="text-base font-extrabold text-white tracking-wide">Guarda i miei lavori</span>
+                            <span class="text-xs text-graytext font-medium mt-0.5">Sito web & Video Portfolio</span>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-accent group-hover:translate-x-0.5 transition-all"></i>
+                    </div>
+                </a>
+
+                <!-- Action 2: Contatti (Silver/Gray Pulsing Glow CTA) -->
+                <button id="contact-btn" class="glass-button pulse-contact w-full p-5 rounded-2xl flex items-center justify-between group font-bold text-white">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white shrink-0">
+                            <i data-lucide="message-square" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex flex-col items-start text-left">
+                            <span class="text-base font-extrabold tracking-wide text-white">Lavoriamo insieme</span>
+                            <span class="text-xs text-graytext font-medium mt-0.5">Parliamo del tuo progetto</span>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
+                    </div>
+                </button>
+
+            </div>
         </div>
 
-        <!-- Links Stack -->
-        <div class="w-full space-y-4 reveal">
+        <!-- Contact Modal / Bottom Sheet -->
+        <div id="contact-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
+            <!-- Modal Backdrop -->
+            <div id="modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
             
-            <!-- Link: Portfolio (EVIDENZIATO) -->
-            <a href="/" class="glass-button pulse-featured w-full p-4 rounded-2xl flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center text-accent shrink-0">
-                        <i data-lucide="globe" class="w-5 h-5"></i>
+            <!-- Modal Box -->
+            <div id="modal-content" class="modal-glass relative z-10 w-full max-w-md rounded-t-[2.5rem] sm:rounded-[2rem] p-6 sm:p-8 shadow-2xl transform translate-y-10 transition-all duration-300">
+                
+                <!-- Bottom sheet pull indicator for mobile -->
+                <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6 sm:hidden"></div>
+
+                <!-- Panel 1: Contact Options -->
+                <div id="panel-options" class="transition-all duration-300">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-white tracking-wide">Fai il primo passo</h3>
+                            <p class="text-xs text-graytext mt-1">Scegli il metodo di contatto che preferisci</p>
+                        </div>
+                        <button id="close-modal" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5 text-white"></i>
+                        </button>
                     </div>
-                    <div class="flex flex-col items-start">
-                        <span class="text-base font-bold text-white tracking-wide">Visita il mio sito</span>
-                        <span class="text-[10px] text-accent font-bold uppercase tracking-widest">Portfolio</span>
+                    
+                    <div class="space-y-4">
+                        <!-- WhatsApp Option -->
+                        <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center justify-between p-4 rounded-2xl bg-green-500/5 border border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10 transition-all group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center text-green-500 shrink-0 animate-pulse">
+                                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <h4 class="text-white font-extrabold text-base">Chat su WhatsApp</h4>
+                                    <span class="text-xs text-green-400 font-bold tracking-wide uppercase">Consigliato &bull; Risposta Rapida</span>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-graytext group-hover:text-green-500 group-hover:translate-x-1 transition-all"></i>
+                        </a>
+
+                        <!-- Email Option (Opens Copy Sub-Panel) -->
+                        <button id="email-option-btn" class="w-full flex items-center justify-between p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10 transition-all group text-left">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                                    <i data-lucide="mail" class="w-6 h-6"></i>
+                                </div>
+                                <div class="text-left">
+                                    <h4 class="text-white font-extrabold text-base">Invia una Email</h4>
+                                    <span class="text-xs text-blue-400 font-bold tracking-wide uppercase">info@teomacauda.it</span>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-graytext group-hover:text-blue-400 group-hover:translate-x-1 transition-all"></i>
+                        </button>
                     </div>
                 </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-accent group-hover:translate-x-1 transition-all"></i>
-            </a>
 
-            <!-- Link: Instagram (AGGIUNTO) -->
-            <a href="https://www.instagram.com/teo.macauda/" target="_blank" class="glass-button w-full p-4 rounded-2xl flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                        </svg>
+                <!-- Panel 2: Email Details / Copy (Sub-Panel) -->
+                <div id="panel-email" class="hidden opacity-0 transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <button id="back-to-options" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <i data-lucide="arrow-left" class="w-5 h-5 text-white"></i>
+                        </button>
+                        <div>
+                            <h3 class="text-lg font-extrabold text-white tracking-wide">Contatto Email</h3>
+                            <p class="text-xs text-graytext">Copia l'indirizzo o avvia l'applicazione</p>
+                        </div>
                     </div>
-                    <span class="text-base font-semibold text-white tracking-wide">Seguimi su Instagram</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-graytext group-hover:text-pink-500 group-hover:translate-x-1 transition-all"></i>
-            </a>
 
-            <!-- Link: WhatsApp -->
-            <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="glass-button w-full p-4 rounded-2xl flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                        </svg>
+                    <div class="space-y-5">
+                        <!-- Email Address Box -->
+                        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
+                            <span id="email-address-text" class="text-sm font-semibold text-white tracking-wide select-all">info@teomacauda.it</span>
+                            <span class="text-xs text-accent font-bold uppercase tracking-widest">Email</span>
+                        </div>
+
+                        <!-- Copy Button -->
+                        <button id="copy-email-btn" class="w-full py-4 rounded-2xl bg-accent text-white hover:bg-accentHover active:scale-98 transition-all flex items-center justify-center gap-3 font-bold">
+                            <i data-lucide="copy" class="w-5 h-5"></i>
+                            <span id="copy-btn-text">Copia Indirizzo Email</span>
+                        </button>
+
+                        <!-- Fallback link -->
+                        <a href="mailto:info@teomacauda.it" class="block text-center text-xs text-graytext underline hover:text-white transition-colors">
+                            Oppure apri l'app email per inviare
+                        </a>
                     </div>
-                    <span class="text-base font-semibold text-white tracking-wide">Parliamo del tuo progetto</span>
                 </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-graytext group-hover:text-green-500 group-hover:translate-x-1 transition-all"></i>
-            </a>
 
-            <!-- Link: Email -->
-            <a href="mailto:info@teomacauda.it" class="glass-button w-full p-4 rounded-2xl flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 shrink-0">
-                        <i data-lucide="mail" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-base font-semibold text-white tracking-wide">Richiedi un preventivo</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-graytext group-hover:text-blue-400 group-hover:translate-x-1 transition-all"></i>
-            </a>
-
-            <!-- Link: YouTube -->
-            <a href="https://www.youtube.com/@teo.macauda" target="_blank" class="glass-button w-full p-4 rounded-2xl flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center text-red-500 shrink-0">
-                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                        </svg>
-                    </div>
-                    <span class="text-base font-semibold text-white tracking-wide">Seguimi su YouTube</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-graytext group-hover:text-red-500 group-hover:translate-x-1 transition-all"></i>
-            </a>
-
+            </div>
         </div>
 
         <!-- Footer -->
-        <footer class="w-full mt-16 py-12 text-center border-t border-white/5 relative z-10">
-            <p class="text-graytext text-sm mb-4">
+        <footer class="w-full mt-12 py-8 text-center border-t border-white/5 relative z-10">
+            <p class="text-graytext text-[11px] mb-4">
                 &copy; <script>document.write(new Date().getFullYear())</script> 
-                Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+                Matteo Maria Macauda | P.IVA 02153520891 | Via Teofane, 2 – 96100 Siracusa (SR) | 
                 <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
             </p>
-            <div class="px-6">
-                <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                    TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
+            <div class="px-2">
+                <p class="text-[8px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
+                    TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE.
                 </p>
             </div>
         </footer>
@@ -215,18 +297,138 @@
     </main>
 
     <script>
-        // Inizializza le icone Lucide per gli altri elementi
+        // Inizializza le icone Lucide
         lucide.createIcons();
 
-        // Animazione di ingresso con GSAP
+        // Animazione di ingresso iniziale con GSAP
         document.addEventListener('DOMContentLoaded', () => {
-            gsap.to(".reveal", {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                stagger: 0.15,
-                ease: "power3.out"
+            gsap.timeline()
+                .to(".reveal", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    stagger: 0.12,
+                    ease: "power3.out"
+                })
+                // Animazione premium ritardata: quando la pagina si stabilizza, il badge si rivela con un elegante zoom e leggero spring-back
+                .fromTo("#urgency-badge", 
+                    { opacity: 0, y: 15, scale: 0.8 },
+                    { opacity: 1, y: 0, scale: 1.08, duration: 0.7, ease: "back.out(1.8)" },
+                    "-=0.1"
+                )
+                .to("#urgency-badge", { scale: 1, duration: 0.3, ease: "power2.out" });
+        });
+
+        // Gestione Modal & Pannelli
+        const contactBtn = document.getElementById('contact-btn');
+        const modal = document.getElementById('contact-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalContent = document.getElementById('modal-content');
+        const closeModal = document.getElementById('close-modal');
+
+        const panelOptions = document.getElementById('panel-options');
+        const panelEmail = document.getElementById('panel-email');
+        const emailOptionBtn = document.getElementById('email-option-btn');
+        const backToOptions = document.getElementById('back-to-options');
+
+        const copyEmailBtn = document.getElementById('copy-email-btn');
+        const copyBtnText = document.getElementById('copy-btn-text');
+        const emailAddressText = document.getElementById('email-address-text').textContent;
+
+        function openModal() {
+            // Reimposta al primo pannello prima di aprire
+            panelOptions.classList.remove('hidden');
+            panelOptions.style.opacity = '1';
+            panelEmail.classList.add('hidden');
+            panelEmail.style.opacity = '0';
+
+            modal.classList.remove('pointer-events-none');
+            
+            // Animazione GSAP per ingresso pulito
+            gsap.timeline()
+                .to(modal, { 
+                    opacity: 1, 
+                    duration: 0.25, 
+                    ease: "power2.out" 
+                })
+                .fromTo(modalContent, 
+                    { y: "100%", opacity: 0 }, 
+                    { y: "0%", opacity: 1, duration: 0.4, ease: "power3.out" }, 
+                    "-=0.15"
+                );
+        }
+
+        function closeModalFunc() {
+            gsap.timeline({
+                onComplete: () => {
+                    modal.classList.add('pointer-events-none');
+                }
+            })
+            .to(modalContent, { 
+                y: "100%", 
+                opacity: 0, 
+                duration: 0.3, 
+                ease: "power3.in" 
+            })
+            .to(modal, { 
+                opacity: 0, 
+                duration: 0.2, 
+                ease: "power2.in" 
+            }, "-=0.15");
+        }
+
+        // Passa al pannello Email
+        emailOptionBtn.addEventListener('click', () => {
+            gsap.to(panelOptions, {
+                opacity: 0,
+                duration: 0.2,
+                onComplete: () => {
+                    panelOptions.classList.add('hidden');
+                    panelEmail.classList.remove('hidden');
+                    gsap.to(panelEmail, { opacity: 1, duration: 0.2 });
+                }
             });
+        });
+
+        // Ritorna alle opzioni di contatto
+        backToOptions.addEventListener('click', () => {
+            gsap.to(panelEmail, {
+                opacity: 0,
+                duration: 0.2,
+                onComplete: () => {
+                    panelEmail.classList.add('hidden');
+                    panelOptions.classList.remove('hidden');
+                    gsap.to(panelOptions, { opacity: 1, duration: 0.2 });
+                    // Ripristina testo pulsante copia se era stato copiato
+                    copyBtnText.textContent = "Copia Indirizzo Email";
+                }
+            });
+        });
+
+        // Funzione di Copia Email negli appunti
+        copyEmailBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(emailAddressText).then(() => {
+                copyBtnText.textContent = "Copiato!";
+                // Effetto feedback visivo sul bottone
+                gsap.fromTo(copyEmailBtn, { scale: 0.95 }, { scale: 1, duration: 0.2, ease: "power2.out" });
+                setTimeout(() => {
+                    copyBtnText.textContent = "Copia Indirizzo Email";
+                }, 2000);
+            }).catch(err => {
+                console.error('Errore nella copia: ', err);
+            });
+        });
+
+        // Event Listeners
+        contactBtn.addEventListener('click', openModal);
+        closeModal.addEventListener('click', closeModalFunc);
+        modalBackdrop.addEventListener('click', closeModalFunc);
+
+        // Chiudi premendo ESC
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('pointer-events-none')) {
+                closeModalFunc();
+            }
         });
     </script>
 </body>
