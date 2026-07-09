@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToPedBtn) {
         if (pedParam) {
             backToPedBtn.href = `https://teomacauda.it/pianieditoriali/?v=${pedParam}`;
-            backToPedBtn.style.display = 'inline-block';
+            backToPedBtn.style.display = 'inline-flex';
         } else {
             backToPedBtn.style.display = 'none';
         }
