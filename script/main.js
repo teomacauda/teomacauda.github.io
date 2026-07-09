@@ -356,5 +356,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-copy-link')?.addEventListener('click', triggerCopyLink);
     document.getElementById('btn-edit-script')?.addEventListener('click', triggerEditScript);
     document.getElementById('btn-delete-script')?.addEventListener('click', triggerDeleteScript);
+    
+    // Gestione pulsante di ritorno al PED
+    const pedParam = urlParams.get('ped');
+    const backToPedBtn = document.getElementById('back-to-ped');
+    if (backToPedBtn) {
+        if (pedParam) {
+            backToPedBtn.href = `https://teomacauda.it/pianieditoriali/?v=${pedParam}`;
+            backToPedBtn.style.display = 'inline-block';
+        } else {
+            backToPedBtn.style.display = 'none';
+        }
+    }
+
     lucide.createIcons();
 });
