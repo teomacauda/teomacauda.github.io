@@ -185,6 +185,18 @@ function renderVideoTable(videos, isAdmin) {
         if (format === "Storia") typeStyle = "bg-amber-500/10 text-amber-400 border-amber-500/20";
         if (format === "Post") typeStyle = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
 
+        let finalScriptLink = video.scriptLink || '';
+        if (finalScriptLink) {
+            const currentPed = new URLSearchParams(window.location.search).get('v');
+            if (currentPed) {
+                if (finalScriptLink.includes('?')) {
+                    finalScriptLink = `${finalScriptLink}&ped=${currentPed}`;
+                } else {
+                    finalScriptLink = `${finalScriptLink}?ped=${currentPed}`;
+                }
+            }
+        }
+
         // DESKTOP ROW
         const tr = document.createElement('tr');
         tr.className = "hover:bg-white/[0.01] transition-colors group";
@@ -213,7 +225,7 @@ function renderVideoTable(videos, isAdmin) {
             <td class="p-5 text-graytext font-light max-w-xs truncate md:whitespace-normal">${video.notes || '-'}</td>
             <td class="p-5 text-right whitespace-nowrap space-x-1.5">
                 ${video.scriptLink ? `
-                    <a href="${video.scriptLink}" class="inline-flex h-8 px-3 bg-white/5 hover:bg-accent hover:text-white rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
+                    <a href="${finalScriptLink}" class="inline-flex h-8 px-3 bg-white/5 hover:bg-accent hover:text-white rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
                         <span>Leggi Script</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
                 ` : `<span class="text-xs text-graytext/40 italic pr-2">Nessuno Script</span>`}
@@ -342,7 +354,7 @@ function renderVideoTable(videos, isAdmin) {
                     <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                         <div>
                             ${video.scriptLink ? `
-                                <a href="${video.scriptLink}" class="inline-flex h-8 px-3 bg-white/5 hover:bg-accent hover:text-white rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
+                                <a href="${finalScriptLink}" class="inline-flex h-8 px-3 bg-white/5 hover:bg-accent hover:text-white rounded-lg items-center gap-1.5 text-xs text-graytext hover:text-white transition-all">
                                     <span>Leggi Script</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                                 </a>
                             ` : `<span class="text-xs text-graytext/40 italic">Nessuno Script</span>`}
