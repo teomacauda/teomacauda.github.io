@@ -78,6 +78,16 @@ async function initRouter(user) {
                     }
                 }
 
+                   // Gestione Visibilità Chiudi Script solo per Admin
+                const closeScriptBtn = document.getElementById('btn-close-script');
+                if (closeScriptBtn) {
+                    if (user) {
+                        closeScriptBtn.classList.remove('hidden');
+                    } else {
+                        closeScriptBtn.classList.add('hidden');
+                    }
+                }
+
                 loaderEl.classList.add('hidden');
                 detailSection.classList.remove('hidden');
             } else {
