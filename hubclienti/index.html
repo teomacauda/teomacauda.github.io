@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Area Riservata Clienti | Teo Macauda</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Teo Hub">
+    
+    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
+        #page-wrapper { overflow-x: hidden; width: 100%; position: relative; min-height: 100vh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        .glass-nav { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.4s ease; margin-top: env(safe-area-inset-top); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
+        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.03) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.01) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.4; z-index: 1; pointer-events: none; }
+        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+<div id="page-wrapper" class="flex flex-col">
+    <div class="ambient-glow"></div>
+    <div class="hero-grid"></div>
+
+    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
+        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center hover:opacity-80 transition-all">
+                <svg class="h-9 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
+                </svg>
+            </a>
+            <div class="flex items-center gap-3">
+                <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Admin Mode
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full mx-auto relative z-10 flex flex-col justify-center">
+        
+        <div id="main-loader" class="flex justify-center items-center py-40">
+            <div class="loader !w-9 !h-9"></div>
+        </div>
+
+        <!-- Lock Section for Admins -->
+        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-24 px-6 flex flex-col items-center">
+            <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
+                <i data-lucide="lock" class="w-7 h-7"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Hub Clienti</h1>
+            <p class="text-graytext text-sm font-light mb-8">Questa sezione raccoglie le dashboard dedicate dei clienti. Effettua l'accesso come amministratore.</p>
+            <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
+                Accedi come Admin
+            </button>
+        </div>
+
+        <!-- Admin Catalog Section -->
+        <div id="section-admin-catalog" class="hidden max-w-7xl mx-auto px-6 pt-32 pb-16 w-full">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Hub <span class="text-accent">Clienti</span></h1>
+                    <p class="text-graytext text-sm font-light mt-1">Gestisci le webapp e i link dei singoli clienti.</p>
+                </div>
+                <button onclick="openCreateClientModal()" class="h-11 px-5 bg-white/5 border border-white/10 hover:bg-accent hover:border-accentHover text-white text-sm font-bold rounded-xl flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-accent/30 self-start sm:self-auto">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Nuovo Cliente
+                </button>
+            </div>
+            <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        </div>
+
+        <!-- Client View Section -->
+        <div id="section-client" class="hidden w-full max-w-md mx-auto px-6 py-20 flex flex-col items-center justify-center min-h-[70vh]">
+            <!-- Centered Animating Brand Group -->
+            <div id="client-brand-group" class="flex flex-col items-center text-center">
+                <div id="client-avatar-container" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-white/10 bg-white/5 p-1 mb-4 flex items-center justify-center">
+                    <img id="client-avatar-img" src="" alt="Avatar" class="w-full h-full object-cover rounded-full hidden">
+                    <div id="client-avatar-placeholder" class="w-full h-full rounded-full bg-accent/10 flex items-center justify-center text-accent text-3xl font-extrabold">C</div>
+                </div>
+                <h2 id="client-greeting" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white mb-1 select-none">Ciao Client</h2>
+                <p class="text-xs text-accent uppercase font-bold tracking-widest opacity-80">La tua area riservata</p>
+            </div>
+
+            <!-- Client Action Buttons -->
+            <div id="client-actions-container" class="w-full mt-10 space-y-4 opacity-0 scale-95 pointer-events-none">
+                <a id="btn-client-ped" href="#" target="_blank" class="glass-card flex items-center justify-between p-5 rounded-2xl border border-white/5 hover:border-accent/40 hover:bg-accent/[0.02] transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="text-base font-bold text-white tracking-tight leading-none mb-1">Piano Editoriale</h3>
+                            <p class="text-xs text-graytext">Contenuti e strategie pianificate</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-graytext/40 group-hover:text-accent transition-all group-hover:translate-x-1"></i>
+                </a>
+
+                <a id="btn-client-report" href="#" target="_blank" class="glass-card flex items-center justify-between p-5 rounded-2xl border border-white/5 hover:border-blue-500/40 hover:bg-blue-500/[0.02] transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="text-base font-bold text-white tracking-tight leading-none mb-1">Report Mensile</h3>
+                            <p class="text-xs text-graytext">Performance e dati di crescita</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-graytext/40 group-hover:text-blue-400 transition-all group-hover:translate-x-1"></i>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Auth and CRUD Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
+        
+        <div class="glass-modal w-full sm:max-w-xl p-6 md:p-8 rounded-t-[2rem] sm:rounded-3xl relative transform translate-y-full sm:translate-y-10 transition-transform duration-400 max-h-[88vh] overflow-y-auto no-scrollbar pb-10 sm:pb-8">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 sm:hidden"></div>
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            
+            <!-- Auth Step -->
+            <div id="modal-step-auth" class="hidden">
+                <h3 class="text-xl font-bold mb-1 text-white">Autenticazione</h3>
+                <p class="text-xs text-graytext mb-5">Accedi per gestire l'Hub Clienti.</p>
+                <form id="form-login" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email</label>
+                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
+                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div id="auth-error" class="text-xs text-red-500 hidden font-medium"></div>
+                    <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2">
+                        <span>Accedi</span><div id="login-loader" class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Create / Edit Client Step -->
+            <div id="modal-step-client" class="hidden">
+                <h3 id="modal-client-title" class="text-xl font-bold mb-0.5 text-white">Gestisci <span class="text-accent">Cliente</span></h3>
+                <p class="text-xs text-graytext mb-5">Inserisci i dati del cliente per generare la sua webapp personalizzata.</p>
+                <form id="form-client" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Nome Cliente</label>
+                        <input type="text" id="client-name-input" required placeholder="Es. Mattia Rossi" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">URL Immagine Profilo</label>
+                        <input type="url" id="client-avatar-input" placeholder="Es. https://images.unsplash.com/... o percorso relativo" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Link Piano Editoriale (PED)</label>
+                        <input type="url" id="client-ped-input" placeholder="Es. https://teomacauda.it/pianieditoriali/?v=..." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Link Report Mensile</label>
+                        <input type="url" id="client-report-input" placeholder="Es. https://teomacauda.it/report/?v=..." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <button type="submit" id="btn-submit-client" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2 shadow-lg">
+                        <i data-lucide="save" class="w-4 h-4"></i> Salva Cliente
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer id="main-footer" class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+        <p class="text-graytext text-sm mb-4">
+            © <script>document.write(new Date().getFullYear())</script> 
+            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
+        </p>
+    </footer>
+</div>
+
+<script type="module" src="./main.js"></script>
+
+</body>
+</html>
