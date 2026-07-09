@@ -81,6 +81,24 @@ async function initReportRouter(user) {
     if (user) adminIndicator.classList.remove('hidden');
     else adminIndicator.classList.add('hidden');
 
+      // Gestione pulsante di ritorno all'HUB
+    const hubParam = urlParams.get('hub');
+    const backToHubBtn = document.getElementById('back-to-hub');
+    if (backToHubBtn) {
+        if (hubParam) {
+            if (window.location.origin.includes('localhost') || window.location.protocol === 'file:') {
+                backToHubBtn.href = `../Hub%20clienti/?v=${hubParam}`;
+            } else {
+                backToHubBtn.href = `https://teomacauda.it/hubclienti/?v=${hubParam}`;
+            }
+            backToHubBtn.style.display = 'inline-flex';
+        } else {
+            backToHubBtn.style.display = 'none';
+        }
+    }
+
+    
+    
     if (reportSlug) {
         try {
             const q = query(collection(db, "reportMensili"), where("slug", "==", reportSlug));
