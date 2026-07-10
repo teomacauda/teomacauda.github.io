@@ -7,7 +7,7 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2",
+      "src": "https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
