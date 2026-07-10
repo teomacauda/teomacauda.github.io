@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hub | Teo Macauda</title>
+    
+    <!-- PWA & Mobile Optimization -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hub">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Scripts & Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS (Site branding & Animation system) -->
+    <style>
+        html, body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            width: 100%; 
+            max-width: 100vw; 
+            overflow-x: hidden; 
+            position: relative; 
+            height: 100%; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        #page-wrapper { 
+            overflow-x: hidden; 
+            width: 100%; 
+            position: relative; 
+            min-height: 100vh; 
+            padding-top: env(safe-area-inset-top); 
+            padding-bottom: env(safe-area-inset-bottom); 
+        }
+
+        /* Glassmorphism Styles */
+        .glass-nav { 
+            background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            transition: all 0.4s ease; 
+        }
+        
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        
+        .glass-card:hover { 
+            border-color: rgba(255, 122, 0, 0.3); 
+            background: rgba(255, 255, 255, 0.05); 
+            box-shadow: 0 0 25px rgba(255, 122, 0, 0.05);
+        }
+        
+        .plus-card { 
+            border: 1px dashed rgba(255, 255, 255, 0.2); 
+            background: rgba(255, 255, 255, 0.01); 
+        }
+        
+        .plus-card:hover { 
+            border-color: rgba(255, 122, 0, 0.5); 
+            background: rgba(255, 122, 0, 0.02); 
+        }
+        
+        .glass-modal { 
+            background: rgba(10, 10, 10, 0.94); 
+            backdrop-filter: blur(30px); 
+            -webkit-backdrop-filter: blur(30px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        
+        .ambient-glow { 
+            position: absolute; 
+            width: 100%; 
+            height: 800px; 
+            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.03) 45%, rgba(0, 0, 0, 0) 85%); 
+            top: 0; 
+            left: 0; 
+            z-index: 0; 
+            pointer-events: none; 
+        }
+        
+        .hero-grid { 
+            position: absolute; 
+            inset: 0; 
+            background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); 
+            background-size: 40px 40px; 
+            opacity: 0.5; 
+            z-index: 1; 
+            pointer-events: none; 
+        }
+        
+        .loader { 
+            border: 2px solid rgba(255,255,255,0.1); 
+            border-top: 2px solid #FF7A00; 
+            border-radius: 50%; 
+            width: 20px; 
+            height: 20px; 
+            animation: spin 1s linear infinite; 
+        }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* --- Client View Custom Layout & Animations --- */
+
+        /* Splash Screen (Teo's Logo Fade In/Out) */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.9); }
+            25%, 75% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0; transform: scale(1); }
+        }
+        .animate-logo-splash {
+            animation: fadeInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* 3D Premium Button Glow effects */
+        .premium-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 122, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .premium-btn:hover::before {
+            opacity: 1;
+        }
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            border-color: #FF7A00;
+            box-shadow: 0 10px 30px -10px rgba(255, 122, 0, 0.3), inset 0 0 15px rgba(255, 122, 0, 0.1);
+        }
+        .premium-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Sequential blinking dots for calendar icon */
+        @keyframes dot-blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; filter: drop-shadow(0 0 3px #FF7A00); }
+        }
+        .animate-dot-1 { animation: dot-blink 1.5s infinite ease-in-out; }
+        .animate-dot-2 { animation: dot-blink 1.5s infinite ease-in-out 0.25s; }
+        .animate-dot-3 { animation: dot-blink 1.5s infinite ease-in-out 0.5s; }
+        .animate-dot-4 { animation: dot-blink 1.5s infinite ease-in-out 0.75s; }
+        .animate-dot-5 { animation: dot-blink 1.5s infinite ease-in-out 1s; }
+        .animate-dot-6 { animation: dot-blink 1.5s infinite ease-in-out 1.25s; }
+
+        /* Swinging Calendar Animation */
+        @keyframes swing-subtle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        .animate-swing {
+            animation: swing-subtle 3s infinite ease-in-out;
+        }
+
+        /* Growing bar chart animation */
+        @keyframes bar-grow {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+        .animate-bar-1 { animation: bar-grow 1.6s infinite ease-in-out; }
+        .animate-bar-2 { animation: bar-grow 1.6s infinite ease-in-out 0.3s; }
+        .animate-bar-3 { animation: bar-grow 1.6s infinite ease-in-out 0.6s; }
+
+        /* Bouncing Arrow for Chart Icon */
+        @keyframes arrow-move {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2px, -2px); }
+        }
+        .animate-arrow { animation: arrow-move 1.6s infinite ease-in-out; }
+
+        /* Positioning states for client info header */
+        .client-header-transition {
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .client-header-centered {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.4);
+            opacity: 0;
+            z-index: 40;
+            width: 100%;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        .client-header-centered.show {
+            opacity: 1;
+        }
+
+        .client-header-top {
+            position: fixed;
+            top: calc(env(safe-area-inset-top, 0px) + 50px);
+            left: 50%;
+            transform: translate(-50%, 0) scale(1);
+            opacity: 1;
+            z-index: 40;
+            width: 100%;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        /* Pulse glow overlay on client avatar */
+        @keyframes avatar-pulse {
+            0% { box-shadow: 0 0 0 0px rgba(255, 122, 0, 0.4); }
+            100% { box-shadow: 0 0 0 15px rgba(255, 122, 0, 0); }
+        }
+        .avatar-glow {
+            animation: avatar-pulse 2s infinite cubic-bezier(0.25, 0, 0, 1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<div id="page-wrapper" class="flex flex-col">
+    <div class="ambient-glow"></div>
+    <div class="hero-grid"></div>
+
+    <!-- NAVBAR (Admin / Home default, hidden on client view) -->
+    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
+        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="./" class="flex items-center hover:opacity-80 transition-all">
+                <svg class="h-9 w-auto text-white" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="currentColor"/>
+                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="currentColor"/>
+                </svg>
+            </a>
+            <div class="flex items-center gap-3">
+                <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Admin Mode
+                </div>
+                <button id="btn-logout" class="hidden text-xs text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-1.5 rounded-full transition-all">
+                    Esci
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN ROUTING AREA -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 pt-32 pb-16 relative z-10">
+        
+        <!-- MAIN LOADER (Shown during DB check) -->
+        <div id="main-loader" class="flex justify-center items-center py-32">
+            <div class="loader !w-9 !h-9"></div>
+        </div>
+
+        <!-- 1. LOCK SECTION (Requires login to access Admin Panel) -->
+        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-20 flex flex-col items-center">
+            <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
+                <i data-lucide="lock" class="w-7 h-7 text-white"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Client Hub</h1>
+            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link diretto del cliente o credenziali amministratore.</p>
+            <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
+                <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
+            </button>
+        </div>
+
+        <!-- 2. ADMIN VIEW (Clients Catalog and CRUD) -->
+        <div id="section-admin-catalog" class="hidden">
+            <div class="mb-10 text-left">
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Gestione <span class="text-accent">Hub Clienti</span></h1>
+                <p class="text-graytext text-sm font-light mt-1">Configura l'hub per i tuoi clienti inserendo le loro risorse.</p>
+            </div>
+            
+            <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Javascript will inject cards here + a "+" card at the end -->
+            </div>
+        </div>
+
+        <!-- 3. CLIENT VIEW (Highly Animated Landing Screen) -->
+        <div id="section-client-view" class="hidden fixed inset-0 z-30 bg-black overflow-y-auto">
+            <div class="absolute inset-0 bg-radial-gradient"></div>
+            <div class="hero-grid opacity-30"></div>
+            
+            <!-- Phase 1: Teo's Logo Splash Overlay -->
+            <div id="teo-logo-overlay" class="absolute inset-0 z-50 flex items-center justify-center bg-black">
+                <div id="splash-logo-container" class="w-36 h-36 flex items-center justify-center opacity-0">
+                    <svg class="w-full h-full text-accent" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="currentColor"/>
+                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="currentColor"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Phase 2 & 3: Interactive Client Container -->
+            <!-- Safe Area Notch protection: top: calc(env(safe-area-inset-top) + 50px) -->
+            <div id="client-header-container" class="client-header-transition client-header-centered">
+                <div class="relative inline-block mb-6">
+                    <img id="client-avatar" src="" alt="Cliente" class="w-24 h-24 rounded-full border-2 border-accent/40 bg-white/5 object-cover avatar-glow">
+                </div>
+                <h2 id="client-greeting" class="text-3xl font-extrabold tracking-tight text-white mb-2">Ciao!</h2>
+                <p id="client-subtitle" class="text-sm font-light text-graytext uppercase tracking-widest">Benvenuto nel tuo Hub</p>
+            </div>
+
+            <!-- Teo's Logo top left (appears in Phase 3) -->
+            <!-- Safe position: top: calc(env(safe-area-inset-top) + 30px) -->
+            <div id="client-logo-topleft" class="fixed left-6 z-40 opacity-0 transition-opacity duration-1000 ease-out" style="top: calc(env(safe-area-inset-top, 0px) + 30px);">
+                <a href="./" class="block hover:opacity-80 transition-all">
+                    <svg class="h-8 w-auto text-white" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="currentColor"/>
+                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Buttons Section (appears in Phase 3) -->
+            <!-- Safe position: top: calc(env(safe-area-inset-top) + 250px) -->
+            <div id="client-buttons-container" class="absolute left-1/2 -translate-x-1/2 w-full max-w-[450px] px-6 flex flex-col gap-4 opacity-0 transition-all duration-1000 ease-out" style="top: calc(env(safe-area-inset-top, 0px) + 260px); transform: translate(-50%, 20px);">
+                
+                <!-- Piano Editoriale Button -->
+                <a id="btn-ped" href="#" target="_self" class="premium-btn glass-card flex items-center p-5 rounded-2xl gap-5 group w-full cursor-pointer select-none">
+                    <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent relative">
+                        <!-- Swinging Calendar Custom SVG Icon -->
+                        <svg class="w-6 h-6 animate-swing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <!-- Interactive dots pulsing sequentially -->
+                            <circle cx="7" cy="14" r="1.2" fill="#FF7A00" class="animate-dot-1"></circle>
+                            <circle cx="12" cy="14" r="1.2" fill="#FF7A00" class="animate-dot-2"></circle>
+                            <circle cx="17" cy="14" r="1.2" fill="#FF7A00" class="animate-dot-3"></circle>
+                            <circle cx="7" cy="18" r="1.2" fill="#FF7A00" class="animate-dot-4"></circle>
+                            <circle cx="12" cy="18" r="1.2" fill="#FF7A00" class="animate-dot-5"></circle>
+                            <circle cx="17" cy="18" r="1.2" fill="#FF7A00" class="animate-dot-6"></circle>
+                        </svg>
+                    </div>
+                    <div class="text-left flex-1">
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-accent mb-0.5">Calendario Pubblicazioni</span>
+                        <h4 class="text-lg font-bold text-white leading-tight">Piano Editoriale</h4>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-graytext/40 group-hover:text-accent group-hover:translate-x-1 transition-all"></i>
+                </a>
+
+                <!-- Report Button -->
+                <a id="btn-report" href="#" target="_self" class="premium-btn glass-card flex items-center p-5 rounded-2xl gap-5 group w-full cursor-pointer select-none">
+                    <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent relative">
+                        <!-- Custom animated growth chart SVG -->
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10" class="animate-bar-3" style="transform-origin: 18px 20px;"></line>
+                            <line x1="12" y1="20" x2="12" y2="5" class="animate-bar-2" style="transform-origin: 12px 20px;"></line>
+                            <line x1="6" y1="20" x2="6" y2="14" class="animate-bar-1" style="transform-origin: 6px 20px;"></line>
+                            <!-- Trending arrow moving in loop -->
+                            <path d="M17 5h4v4" class="animate-arrow" style="transform-origin: 19px 7px;"></path>
+                            <path d="M3 19L11 11L15 15L21 7" class="animate-arrow-path"></path>
+                        </svg>
+                    </div>
+                    <div class="text-left flex-1">
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-accent mb-0.5">Analisi Performance</span>
+                        <h4 class="text-lg font-bold text-white leading-tight">Report Mensile</h4>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-graytext/40 group-hover:text-accent group-hover:translate-x-1 transition-all"></i>
+                </a>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER (Admin / Home default, hidden on client view) -->
+    <footer id="footer" class="border-t border-white/5 py-8 text-center text-xs text-graytext/50 font-mono">
+        &copy; 2026 TEO MACAUDA. ALL RIGHTS RESERVED.
+    </footer>
+</div>
+
+<!-- ================= AUTH & ACTION MODAL ================= -->
+<div id="auth-modal" class="fixed inset-0 z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAuthModal()"></div>
+    
+    <!-- Content Modal -->
+    <div class="glass-modal max-w-lg w-full rounded-3xl p-8 relative mx-4 transition-all duration-300 transform translate-y-10">
+        <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-graytext hover:text-white transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <!-- STEP A: Login Form (If not logged in) -->
+        <div id="modal-step-auth" class="hidden">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-extrabold tracking-tight text-white">Accesso Admin</h3>
+                <p class="text-graytext text-xs mt-1">Esegui l'accesso per gestire l'hub dei clienti</p>
+            </div>
+            
+            <form id="form-login" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Indirizzo Email</label>
+                    <input type="email" id="login-email" required placeholder="admin@email.com" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Password</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                
+                <div id="auth-error" class="hidden text-xs text-red-500 bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-center"></div>
+                
+                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+                    <div id="login-loader" class="loader hidden"></div>
+                    <span>Accedi</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- STEP B: Create/Edit Client Form (If logged in) -->
+        <div id="modal-step-create" class="hidden">
+            <div class="text-center mb-6">
+                <h3 id="modal-create-title" class="text-2xl font-extrabold tracking-tight text-white">Nuovo <span class="text-accent">Cliente</span></h3>
+                <p class="text-graytext text-xs mt-1">Configura l'hub compilando le risorse per il cliente.</p>
+            </div>
+
+            <form id="form-create-client" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Nome Cliente</label>
+                    <input type="text" id="client-name" required placeholder="es. Mario Rossi" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">URL Immagine Profilo Cliente (Favicon o Avatar)</label>
+                    <input type="url" id="client-avatar-input" required placeholder="https://raw.githubusercontent.com/.../avatar.png" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Link Piano Editoriale (Opzionale)</label>
+                    <input type="url" id="client-ped-input" placeholder="https://teomacauda.it/pianieditoriali/?v=..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Link Report Mensile (Opzionale)</label>
+                    <input type="url" id="client-report-input" placeholder="https://teomacauda.it/report/?v=..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+
+                <button type="submit" id="btn-submit-client" class="w-full h-11 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Salva Cliente
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
