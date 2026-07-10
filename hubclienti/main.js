@@ -81,7 +81,7 @@ async function initRouter(user) {
                 const clientData = clientDoc.data();
                 
                 // Popolamento dei dati cliente
-                document.getElementById('client-avatar').src = clientData.avatarUrl || 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2';
+                document.getElementById('client-avatar').src = clientData.avatarUrl || 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png';
                 document.getElementById('client-greeting').innerText = `Ciao ${clientData.clientName}!`;
                 
                 // Configurazione pulsanti PED & Report con parametro hub
@@ -199,9 +199,9 @@ async function loadAdminCatalog() {
             card.innerHTML = `
                 <div>
                     <div class="flex items-center gap-3 mb-3">
-                        <img src="${data.avatarUrl || 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2'}" 
+                        <img src="${data.avatarUrl || 'https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png'}" 
                              class="w-10 h-10 rounded-full object-cover border border-white/10" 
-                             onerror="this.src='https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2'">
+                              onerror="this.src='https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png'">
                         <div>
                             <h3 class="text-lg font-bold text-white tracking-tight leading-tight pr-6">${data.clientName}</h3>
                             <p class="text-[10px] text-accent font-mono mt-0.5">/${data.slug}</p>
