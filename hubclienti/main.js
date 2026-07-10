@@ -110,16 +110,18 @@ async function initRouter(user) {
                 // Mostro la sezione e nascondo il loader
                 loaderEl.classList.add('hidden');
                 clientSection.classList.remove('hidden');
-
+                
                 // GSAP Intro Animation
                 runClientIntroAnimation();
-
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                
             } else {
                 window.location.href = './';
             }
         } catch (error) {
             console.error("Errore:", error);
             window.location.href = './';
+            loaderEl.classList.add('hidden');
         }
     } else {
         // ADMIN OR LOCK VIEW
@@ -128,6 +130,7 @@ async function initRouter(user) {
         } else {
             loaderEl.classList.add('hidden');
             lockSection.classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     }
 }
@@ -238,6 +241,7 @@ async function loadAdminCatalog() {
         adminCatalogSection.classList.remove('hidden');
     } catch (error) {
         console.error("Errore catalogo:", error);
+        loaderEl.classList.add('hidden');
     }
 }
 
@@ -347,6 +351,10 @@ function openCustomStep(step) {
 }
 
 function openAuthModal() {
+        if (!auth.currentUser) {
+        document.getElementById('modal-step-auth').classList.remove('hidden');
+        document.getElementById('modal-step-client').classList.add('hidden');
+    }
     authModal.classList.remove('opacity-0', 'pointer-events-none');
     authModal.classList.add('opacity-100', 'pointer-events-auto');
     if(window.innerWidth < 640) {
@@ -369,3 +377,4 @@ function closeAuthModal() {
 window.openAuthModal = openAuthModal;
 window.closeAuthModal = closeAuthModal;
 window.openCreateClientModal = openCreateClientModal;
+window.openCustomStep = openCustomStep;
