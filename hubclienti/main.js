@@ -106,14 +106,26 @@ function setupClientView(clientData) {
     clientNameSpan.textContent = clientData.clientName;
     // Configure PED Button
     if (clientData.pedLink && clientData.pedLink.trim() !== '') {
-        btnPed.href = clientData.pedLink;
+        let pedUrl = clientData.pedLink;
+        if (pedUrl.includes('?')) {
+            pedUrl += `&hub=${clientData.slug}`;
+        } else {
+            pedUrl += `?hub=${clientData.slug}`;
+        }
+        btnPed.href = pedUrl;
         btnPed.classList.remove('hidden');
     } else {
         btnPed.classList.add('hidden');
     }
     // Configure Report Button
     if (clientData.reportLink && clientData.reportLink.trim() !== '') {
-        btnReport.href = clientData.reportLink;
+        let reportUrl = clientData.reportLink;
+        if (reportUrl.includes('?')) {
+            reportUrl += `&hub=${clientData.slug}`;
+        } else {
+            reportUrl += `?hub=${clientData.slug}`;
+        }
+        btnReport.href = reportUrl;
         btnReport.classList.remove('hidden');
     } else {
         btnReport.classList.add('hidden');
@@ -193,14 +205,11 @@ function startIntroAnimation() {
             clientGreeting.classList.add('opacity-100', 'translate-y-0');
         }, 100);
     }, 2800);
-    // Step D: Minimize Profile Image, Hide greeting, and slide in Action Buttons
+    // Step D: Minimize Profile Image, keeping greeting visible, and slide in Action Buttons
     setTimeout(() => {
-        // Move & scale profile image container
+      // Move & scale profile image container (includes both avatar and greeting text)
         profileImgContainer.style.transform = 'translateY(-12vh) scale(0.75)';
-        
-        // Fade out welcome greeting text
-        clientGreeting.style.opacity = '0';
-        clientGreeting.style.transform = 'translateY(-10px)';
+      
         // Fade in top left logo and action buttons
         clientLogoTop.classList.remove('opacity-0');
         clientLogoTop.classList.add('opacity-100');
