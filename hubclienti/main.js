@@ -191,8 +191,8 @@ async function initRouter(user) {
                 // Fase 4: Solo dopo il rimpicciolimento, comparsa e scorrimento dei pulsanti risorse
                 setTimeout(() => {
                     // Espansione e comparsa dei pulsanti
-                    buttonsContainer.classList.remove('opacity-0', 'max-h-0', 'mt-0', 'pointer-events-none');
-                    buttonsContainer.classList.add('opacity-100', 'max-h-[350px]', 'mt-8', 'pointer-events-auto');
+                    buttonsContainer.classList.remove('opacity-0', 'max-h-0', 'mt-0', 'pointer-events-none', 'overflow-hidden');
+                    buttonsContainer.classList.add('opacity-100', 'max-h-[350px]', 'mt-8', 'pointer-events-auto', 'overflow-visible');
                 }, 5800);
 
             } else {
