@@ -109,6 +109,30 @@ async function initRouter(user) {
                 clientViewSection.classList.remove('hidden');
                 loaderEl.classList.add('hidden');
 
+                // --- GENERAZIONE DINAMICA MANIFEST PWA PER IL CLIENTE ---
+                const manifestEl = document.querySelector('link[rel="manifest"]');
+                if (manifestEl) {
+                    const manifestData = {
+                        "name": "Hub",
+                        "short_name": "Hub",
+                        "start_url": window.location.href, // Link specifico del cliente corrente
+                        "display": "standalone",
+                        "background_color": "#000000",
+                        "theme_color": "#000000",
+                        "icons": [
+                            {
+                                "src": "https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png",
+                                "sizes": "512x512",
+                                "type": "image/png",
+                                "purpose": "any maskable"
+                            }
+                        ]
+                    };
+                    const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+                    manifestEl.href = URL.createObjectURL(blob);
+                }
+
+                
                 // --- SEQUENZA ANIMAZIONI CLIENTE ---
                 const splashOverlay = document.getElementById('teo-logo-overlay');
                 const splashLogo = document.getElementById('splash-logo-container');
@@ -116,21 +140,23 @@ async function initRouter(user) {
                 const logoTopLeft = document.getElementById('client-logo-topleft');
                 const buttonsContainer = document.getElementById('client-buttons-container');
 
-                // Reset stati
+                // Reset stati per l'animazione
                 splashOverlay.style.display = 'flex';
                 splashOverlay.style.opacity = '1';
                 splashLogo.classList.remove('animate-logo-splash');
-                headerContainer.className = 'client-header-transition client-header-centered';
+                 
+                headerContainer.className = 'client-header-transition transform scale-[1.3] opacity-0 text-center select-none';
+                
+                logoTopLeft.classList.remove('opacity-100');
                 logoTopLeft.classList.add('opacity-0');
-                buttonsContainer.classList.add('opacity-0');
-                buttonsContainer.style.transform = 'translate(-50%, 20px)';
-
-                // Fase 1: Animazione Logo Teo Macauda
+                buttonsContainer.className = 'client-buttons-transition w-full max-w-[420px] flex flex-col gap-4 opacity-0 max-h-0 mt-0 overflow-hidden pointer-events-none';
+                
+                  // Fase 1: Animazione di entrata/uscita Logo Teo Macauda al centro (durata ~2.5s)
                 setTimeout(() => {
                     splashLogo.classList.add('animate-logo-splash');
                 }, 100);
 
-                // Fase 2: Fine splash, apparizione Avatar e Ciao al centro
+                  // Fase 2: Fine splash, apparizione Avatar e Saluto del cliente in grande al centro
                 setTimeout(() => {
                     // Sfuma e rimuovi l'overlay dello splash
                     splashOverlay.style.transition = 'opacity 0.6s ease';
@@ -139,25 +165,28 @@ async function initRouter(user) {
                         splashOverlay.style.display = 'none';
                     }, 600);
 
-                    // Mostra l'avatar e il saluto del cliente centrati
-                    headerContainer.classList.add('show');
+                    // Fade in di avatar e saluto (in formato grande 1.3x)
+                    headerContainer.classList.remove('opacity-0');
+                    headerContainer.classList.add('opacity-100');
                 }, 2600);
 
-                // Fase 3: Rimpicciolimento, salita dell'avatar, comparsa del logo in alto a sx e dei pulsanti
+                // Fase 3: Rimpicciolimento dell'avatar/saluto a 1.0x e comparsa del logo di Teo in alto a sinistra
                 setTimeout(() => {
-                    // Sposta l'header in alto
-                    headerContainer.classList.remove('client-header-centered', 'show');
-                    headerContainer.classList.add('client-header-top');
+                    // Shrink dell'header
+                    headerContainer.classList.remove('scale-[1.3]');
+                    headerContainer.classList.add('scale-100');
 
-                    // Comparsa del logo Teo Macauda in alto a sinistra
+                     // Comparsa del logo in alto a sinistra
                     logoTopLeft.classList.remove('opacity-0');
                     logoTopLeft.classList.add('opacity-100');
-
-                    // Comparsa e salita dei pulsanti risorse
-                    buttonsContainer.classList.remove('opacity-0');
-                    buttonsContainer.classList.add('opacity-100');
-                    buttonsContainer.style.transform = 'translate(-50%, 0)';
                 }, 4800);
+
+                // Fase 4: Solo dopo il rimpicciolimento, comparsa e scorrimento dei pulsanti risorse
+                setTimeout(() => {
+                    // Espansione e comparsa dei pulsanti
+                    buttonsContainer.classList.remove('opacity-0', 'max-h-0', 'mt-0', 'pointer-events-none');
+                    buttonsContainer.classList.add('opacity-100', 'max-h-[350px]', 'mt-8', 'pointer-events-auto');
+                }, 5800);
 
             } else {
                 // Se lo slug non corrisponde a nessun cliente, torna alla home
