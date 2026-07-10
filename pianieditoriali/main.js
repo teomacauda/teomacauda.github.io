@@ -55,15 +55,20 @@ async function initRouter(user) {
         adminIndicator.classList.add('hidden');
     }
 
-    // Gestione pulsante di ritorno all'HUB
+    // Gestione pulsante di ritorno all'HUB (con persistenza locale in caso di navigazione negli script)
     const hubParam = urlParams.get('hub');
+    if (hubParam) {
+        localStorage.setItem('activeHub', hubParam);
+    }
+    const activeHub = hubParam || localStorage.getItem('activeHub');
+    
     const backToHubBtn = document.getElementById('back-to-hub');
     if (backToHubBtn) {
-        if (hubParam) {
+        if (activeHub) {
             if (window.location.origin.includes('localhost') || window.location.protocol === 'file:') {
-                backToHubBtn.href = `../Hub%20clienti/?v=${hubParam}`;
+                backToHubBtn.href = `../Hub%20clienti/?v=${activeHub}`;
             } else {
-                backToHubBtn.href = `https://teomacauda.it/hubclienti/?v=${hubParam}`;
+                backToHubBtn.href = `https://teomacauda.it/hubclienti/?v=${activeHub}`;
             }
             backToHubBtn.style.display = 'inline-flex';
         } else {
