@@ -66,12 +66,17 @@ async function initRouter(user) {
     if (clientSlug) {
         // CLIENT VIEW
         try {
-            const q = query(collection(db, "hubClienti"), where("slug", "==", clientSlug));
+            const q = query(collection(db, "pianiEditoriali"), where("slug", "==", clientSlug));
             const querySnapshot = await getDocs(q);
             
             if (!querySnapshot.empty) {
                 const clientDoc = querySnapshot.docs[0];
                 const clientData = clientDoc.data();
+
+                 if (clientData.isHub !== true) {
+                    window.location.href = './';
+                    return;
+                }
                 
                 // Popolo i dati
                 document.getElementById('client-greeting').innerText = `Ciao ${clientData.clientName}`;
@@ -173,13 +178,26 @@ function runClientIntroAnimation() {
 
 async function loadAdminCatalog() {
     try {
-        const q = query(collection(db, "hubClienti"), orderBy("createdAt", "desc"));
+        cconst q = query(collection(db, "pianiEditoriali"));
         const querySnapshot = await getDocs(q);
         const grid = document.getElementById('client-grid');
         grid.innerHTML = '';
 
+        const clientHubs = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
+             if (data.isHub === true) {
+                clientHubs.push({ id: doc.id, data: data });
+            }
+        });
+        // Ordino per data decrescente in JavaScript
+        clientHubs.sort((a, b) => {
+            const dateA = a.data.createdAt ? (a.data.createdAt.toDate ? a.data.createdAt.toDate() : new Date(a.data.createdAt)) : new Date(0);
+            const dateB = b.data.createdAt ? (b.data.createdAt.toDate ? b.data.createdAt.toDate() : new Date(b.data.createdAt)) : new Date(0);
+            return dateB - dateA;
+        });
+        clientHubs.forEach((client) => {
+            const data = client.data;
             const clientUrl = `${window.location.origin}${window.location.pathname}?v=${data.slug}`;
             
             const card = document.createElement('div');
@@ -225,7 +243,7 @@ async function loadAdminCatalog() {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const docId = btn.getAttribute('data-id');
-                const docRef = doc(db, "hubClienti", docId);
+                 const docRef = doc(db, "pianiEditoriali", docId);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     openEditClientModal(docId, docSnap.data());
@@ -238,7 +256,7 @@ async function loadAdminCatalog() {
                 e.stopPropagation();
                 const docId = btn.getAttribute('data-id');
                 if(confirm("Sei sicuro di voler eliminare definitivamente questo cliente dall'Hub?")) {
-                    await deleteDoc(doc(db, "hubClienti", docId));
+                    await deleteDoc(doc(db, "pianiEditoriali", docId));
                     loadAdminCatalog();
                 }
             });
@@ -287,12 +305,13 @@ if (clientForm) {
         if (currentEditingClientId) {
             // Aggiorna
             try {
-                const docRef = doc(db, "hubClienti", currentEditingClientId);
+                const docRef = doc(db, "pianiEditoriali", currentEditingClientId);
                 await updateDoc(docRef, {
                     clientName,
                     avatarUrl,
                     pedLink,
-                    reportLink
+                    reportLink,
+                    isHub: true
                 });
                 closeAuthModal();
                 loadAdminCatalog();
@@ -303,12 +322,13 @@ if (clientForm) {
             // Crea
             const slug = createSlug(clientName) + "-" + Math.random().toString(36).substring(2, 7);
             try {
-                await addDoc(collection(db, "hubClienti"), {
+                await addDoc(collection(db, "pianiEditoriali"), {
                     clientName,
                     avatarUrl,
                     pedLink,
                     reportLink,
                     slug,
+                    isHub: true,
                     createdAt: new Date()
                 });
                 closeAuthModal();
