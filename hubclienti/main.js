@@ -19,6 +19,13 @@ const db = getFirestore(app);
 const urlParams = new URLSearchParams(window.location.search);
 const clientSlug = urlParams.get('v');
 
+// Rilevamento modalità standalone (WebApp salvata sulla Home)
+const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+// Salva lo slug del cliente corrente nel localStorage per riaperture successive (es. su iOS)
+if (clientSlug) {
+    localStorage.setItem('lastClientSlug', clientSlug);
+}
+
 const loaderEl = document.getElementById('main-loader');
 const lockSection = document.getElementById('section-lock');
 const adminCatalogSection = document.getElementById('section-admin-catalog');
@@ -124,7 +131,7 @@ async function initRouter(user) {
                                 "src": "https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png",
                                 "sizes": "512x512",
                                 "type": "image/png",
-                                "purpose": "any maskable"
+                                "purpose": "any"
                             }
                         ]
                     };
@@ -198,6 +205,15 @@ async function initRouter(user) {
         }
     } else {
         // --- VISTA HOME: LOCK O CATALOGO ADMIN ---
+
+        // Se siamo in modalità Web App (standalone) e non siamo autenticati come admin,
+        // proviamo a caricare l'ultimo cliente memorizzato localmente per evitare il login amministratore.
+        const savedSlug = localStorage.getItem('lastClientSlug');
+        if (isStandalone && !user && savedSlug) {
+            window.location.replace(`?v=${savedSlug}`);
+            return;
+        }
+
         document.getElementById('navbar').classList.remove('hidden');
         document.getElementById('footer').classList.remove('hidden');
         
