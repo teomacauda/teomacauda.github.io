@@ -80,6 +80,12 @@ async function initRouter(user) {
             if (!querySnapshot.empty) {
                 const clientDoc = querySnapshot.docs[0];
                 const clientData = clientDoc.data();
+
+                if (clientData.isHub === true) {
+                    window.location.href = './';
+                    return;
+                }
+                
                 currentClientDocId = clientDoc.id;
 
                 document.getElementById('client-title').innerText = `Piano Editoriale: ${clientData.clientName}`;
@@ -451,6 +457,8 @@ async function loadAdminCatalog() {
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
+            if (data.isHub === true) return;
+            
             const clientUrl = `${window.location.origin}${window.location.pathname}?v=${data.slug}`;
             
             const card = document.createElement('div');
