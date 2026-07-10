@@ -254,6 +254,8 @@ async function loadAdminCatalog() {
         adminCatalogSection.classList.remove('hidden');
     } catch (error) {
         console.error("Errore caricamento catalogo:", error);
+        loaderEl.classList.add('hidden');
+        alert("Errore durante il caricamento del catalogo clienti. Verifica la console per maggiori dettagli.");
     }
 }
 
