@@ -212,6 +212,14 @@ async function loadAdminCatalog() {
             grid.appendChild(card);
         });
 
+         // Tasto geometrico "+" per l'aggiunta di un nuovo Cliente nel catalogo
+        const plusCard = document.createElement('button');
+        plusCard.className = "glass-card plus-card p-6 rounded-2xl flex flex-col items-center justify-center min-h-[180px] text-graytext hover:text-white cursor-pointer";
+        plusCard.innerHTML = `<i data-lucide="plus" class="w-8 h-8 text-graytext/60 group-hover:text-accent transition-transform animate-pulse"></i><span class="text-xs font-bold tracking-tight mt-2">Nuovo Cliente</span>`;
+        plusCard.addEventListener('click', () => openCreateClientModal());
+        grid.appendChild(plusCard);
+
+        
         // Add client triggers
         document.querySelectorAll('.btn-edit-client').forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -236,12 +244,14 @@ async function loadAdminCatalog() {
             });
         });
 
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         loaderEl.classList.add('hidden');
         adminCatalogSection.classList.remove('hidden');
     } catch (error) {
         console.error("Errore catalogo:", error);
+        alert("Errore nel caricamento del database dei clienti: " + error.message);
         loaderEl.classList.add('hidden');
+        adminCatalogSection.classList.remove('hidden');
     }
 }
 
