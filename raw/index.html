@@ -296,6 +296,17 @@
             stroke-dashoffset: 0;
             transition-delay: 0.15s;
         }
+        
+         /* 7. Hub Clienti: Animazione linee di connessione */
+        .hub-connection-line {
+            stroke-dasharray: 12;
+            stroke-dashoffset: 12;
+            transition: stroke-dashoffset 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .futuristic-blade:hover .hub-connection-line {
+            stroke-dashoffset: 0;
+            transition-delay: 0.15s;
+        }
 
         /* Ingressi GSAP */
         .ui-element-gsap {
@@ -368,7 +379,7 @@
         </div>
 
         <!-- Grid dei Floating Tablets -->
-        <div class="grid grid-cols-2 lg:grid-cols-6 gap-6 w-full cards-container" id="cardsGrid">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6 w-full cards-container" id="cardsGrid">
             
             <!-- Badge 1: Consegna -->
             <a href="/consegnavideo" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="consegna">
@@ -520,6 +531,37 @@
                         <div class="space-y-1">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Revisioni</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Approval</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+             <!-- Badge 7: Hub Clienti -->
+            <a href="/hubclienti" class="futuristic-blade ui-element-gsap aspect-[3/4.4] flex flex-col justify-end p-6 md:p-8 group" data-id="hubclienti">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Central node -->
+                                <circle cx="12" cy="12" r="3.5" stroke-width="1.5" />
+                                <!-- Satellites/Clients nodes -->
+                                <circle cx="5" cy="5" r="2" />
+                                <circle cx="19" cy="5" r="2" />
+                                <circle cx="5" cy="19" r="2" />
+                                <circle cx="19" cy="19" r="2" />
+                                <!-- Connection lines drawing in loop on hover -->
+                                <line class="hub-connection-line" x1="9.5" y1="9.5" x2="6.4" y2="6.4" />
+                                <line class="hub-connection-line" x1="14.5" y1="9.5" x2="17.6" y2="6.4" />
+                                <line class="hub-connection-line" x1="9.5" y1="14.5" x2="6.4" y2="17.6" />
+                                <line class="hub-connection-line" x1="14.5" y1="14.5" x2="17.6" y2="17.6" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Hub Clienti</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Workspace</p>
                         </div>
                     </div>
                 </div>
@@ -678,7 +720,8 @@
             piani: { title: "Piani", msg: "Loading editorial scheduler..." },
             report: { title: "Report", msg: "Calculating metric data..." },
             preventivi: { title: "Preventivi", msg: "Running financial models..." },
-            revisioni: { title: "Revisioni", msg: "Syncing review database..." }
+            revisioni: { title: "Revisioni", msg: "Syncing review database..." },
+            hubclienti: { title: "Hub Clienti", msg: "Synchronizing client workspace..." }
         };
 
         blades.forEach(blade => {
