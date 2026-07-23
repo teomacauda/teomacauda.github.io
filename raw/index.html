@@ -118,36 +118,26 @@
             visibility: hidden;
         }
 
-        /* --- FINTO CARICAMENTO CINEMATICO A RIPPLE EXPAND --- */
-        .custom-loader-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(4, 4, 6, 0.98);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        /* 8. Video Audit: Eye/Radar scanning focus animation */
+        .scanner-brackets {
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: 12px 12px;
+        }
+        .futuristic-blade:hover .scanner-brackets {
+            transform: scale(0.9) rotate(90deg);
+        }
+        .scanner-line {
             opacity: 0;
-            pointer-events: none;
-            clip-path: circle(0px at 50% 50%); /* Modificato dinamicamente da GSAP */
-            overflow: hidden;
+            transition: opacity 0.3s ease;
+            transform-origin: 12px 12px;
         }
-        .custom-loader-overlay.active {
-            pointer-events: auto;
+        .futuristic-blade:hover .scanner-line {
+            opacity: 1;
+            animation: scanMotion 1.5s ease-in-out infinite;
         }
-
-        .laser-progress-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #FF7A00, transparent);
-            box-shadow: 0 0 20px #FF7A00, 0 0 40px #FF7A00;
-            width: 0%;
-            transition: width 0.04s linear;
+        @keyframes scanMotion {
+            0%, 100% { transform: translateY(-4px); }
+            50% { transform: translateY(4px); }
         }
 
         /* --- CONCEZIONE BADGE: FLOATING SCI-FI TABLETS --- */
@@ -274,7 +264,7 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
         }
         .tag-path-wrapper {
-            transition: transform 0.4s ease;
+            transition: transform 0.45s ease;
             transform-origin: 12px 2px;
         }
         .futuristic-blade:hover .tag-path-wrapper {
@@ -296,16 +286,28 @@
             stroke-dashoffset: 0;
             transition-delay: 0.15s;
         }
-        
-         /* 7. Hub Clienti: Animazione linee di connessione */
-        .hub-connection-line {
-            stroke-dasharray: 12;
-            stroke-dashoffset: 12;
-            transition: stroke-dashoffset 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+
+        /* 7. Hub Clienti: People/Team expanding animation */
+        .hub-user {
+            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .futuristic-blade:hover .hub-connection-line {
-            stroke-dashoffset: 0;
-            transition-delay: 0.15s;
+        .hub-user-left {
+            transform-origin: 8.5px 15px;
+        }
+        .hub-user-right {
+            transform-origin: 15.5px 15px;
+        }
+        .hub-user-main {
+            transform-origin: 12px 15px;
+        }
+        .futuristic-blade:hover .hub-user-left {
+            transform: translate(-3px, 0.5px) scale(0.95);
+        }
+        .futuristic-blade:hover .hub-user-right {
+            transform: translate(3px, 0.5px) scale(0.95);
+        }
+        .futuristic-blade:hover .hub-user-main {
+            transform: translateY(-1.5px) scale(1.05);
         }
 
         /* Ingressi GSAP */
@@ -347,28 +349,6 @@
         </div>
     </div>
 
-    <!-- SCHERMATA DI CARICAMENTO FINTA (MINIMALISTA E LUSSUOSA CON RIPPLE EXPAND) -->
-    <div id="loaderOverlay" class="custom-loader-overlay">
-        <div class="laser-progress-bar" id="laserBar"></div>
-        
-        <div class="z-10 flex flex-col items-center space-y-4">
-            <div class="relative flex items-center justify-center mb-2">
-                <svg width="90" height="90" viewBox="0 0 100 100" class="transform -rotate-90">
-                    <circle cx="50" cy="50" r="42" stroke="rgba(255,122,0,0.06)" stroke-width="1.5" fill="transparent"/>
-                    <circle id="progressCircle" cx="50" cy="50" r="42" stroke="#FF7A00" stroke-width="2" fill="transparent" 
-                            stroke-dasharray="263.89" stroke-dashoffset="263.89" style="transition: stroke-dashoffset 0.04s linear; filter: drop-shadow(0 0 6px #FF7A00);"/>
-                </svg>
-                <div class="absolute text-xs font-mono font-bold tracking-widest text-white" id="loaderPercentage">0%</div>
-            </div>
-            
-            <h2 id="loaderTitle" class="text-xl font-bold tracking-[0.4em] text-white uppercase font-sans">CONSEGNA</h2>
-            <div class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping"></span>
-                <span id="loaderMessage" class="text-[10px] font-mono tracking-widest text-graytext uppercase">INITIALIZING...</span>
-            </div>
-        </div>
-    </div>
-
     <!-- CONTENUTO CENTRAL HUB -->
     <main class="w-full max-w-6xl mx-auto px-6 flex-grow flex flex-col justify-center relative z-10 py-16 md:py-24">
         
@@ -379,7 +359,7 @@
         </div>
 
         <!-- Grid dei Floating Tablets -->
-         <div class="flex flex-wrap justify-center gap-6 w-full cards-container" id="cardsGrid">
+        <div class="flex flex-wrap justify-center gap-6 max-w-[712px] mx-auto w-full cards-container" id="cardsGrid">
             
             <!-- Badge 1: Consegna -->
             <a href="/consegnavideo" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="consegna">
@@ -397,7 +377,7 @@
                                 <path class="pause-icon opacity-0 scale-0" stroke-linecap="round" stroke-linejoin="round" d="M10 9h1v6h-1zm3 0h1v6h-1z" />
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Consegna</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Video hub</p>
                         </div>
@@ -406,7 +386,7 @@
             </a>
 
             <!-- Badge 2: Script -->
-             <a href="/script" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="script">
+            <a href="/script" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="script">
                 <div class="inner-content flex flex-col justify-between h-full w-full">
                     <div class="flex items-start justify-between">
                         <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
@@ -426,7 +406,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Script</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Copywriting</p>
                         </div>
@@ -453,7 +433,7 @@
                                 <circle class="calendar-dot dot-active" cx="12" cy="16" r="0.75" fill="#FF7A00" />
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Piani</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Editorial grid</p>
                         </div>
@@ -478,7 +458,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Report</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Performance</p>
                         </div>
@@ -487,7 +467,7 @@
             </a>
 
             <!-- Badge 5: Preventivi -->
-           <a href="/preventivi" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="preventivi">
+            <a href="/preventivi" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="preventivi">
                 <div class="inner-content flex flex-col justify-between h-full w-full">
                     <div class="flex items-start justify-between">
                         <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
@@ -505,7 +485,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Preventivi</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Budgeting</p>
                         </div>
@@ -528,15 +508,16 @@
                                 <path class="check-draw-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 9.5l2 2 4-4" />
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Revisioni</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Approval</p>
                         </div>
                     </div>
                 </div>
             </a>
-             <!-- Badge 7: Hub Clienti -->
-           <a href="/hubclienti" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="hubclienti">
+
+            <!-- Badge 7: Hub Clienti -->
+            <a href="/hubclienti" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="hubclienti">
                 <div class="inner-content flex flex-col justify-between h-full w-full">
                     <div class="flex items-start justify-between">
                         <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
@@ -545,23 +526,56 @@
                     <div class="flex flex-col space-y-8">
                         <div class="icon-container-svg text-accent">
                             <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Central node -->
-                                <circle cx="12" cy="12" r="3.5" stroke-width="1.5" />
-                                <!-- Satellites/Clients nodes -->
-                                <circle cx="5" cy="5" r="2" />
-                                <circle cx="19" cy="5" r="2" />
-                                <circle cx="5" cy="19" r="2" />
-                                <circle cx="19" cy="19" r="2" />
-                                <!-- Connection lines drawing in loop on hover -->
-                                <line class="hub-connection-line" x1="9.5" y1="9.5" x2="6.4" y2="6.4" />
-                                <line class="hub-connection-line" x1="14.5" y1="9.5" x2="17.6" y2="6.4" />
-                                <line class="hub-connection-line" x1="9.5" y1="14.5" x2="6.4" y2="17.6" />
-                                <line class="hub-connection-line" x1="14.5" y1="14.5" x2="17.6" y2="17.6" />
+                                <!-- Left User -->
+                                <g class="hub-user hub-user-left">
+                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                    <path d="M5 15a3.5 3.5 0 017 0" stroke-linecap="round" />
+                                </g>
+                                <!-- Right User -->
+                                <g class="hub-user hub-user-right">
+                                    <circle cx="15.5" cy="8.5" r="1.5" />
+                                    <path d="M12 15a3.5 3.5 0 017 0" stroke-linecap="round" />
+                                </g>
+                                <!-- Central Main User (occludes background paths with solid color) -->
+                                <g class="hub-user hub-user-main">
+                                    <circle cx="12" cy="7" r="2" fill="#08080a" />
+                                    <path d="M7 15a5 5 0 0110 0" fill="#08080a" stroke-linecap="round" />
+                                </g>
                             </svg>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
                             <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Hub Clienti</h2>
                             <p class="text-[9px] font-mono text-graytext/50 uppercase">Workspace</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Badge 8: Video Audit -->
+            <a href="/videoaudit" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="videoaudit">
+                <div class="inner-content flex flex-col justify-between h-full w-full">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-8">
+                        <div class="icon-container-svg text-accent">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Eye Icon -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                                <circle cx="12" cy="12" r="2.5" />
+                                
+                                <!-- Focus Brackets -->
+                                <g class="scanner-brackets">
+                                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3" stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                                <!-- Scanner Line -->
+                                <line class="scanner-line" x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1 h-12 flex flex-col justify-end">
+                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Video Audit</h2>
+                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Analysis</p>
                         </div>
                     </div>
                 </div>
@@ -704,88 +718,6 @@
                     ease: "power2.out",
                     overwrite: "auto"
                 });
-            });
-        });
-
-        // --- 4. FLUSSO SCHERMATA DI CARICAMENTO FINTA CON RIPPLE EXPAND (DALLA POSIZIONE DEL CLICK) ---
-        const loaderOverlay = document.getElementById('loaderOverlay');
-        const loaderTitle = document.getElementById('loaderTitle');
-        const loaderMessage = document.getElementById('loaderMessage');
-        const loaderPercentage = document.getElementById('loaderPercentage');
-        const progressCircle = document.getElementById('progressCircle');
-
-        const loadersConfig = {
-            consegna: { title: "Consegna", msg: "Connecting delivery pipeline..." },
-            script: { title: "Script", msg: "Allocating script editor..." },
-            piani: { title: "Piani", msg: "Loading editorial scheduler..." },
-            report: { title: "Report", msg: "Calculating metric data..." },
-            preventivi: { title: "Preventivi", msg: "Running financial models..." },
-            revisioni: { title: "Revisioni", msg: "Syncing review database..." },
-            hubclienti: { title: "Hub Clienti", msg: "Synchronizing client workspace..." }
-        };
-
-        blades.forEach(blade => {
-            blade.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetUrl = blade.getAttribute('href');
-                const id = blade.getAttribute('data-id');
-                const config = loadersConfig[id] || { title: "Central OS", msg: "Loading..." };
-                
-                // Cattura le coordinate esatte del click del mouse
-                const clickX = e.clientX;
-                const clickY = e.clientY;
-
-                // Configura i testi
-                loaderTitle.innerText = config.title;
-                loaderMessage.innerText = config.msg;
-                loaderPercentage.innerText = "0%";
-                progressCircle.style.strokeDashoffset = "263.89";
-
-                // Imposta lo stato iniziale del clip-path concentrato sul click
-                gsap.set(loaderOverlay, {
-                    opacity: 0,
-                    clipPath: `circle(0px at ${clickX}px ${clickY}px)`
-                });
-
-                loaderOverlay.classList.add('active');
-
-                // Calcola il raggio di espansione necessario per coprire tutto lo schermo
-                const w = window.innerWidth;
-                const h = window.innerHeight;
-                const maxRadius = Math.sqrt(Math.pow(Math.max(clickX, w - clickX), 2) + Math.pow(Math.max(clickY, h - clickY), 2)) + 50;
-
-                // Animazione di espansione clip-path (Ripple Expand)
-                gsap.to(loaderOverlay, {
-                    opacity: 1,
-                    clipPath: `circle(${maxRadius}px at ${clickX}px ${clickY}px)`,
-                    duration: 0.75,
-                    ease: "power3.inOut"
-                });
-
-                // Fade-in ritardato e morbido del contenuto interno del loader
-                gsap.fromTo(loaderOverlay.querySelector('.z-10'), 
-                    { opacity: 0, y: 15 },
-                    { opacity: 1, y: 0, duration: 0.4, delay: 0.25, ease: "power2.out" }
-                );
-
-                let progress = 0;
-                const totalLength = 263.89; // 2 * PI * r (r=42)
-
-                const progressInterval = setInterval(() => {
-                    progress += Math.floor(Math.random() * 8) + 4;
-                    if (progress >= 100) {
-                        progress = 100;
-                        clearInterval(progressInterval);
-                        setTimeout(() => {
-                            window.location.href = targetUrl;
-                        }, 250);
-                    }
-                    
-                    loaderPercentage.innerText = `${progress}%`;
-                    const offset = totalLength - (progress / 100) * totalLength;
-                    progressCircle.style.strokeDashoffset = offset;
-                    document.getElementById('laserBar').style.width = `${progress}%`;
-                }, 35);
             });
         });
         
