@@ -57,11 +57,9 @@
                 </svg>
             </a>
             <div class="flex items-center gap-3">
-
-<a id="back-to-hub" href="#" style="display: none;" class="inline-flex items-center justify-center gap-1.5 text-white bg-accent hover:bg-accentHover transition-all text-xs font-bold h-10 px-4 rounded-xl active:scale-95 duration-200 shadow-md">
+                <a id="back-to-hub" href="#" style="display: none;" class="inline-flex items-center justify-center gap-1.5 text-white bg-accent hover:bg-accentHover transition-all text-xs font-bold h-10 px-4 rounded-xl active:scale-95 duration-200 shadow-md">
                     <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>HUB</span>
                 </a>
-                
                 <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     Admin Mode
@@ -106,9 +104,6 @@
                     Gestione Report Mensile
                 </div>
                 <div class="flex items-center gap-3">
-                    <button id="btn-add-item" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
-                        Aggiungi Contenuto
-                    </button>
                     <button id="btn-clear-all" class="h-9 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
                         Svuota Tutto
                     </button>
@@ -156,22 +151,18 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-white/5 pt-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="border-t border-white/5 pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Account Raggiunti (Totale)</label>
                             <input type="number" id="kpi-reached-count" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Account % (Es: +15% o -4%)</label>
-                            <input type="text" id="kpi-reached-pct" placeholder="Es: +15%" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Visualizzazioni Totali</label>
+                            <input type="number" id="kpi-views-count" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Visite al Profilo (Totale)</label>
-                            <input type="number" id="kpi-visits-count" value="0" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Visite % (Es: +24% o -8%)</label>
-                            <input type="text" id="kpi-visits-pct" placeholder="Es: +24%" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-graytext mb-1">Crescita Visualizzazioni % (Es: +24% o -8%)</label>
+                            <input type="text" id="kpi-views-pct" placeholder="Es: +24%" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
                         </div>
                     </div>
 
@@ -183,9 +174,14 @@
 
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h2 class="text-xl font-bold text-white tracking-tight">Catalogo Video e Post Inseriti</h2>
-                <div class="flex items-center gap-1.5 bg-white/5 border border-white/10 p-1 rounded-xl self-start sm:self-auto">
-                    <button id="sort-btn-global" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white">Classifica Totale (Views ↓)</button>
-                    <button id="sort-btn-grouped" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-graytext hover:text-white">Raggruppati per Piattaforma</button>
+                <div class="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+                    <button id="btn-add-item" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
+                        Aggiungi Contenuto
+                    </button>
+                    <div class="flex items-center gap-1.5 bg-white/5 border border-white/10 p-1 rounded-xl">
+                        <button id="sort-btn-global" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white">Classifica Totale (Views ↓)</button>
+                        <button id="sort-btn-grouped" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-graytext hover:text-white">Raggruppati per Piattaforma</button>
+                    </div>
                 </div>
             </div>
 
@@ -265,26 +261,22 @@
                         <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Account Raggiunti</h2>
                     </div>
                     <div class="glass-card p-8 rounded-3xl border-white/5 text-center relative overflow-hidden">
-                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none mb-4"><span class="counter-anim" id="client-stat-reached-count" data-target="0">0</span></div>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mx-auto" id="client-stat-reached-badge">
-                            <span id="client-stat-reached-arrow-box"></span>
-                            <span id="client-stat-reached-pct">0%</span> rispetto al mese precedente
-                        </div>
+                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none"><span class="counter-anim" id="client-stat-reached-count" data-target="0">0</span></div>
                     </div>
                 </div>
             </section>
 
-            <section id="slide-client-visits" class="hidden snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
+            <section id="slide-client-views" class="hidden snap-start h-[100dvh] w-full flex flex-col justify-center items-center p-6 relative z-10">
                 <div class="w-full max-w-sm mx-auto flex flex-col justify-center h-full">
                     <div class="mb-6 text-center">
-                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Interazione Diretta</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Visite al Profilo</h2>
+                        <span class="text-[9px] font-bold text-accent uppercase tracking-widest block mb-1">Interazione Totale</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Visualizzazioni Totali</h2>
                     </div>
                     <div class="glass-card p-8 rounded-3xl border-white/5 text-center relative overflow-hidden">
-                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none mb-4"><span class="counter-anim" id="client-stat-visits-count" data-target="0">0</span></div>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mx-auto" id="client-stat-visits-badge">
-                            <span id="client-stat-visits-arrow-box"></span>
-                            <span id="client-stat-visits-pct">0%</span> rispetto al mese precedente
+                        <div class="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none mb-4"><span class="counter-anim" id="client-stat-views-count" data-target="0">0</span></div>
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mx-auto" id="client-stat-views-badge">
+                            <span id="client-stat-views-arrow-box"></span>
+                            <span id="client-stat-views-pct">0%</span> rispetto al mese precedente
                         </div>
                     </div>
                 </div>
