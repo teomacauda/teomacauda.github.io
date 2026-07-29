@@ -81,16 +81,16 @@ async function initReportRouter(user) {
     if (user) adminIndicator.classList.remove('hidden');
     else adminIndicator.classList.add('hidden');
 
-     // Gestione pulsante di ritorno all'HUB (con persistenza locale)
+    // Gestione pulsante di ritorno all'HUB (con persistenza locale)
     const hubParam = urlParams.get('hub');
-     if (hubParam) {
+    if (hubParam) {
         localStorage.setItem('activeHub', hubParam);
     }
     const activeHub = hubParam || localStorage.getItem('activeHub');
     
     const backToHubBtn = document.getElementById('back-to-hub');
     if (backToHubBtn) {
-        if (hubParam) {
+        if (activeHub) {
             if (window.location.origin.includes('localhost') || window.location.protocol === 'file:') {
                 backToHubBtn.href = `../Hub%20clienti/?v=${activeHub}`;
             } else {
@@ -102,8 +102,6 @@ async function initReportRouter(user) {
         }
     }
 
-    
-    
     if (reportSlug) {
         try {
             const q = query(collection(db, "reportMensili"), where("slug", "==", reportSlug));
@@ -122,9 +120,8 @@ async function initReportRouter(user) {
                     document.getElementById('followers-youtube').value = reportData.followersYt || 0;
                     
                     document.getElementById('kpi-reached-count').value = reportData.kpiReachedCount || 0;
-                    document.getElementById('kpi-reached-pct').value = reportData.kpiReachedPct || '';
-                    document.getElementById('kpi-visits-count').value = reportData.kpiVisitsCount || 0;
-                    document.getElementById('kpi-visits-pct').value = reportData.kpiVisitsPct || '';
+                    document.getElementById('kpi-views-count').value = reportData.kpiViewsCount || 0;
+                    document.getElementById('kpi-views-pct').value = reportData.kpiViewsPct || '';
                     
                     renderAdminContentsLayout(reportData.items || []);
                     loaderEl.classList.add('hidden');
@@ -208,27 +205,29 @@ function renderAdminContentsLayout(items) {
         return;
     }
 
+    const itemsWithIndex = items.map((item, index) => ({ ...item, originalIndex: index }));
+
     if (activeAdminSort === 'global') {
-        const sortedItems = [...items].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
+        const sortedItems = [...itemsWithIndex].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
         container.appendChild(buildAdminTableBlock("Classifica Globale Performance", sortedItems));
     } else {
         const platforms = ["Reel", "Post", "Storia", "Video YT", "YT Shorts", "TikTok"];
         platforms.forEach(platform => {
-            const filtered = items.filter(i => i.type === platform)
+            const filtered = itemsWithIndex.filter(i => i.type === platform)
                                   .sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
             if (filtered.length > 0) {
-                container.appendChild(buildAdminTableBlock(`Canale: ${platform}`, filtered, items));
+                container.appendChild(buildAdminTableBlock(`Canale: ${platform}`, filtered));
             }
         });
     }
 }
 
-function buildAdminTableBlock(title, sortedItems, originalItems = null) {
+function buildAdminTableBlock(title, sortedItems) {
     const block = document.createElement('div');
     block.className = "glass-card p-5 rounded-2xl border border-white/5 overflow-hidden";
     
     let rowsHtml = sortedItems.map(item => {
-        const originalIndex = originalItems ? originalItems.findIndex(orig => orig.title === item.title && orig.views === item.views) : sortedItems.indexOf(item);
+        const originalIndex = item.originalIndex;
         return `
             <tr class="border-b border-white/5 hover:bg-white/[0.01] transition-all">
                 <td class="p-4 font-bold text-white text-sm">${item.title}</td>
@@ -365,49 +364,37 @@ function renderClientReportView(data) {
         slideFollowers.classList.add('hidden');
     }
 
-    // ================= RENDERING CONDIZIONALE + COLORE SULLE NUOVE SLIDE (ACCOUNT & VISITE) =================
+    // ================= RENDERING CONDIZIONALE + COLORE SULLE NUOVE SLIDE (ACCOUNT & VIEWS) =================
     const reachedCount = parseInt(data.kpiReachedCount) || 0;
-    const reachedPct = data.kpiReachedPct ? data.kpiReachedPct.trim() : '';
     const slideReached = document.getElementById('slide-client-reached');
 
-    if (reachedCount > 0 && reachedPct !== '') {
+    if (reachedCount > 0) {
         slideReached.classList.remove('hidden');
         document.getElementById('client-stat-reached-count').setAttribute('data-target', reachedCount);
-        document.getElementById('client-stat-reached-pct').innerText = reachedPct;
-        
-        const reachedBadge = document.getElementById('client-stat-reached-badge');
-        const reachedArrowBox = document.getElementById('client-stat-reached-arrow-box');
-        if (checkIsNegative(reachedPct)) {
-            reachedBadge.className = "inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
-            reachedArrowBox.innerHTML = inlineVectors.arrowDown;
-        } else {
-            reachedBadge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
-            reachedArrowBox.innerHTML = inlineVectors.arrowUp;
-        }
     } else {
         slideReached.classList.add('hidden');
     }
 
-    const visitsCount = parseInt(data.kpiVisitsCount) || 0;
-    const visitsPct = data.kpiVisitsPct ? data.kpiVisitsPct.trim() : '';
-    const slideVisits = document.getElementById('slide-client-visits');
+    const viewsCount = parseInt(data.kpiViewsCount) || 0;
+    const viewsPct = data.kpiViewsPct ? data.kpiViewsPct.trim() : '';
+    const slideViews = document.getElementById('slide-client-views');
 
-    if (visitsCount > 0 && visitsPct !== '') {
-        slideVisits.classList.remove('hidden');
-        document.getElementById('client-stat-visits-count').setAttribute('data-target', visitsCount);
-        document.getElementById('client-stat-visits-pct').innerText = visitsPct;
+    if (viewsCount > 0 && viewsPct !== '') {
+        slideViews.classList.remove('hidden');
+        document.getElementById('client-stat-views-count').setAttribute('data-target', viewsCount);
+        document.getElementById('client-stat-views-pct').innerText = viewsPct;
         
-        const visitsBadge = document.getElementById('client-stat-visits-badge');
-        const visitsArrowBox = document.getElementById('client-stat-visits-arrow-box');
-        if (checkIsNegative(visitsPct)) {
-            visitsBadge.className = "inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
-            visitsArrowBox.innerHTML = inlineVectors.arrowDown;
+        const viewsBadge = document.getElementById('client-stat-views-badge');
+        const viewsArrowBox = document.getElementById('client-stat-views-arrow-box');
+        if (checkIsNegative(viewsPct)) {
+            viewsBadge.className = "inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
+            viewsArrowBox.innerHTML = inlineVectors.arrowDown;
         } else {
-            visitsBadge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
-            visitsArrowBox.innerHTML = inlineVectors.arrowUp;
+            viewsBadge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
+            viewsArrowBox.innerHTML = inlineVectors.arrowUp;
         }
     } else {
-        slideVisits.classList.add('hidden');
+        slideViews.classList.add('hidden');
     }
 
     if(items.length === 0) return;
@@ -594,8 +581,7 @@ document.getElementById('form-create-report').addEventListener('submit', async (
     await addDoc(collection(db, "reportMensili"), { 
         title: tVal, slug: slug, items: [], 
         followersIg: 0, followersTt: 0, followersYt: 0, 
-        clientAvatarUrl: "", kpiReachedCount: 0, kpiReachedPct: "", 
-        kpiVisitsCount: 0, kpiVisitsPct: "" 
+        clientAvatarUrl: "", kpiReachedCount: 0, kpiViewsCount: 0, kpiViewsPct: "" 
     });
     window.closeCreateReportModal();
     loadAdminCatalogGrid();
@@ -638,9 +624,8 @@ document.getElementById('form-report-followers').addEventListener('submit', asyn
         followersTt: parseInt(document.getElementById('followers-tiktok').value) || 0,
         followersYt: parseInt(document.getElementById('followers-youtube').value) || 0,
         kpiReachedCount: parseInt(document.getElementById('kpi-reached-count').value) || 0,
-        kpiReachedPct: document.getElementById('kpi-reached-pct').value.trim(),
-        kpiVisitsCount: parseInt(document.getElementById('kpi-visits-count').value) || 0,
-        kpiVisitsPct: document.getElementById('kpi-visits-pct').value.trim()
+        kpiViewsCount: parseInt(document.getElementById('kpi-views-count').value) || 0,
+        kpiViewsPct: document.getElementById('kpi-views-pct').value.trim()
     });
     alert("Tutte le metriche e configurazioni del report salvate correttamente.");
     initReportRouter(auth.currentUser);
