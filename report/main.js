@@ -420,6 +420,36 @@ function renderClientReportView(data) {
     document.getElementById('client-king-likes-icon').innerHTML = iconMap[kingLikes.type] || '';
     document.getElementById('client-likes-king-link').href = kingLikes.link || '#';
 
+    // Video con più INTERATIONS
+    const kingInteractions = [...items].map(item => {
+        const l = parseInt(item.likes) || 0;
+        const c = parseInt(item.comments) || 0;
+        const s = parseInt(item.shares) || 0;
+        const r = parseInt(item.reposts) || 0;
+        const sv = parseInt(item.saves) || 0;
+        return { ...item, totalInteractions: l + c + s + r + sv, l, c, s, r, sv };
+    }).sort((a, b) => b.totalInteractions - a.totalInteractions)[0];
+
+    if (kingInteractions) {
+        document.getElementById('client-king-interactions-title').innerText = kingInteractions.title;
+        document.getElementById('client-king-interactions-platform').innerText = kingInteractions.type;
+        document.getElementById('client-stat-king-interactions-count').setAttribute('data-target', kingInteractions.totalInteractions);
+        document.getElementById('client-king-interactions-icon').innerHTML = iconMap[kingInteractions.type] || '';
+        document.getElementById('client-interactions-king-link').href = kingInteractions.link || '#';
+        
+        document.getElementById('king-int-likes').innerText = kingInteractions.l.toLocaleString('it-IT');
+        document.getElementById('king-int-comments').innerText = kingInteractions.c.toLocaleString('it-IT');
+        document.getElementById('king-int-shares').innerText = kingInteractions.s.toLocaleString('it-IT');
+        document.getElementById('king-int-reposts').innerText = kingInteractions.r.toLocaleString('it-IT');
+        document.getElementById('king-int-saves').innerText = kingInteractions.sv.toLocaleString('it-IT');
+        
+        document.getElementById('king-int-likes-row').style.display = kingInteractions.l > 0 ? 'flex' : 'none';
+        document.getElementById('king-int-comments-row').style.display = kingInteractions.c > 0 ? 'flex' : 'none';
+        document.getElementById('king-int-shares-row').style.display = kingInteractions.s > 0 ? 'flex' : 'none';
+        document.getElementById('king-int-reposts-row').style.display = kingInteractions.r > 0 ? 'flex' : 'none';
+        document.getElementById('king-int-saves-row').style.display = kingInteractions.sv > 0 ? 'flex' : 'none';
+    }
+
     // Slide Finale Breakdown Analitico
     const breakdownLayout = document.getElementById('client-full-breakdown-layout');
     breakdownLayout.innerHTML = '';
@@ -439,11 +469,26 @@ function renderClientReportView(data) {
             platformItems.forEach(item => {
                 const rowItem = document.createElement('div');
                 rowItem.className = "glass-card p-4 rounded-xl border border-white/5 flex flex-col gap-1";
+                
+                let details = `
+                    <span class="flex items-center gap-1">${inlineVectors.eye} <b>${parseInt(item.views || 0).toLocaleString('it-IT')}</b> views</span>
+                    <span class="flex items-center gap-1">${inlineVectors.heart} <b>${parseInt(item.likes || 0).toLocaleString('it-IT')}</b> like</span>
+                `;
+                
+                const comm = parseInt(item.comments) || 0;
+                const sh = parseInt(item.shares) || 0;
+                const rep = parseInt(item.reposts) || 0;
+                const sav = parseInt(item.saves) || 0;
+                
+                if (comm > 0) details += `<span class="flex items-center gap-1">💬 <b>${comm.toLocaleString('it-IT')}</b> commenti</span>`;
+                if (sh > 0) details += `<span class="flex items-center gap-1">🔗 <b>${sh.toLocaleString('it-IT')}</b> condivisioni</span>`;
+                if (rep > 0) details += `<span class="flex items-center gap-1">🔁 <b>${rep.toLocaleString('it-IT')}</b> repost</span>`;
+                if (sav > 0) details += `<span class="flex items-center gap-1">💾 <b>${sav.toLocaleString('it-IT')}</b> salvataggi</span>`;
+                
                 rowItem.innerHTML = `
                     <div class="text-sm font-bold text-white tracking-tight">${item.title}</div>
-                    <div class="flex items-center gap-4 text-xs text-graytext mt-2 border-t border-white/5 pt-2">
-                        <span class="flex items-center gap-1">${inlineVectors.eye} <b>${parseInt(item.views).toLocaleString('it-IT')}</b> views</span>
-                        <span class="flex items-center gap-1">${inlineVectors.heart} <b>${parseInt(item.likes).toLocaleString('it-IT')}</b> like</span>
+                    <div class="flex flex-wrap items-center gap-4 text-xs text-graytext mt-2 border-t border-white/5 pt-2">
+                        ${details}
                     </div>
                 `;
                 cardWrap.appendChild(rowItem);
@@ -536,6 +581,8 @@ window.openAddItemModal = (index = null) => {
             document.getElementById('metric-likes').value = item.likes || 0;
             document.getElementById('metric-comments').value = item.comments || 0;
             document.getElementById('metric-shares').value = item.shares || 0;
+            document.getElementById('metric-reposts').value = item.reposts || 0;
+            document.getElementById('metric-saves').value = item.saves || 0;
         });
     } else {
         document.getElementById('add-item-modal-title').innerText = "Aggiungi Contenuto al Report";
@@ -598,7 +645,9 @@ document.getElementById('form-report-item').addEventListener('submit', async (e)
         views: parseInt(document.getElementById('metric-views').value) || 0,
         likes: parseInt(document.getElementById('metric-likes').value) || 0,
         comments: parseInt(document.getElementById('metric-comments').value) || 0,
-        shares: parseInt(document.getElementById('metric-shares').value) || 0
+        shares: parseInt(document.getElementById('metric-shares').value) || 0,
+        reposts: parseInt(document.getElementById('metric-reposts').value) || 0,
+        saves: parseInt(document.getElementById('metric-saves').value) || 0
     };
 
     const docRef = doc(db, "reportMensili", currentReportDocId);
