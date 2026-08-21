@@ -349,6 +349,55 @@
         </div>
     </div>
 
+    <!-- SCHERMATA DI LOGIN -->
+    <div id="login-container" class="fixed inset-0 z-40 flex items-center justify-center px-4 opacity-0 pointer-events-none transition-all duration-500" style="transform: translateY(30px) scale(0.95);">
+        <div class="w-full max-w-md bg-white/[0.03] border border-white/10 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative">
+            
+            <!-- Glow superiore decorativo -->
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-accent/20 rounded-full blur-[60px] pointer-events-none"></div>
+
+            <div class="text-center mb-8 space-y-2">
+                <span class="text-[10px] font-mono font-bold tracking-[0.4em] text-accent uppercase">Central OS // RAW</span>
+                <h2 class="text-2xl font-black text-white tracking-tight uppercase">Autenticazione</h2>
+                <p class="text-[11px] text-graytext/60 max-w-[280px] mx-auto leading-relaxed">Inserisci le tue credenziali amministratore per accedere al pannello strumenti.</p>
+            </div>
+
+            <form id="login-form" class="space-y-5">
+                <div class="space-y-1.5">
+                    <label class="block text-[9px] font-mono font-bold text-graytext uppercase tracking-widest pl-1">Email</label>
+                    <div class="relative group">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-graytext/60 group-focus-within:text-accent transition-colors">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </span>
+                        <input type="email" id="login-email" required placeholder="admin@example.com" 
+                               class="w-full h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-sm text-white placeholder:text-graytext/30 focus:outline-none focus:border-accent focus:bg-white/[0.04] transition-all duration-300">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-[9px] font-mono font-bold text-graytext uppercase tracking-widest pl-1">Password</label>
+                    <div class="relative group">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-graytext/60 group-focus-within:text-accent transition-colors">
+                            <i data-lucide="key-round" class="w-4 h-4"></i>
+                        </span>
+                        <input type="password" id="login-password" required placeholder="••••••••" 
+                               class="w-full h-12 pl-11 pr-12 bg-white/[0.02] border border-white/10 rounded-2xl text-sm text-white placeholder:text-graytext/30 focus:outline-none focus:border-accent focus:bg-white/[0.04] transition-all duration-300">
+                        <button type="button" id="toggle-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-graytext/60 hover:text-white transition-colors">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="login-error" class="text-xs text-red-500 hidden font-mono text-center bg-red-500/10 border border-red-500/20 py-2.5 px-3 rounded-xl"></div>
+
+                <button type="submit" id="btn-login-submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-2xl font-bold text-xs tracking-wider uppercase transition-all duration-300 active:scale-[0.98] flex justify-center items-center gap-2 mt-4 shadow-lg hover:shadow-accent/20">
+                    <span>Accedi al Sistema</span>
+                    <div id="login-spinner" class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin hidden"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- CONTENUTO CENTRAL HUB -->
     <main class="w-full max-w-6xl mx-auto px-6 flex-grow flex flex-col justify-center relative z-10 py-16 md:py-24">
         
@@ -589,7 +638,29 @@
         Accesso privato / 2026 / Teo Macauda - Videomaker
     </footer>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Configurazione Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
+            authDomain: "script-sito.firebaseapp.com",
+            projectId: "script-sito",
+            storageBucket: "script-sito.firebasestorage.app",
+            messagingSenderId: "863535754551",
+            appId: "G-7YHRQZCNMN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.auth = auth;
+
+        let isSplashFinished = false;
+        let authInitialized = false;
+        let currentUser = null;
+        let routed = false;
+
         // --- 1. SHADER DI SFONDO CANVAS ---
         (function() {
           const canvas = document.getElementById('shader-nurvdz8xx');
@@ -666,18 +737,137 @@
                 
                 setTimeout(() => {
                     splash.remove();
-                    
-                    // Inizio animazione d'ingresso GSAP dei vari elementi
-                    gsap.to(".ui-element-gsap", {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        duration: 1.2,
-                        stagger: 0.1,
-                        ease: "power4.out"
-                    });
+                    isSplashFinished = true;
+                    onSplashOrAuthReady();
                 }, 400); 
             }, 4500); 
+        });
+
+        function onSplashOrAuthReady() {
+            if (!isSplashFinished || !authInitialized || routed) return;
+            routed = true;
+            
+            if (currentUser) {
+                showDashboard();
+            } else {
+                showLoginForm();
+            }
+        }
+
+        function showLoginForm() {
+            const loginContainer = document.getElementById('login-container');
+            if (!loginContainer) return;
+            
+            // Nasconde la dashboard e il footer per evitare sovrapposizioni visive o di layout durante il login
+            const mainEl = document.querySelector('main');
+            const footerEl = document.getElementById('footer-element');
+            if (mainEl) mainEl.style.display = 'none';
+            if (footerEl) footerEl.style.display = 'none';
+            
+            loginContainer.classList.remove('pointer-events-none');
+            gsap.to(loginContainer, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.5,
+                ease: "power4.out"
+            });
+        }
+
+        function showDashboard() {
+            const loginContainer = document.getElementById('login-container');
+            
+            const runDashboardIntro = () => {
+                const mainEl = document.querySelector('main');
+                const footerEl = document.getElementById('footer-element');
+                
+                // Ripristina la visualizzazione di dashboard e footer
+                if (mainEl) mainEl.style.display = '';
+                if (footerEl) footerEl.style.display = '';
+                
+                // Inizio animazione d'ingresso GSAP dei vari elementi
+                gsap.to(".ui-element-gsap", {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1.0,
+                    stagger: 0.08,
+                    ease: "power4.out"
+                });
+            };
+
+            if (loginContainer && loginContainer.parentNode) {
+                loginContainer.classList.add('pointer-events-none');
+                gsap.to(loginContainer, {
+                    opacity: 0,
+                    y: 40,
+                    scale: 0.92,
+                    duration: 0.55,
+                    ease: "power3.inOut",
+                    onComplete: () => {
+                        loginContainer.remove();
+                        runDashboardIntro();
+                    }
+                });
+            } else {
+                runDashboardIntro();
+            }
+        }
+
+        // Firebase auth listener
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            authInitialized = true;
+            
+            if (routed) {
+                if (user) {
+                    showDashboard();
+                }
+            } else {
+                onSplashOrAuthReady();
+            }
+        });
+
+        // Form Login Submit
+        document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            const spinner = document.getElementById('login-spinner');
+            const submitBtn = document.getElementById('btn-login-submit');
+
+            errorEl.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                console.error(error);
+                errorEl.innerText = "Credenziali non valide.";
+                errorEl.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Toggle Password Visibility
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('login-password');
+        
+        togglePasswordBtn?.addEventListener('click', () => {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            const icon = togglePasswordBtn.querySelector('i');
+            if (icon) {
+                if (isPassword) {
+                    togglePasswordBtn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4"></i>';
+                } else {
+                    togglePasswordBtn.innerHTML = '<i data-lucide="eye" class="w-4 h-4"></i>';
+                }
+                lucide.createIcons();
+            }
         });
 
         // --- 3. EFFETTO MOUSE GLOW & 3D TILT PARALLAX (GSAP) ---
