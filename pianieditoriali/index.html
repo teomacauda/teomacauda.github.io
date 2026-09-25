@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Piani Editoriali | Teo Macauda</title>
-    
+
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -20,8 +20,17 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#000000',
+                        console: '#08080a',
+                        accent: '#FF7A00',
+                        accentHover: '#E56D00',
+                        graytext: '#8E8E93',
+                    }
                 }
             }
         }
@@ -30,237 +39,372 @@
     <style>
         html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
         #page-wrapper { overflow-x: hidden; width: 100%; position: relative; min-height: 100vh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-        .glass-nav { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.4s ease; margin-top: env(safe-area-inset-top); }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
-        .plus-card { border: 1px dashed rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.01); }
-        .plus-card:hover { border-color: rgba(255, 122, 0, 0.5); background: rgba(255, 122, 0, 0.02); }
-        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.2) 0%, rgba(255, 122, 0, 0.04) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
-        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; z-index: 1; pointer-events: none; }
-        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+
+        .ambient-glow { position: fixed; width: 100%; height: 900px; background: radial-gradient(ellipse at 50% 0%, rgba(255,122,0,0.16) 0%, rgba(255,122,0,0.04) 40%, rgba(0,0,0,0) 80%); top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .ambient-glow-2 { position: fixed; width: 100%; height: 700px; background: radial-gradient(ellipse at 100% 100%, rgba(255,122,0,0.06) 0%, rgba(0,0,0,0) 60%); bottom: 0; right: 0; z-index: 0; pointer-events: none; }
+
+        .glass-nav { background: rgba(10,10,12,0.55); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,0.08); margin-top: env(safe-area-inset-top); }
+
+        /* Apple-style frosted glass panel */
+        .glass {
+            background: rgba(255,255,255,0.045);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+        }
+        .glass:hover { border-color: rgba(255,122,0,0.35); box-shadow: 0 10px 40px rgba(0,0,0,0.4), 0 0 50px rgba(255,122,0,0.10), inset 0 1px 0 rgba(255,255,255,0.08); }
+        .glass-sm { border-radius: 18px; }
+        .glass-lg { border-radius: 32px; }
+
+        .plus-card { border: 1.5px dashed rgba(255,255,255,0.18); background: rgba(255,255,255,0.02); border-radius: 24px; }
+        .plus-card:hover { border-color: rgba(255,122,0,0.55); background: rgba(255,122,0,0.04); }
+
+        .modal-panel { background: rgba(16,16,18,0.75); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
+        .loader { border: 2.5px solid rgba(255,255,255,0.12); border-top: 2.5px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.9s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .drag-over-top td { border-top: 2px solid #FF7A00 !important; box-shadow: inset 0 4px 6px -4px rgba(255, 122, 0, 0.3); }
-        .drag-over-bottom td { border-bottom: 2px solid #FF7A00 !important; box-shadow: inset 0 -4px 6px -4px rgba(255, 122, 0, 0.3); }
+
+        .drag-ghost { opacity: 0.35; }
+        .drop-target { outline: 2px dashed rgba(255,122,0,0.55); outline-offset: 2px; border-radius: 24px; }
+
+        .pill { border-radius: 999px; }
+        .chip { border: 1px solid rgba(255,255,255,0.12); color: #8E8E93; font-family: 'JetBrains Mono', monospace; border-radius: 999px; background: rgba(255,255,255,0.03); transition: all .25s ease; }
+        .chip.active { background: #FF7A00; border-color: #FF7A00; color: #000; font-weight: 700; box-shadow: 0 4px 16px rgba(255,122,0,0.35); }
+
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+        input, select, textarea { border-radius: 16px !important; }
+        button { border-radius: 16px; }
+
+        .kanban-scroll::-webkit-scrollbar { height: 6px; }
+        .kanban-scroll::-webkit-scrollbar-thumb { background: rgba(255,122,0,0.35); border-radius: 999px; }
+
+        #fab-add { box-shadow: 0 10px 30px rgba(255,122,0,0.45); }
+
+        .btn-primary { background: linear-gradient(180deg, #FF8A1F 0%, #FF7A00 100%); box-shadow: 0 6px 20px rgba(255,122,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25); }
+        .btn-primary:hover { background: linear-gradient(180deg, #FF9433 0%, #E56D00 100%); }
+        .btn-primary:active { transform: scale(0.97); }
+
+        /* Badge stato / tipo — font normale, non mono */
+        .status-badge, .type-badge { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: 0.01em; }
+        .status-badge-trigger, .type-badge-trigger { cursor: pointer; }
+        .status-badge-trigger:hover, .type-badge-trigger:hover { filter: brightness(1.15); }
+        .content-title-trigger { cursor: pointer; }
+        .content-title-trigger:hover { color: #FF7A00; }
+
+        .quick-option { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #e5e5e5; transition: background .15s ease; text-align: left; }
+        .quick-option:hover { background: rgba(255,255,255,0.08); }
+        .quick-option.selected { background: rgba(255,122,0,0.12); }
+
+        .script-link-btn[aria-disabled="true"] { opacity: 0.35; pointer-events: none; }
+
+        /* Righe di selezione stile "Apple Settings": tap → apre il mini menu */
+        .field-row { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; position: relative; width: 100%; min-width: 0; height: 64px; padding: 10px 32px 10px 14px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); text-align: left; transition: all .2s ease; overflow: hidden; }
+        .field-row:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
+        .field-row:active { transform: scale(0.98); }
+        .field-row-label { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93; }
+        .field-row-value { display: flex; align-items: center; gap: 6px; width: 100%; min-width: 0; font-size: 13px; font-weight: 600; color: #fff; font-family: 'Inter', sans-serif; white-space: nowrap; }
+        .field-row-value svg { flex-shrink: 0; }
+        .field-row-value span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+        .field-row-chevron { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #8E8E93; flex-shrink: 0; }
+
+        /* Input data / ora */
+        .date-input-wrap { position: relative; display: flex; align-items: center; }
+        .date-input-icon { position: absolute; left: 12px; color: #FF7A00; pointer-events: none; z-index: 1; }
+        .date-input { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding-left: 36px; padding-right: 10px; font-size: 13px; color: #fff; font-family: 'Inter', sans-serif; }
+        .date-input::-webkit-calendar-picker-indicator { filter: invert(1) brightness(1.3); cursor: pointer; opacity: 0.75; }
+        .date-input:focus { outline: none; border-color: #FF7A00; }
+        #video-date-asap-toggle.active { background: #FF7A00; border-color: #FF7A00; color: #000; }
+        #video-date-fields.asap-disabled { opacity: 0.3; pointer-events: none; }
+
+        /* CALENDARIO custom */
+        .cal-nav-btn { width: 30px; height: 30px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #8E8E93; background: rgba(255,255,255,0.05); transition: all .15s ease; }
+        .cal-nav-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .cal-weekday { font-size: 10px; font-weight: 700; color: #8E8E93; text-align: center; text-transform: uppercase; }
+        .cal-day { width: 100%; aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #e5e5e5; background: transparent; transition: all .15s ease; }
+        .cal-day:hover:not(.cal-day-muted) { background: rgba(255,255,255,0.08); }
+        .cal-day-muted { color: rgba(255,255,255,0.15); pointer-events: none; }
+        .cal-day-today { box-shadow: inset 0 0 0 1.5px #FF7A00; }
+        .cal-day-selected { background: #FF7A00 !important; color: #000 !important; font-weight: 800; }
+
+        /* OROLOGIO a rotelle custom */
+        .wheel-wrap { position: relative; display: flex; align-items: center; justify-content: center; gap: 4px; height: 200px; }
+        .wheel-highlight { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 40px; background: rgba(255,122,0,0.10); border-top: 1px solid rgba(255,122,0,0.35); border-bottom: 1px solid rgba(255,122,0,0.35); pointer-events: none; border-radius: 10px; }
+        .wheel-col { width: 64px; height: 200px; overflow-y: scroll; scroll-snap-type: y mandatory; -ms-overflow-style: none; scrollbar-width: none; }
+        .wheel-col::-webkit-scrollbar { display: none; }
+        .wheel-item { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font-size: 19px; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.28); transition: color .15s ease, transform .15s ease; }
+        .wheel-item.active { color: #ffffff; font-weight: 800; }
+        .wheel-spacer { height: 80px; flex-shrink: 0; }
+
+        /* Animazione di apertura dei popover: appaiono con un piccolo "zoom in" dal punto cliccato,
+           mai da un lato — sovrascrive la transition "all" ereditata da .glass, che causava lo scivolamento */
+        .field-popover { transition: opacity .15s cubic-bezier(0.16,1,0.3,1), transform .15s cubic-bezier(0.16,1,0.3,1); opacity: 0; transform: scale(0.92); }
+        .field-popover.pop-visible { opacity: 1; transform: scale(1); }
     </style>
 </head>
 <body class="antialiased">
 
 <div id="page-wrapper" class="flex flex-col">
     <div class="ambient-glow"></div>
-    <div class="hero-grid"></div>
+    <div class="ambient-glow-2"></div>
 
-    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
-        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-            <a ="/" class="flex items-center hover:opacity-80 transition-all">
-                <svg class="h-9 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
+    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-16 flex items-center">
+        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center hover:opacity-80 transition-all">
+                <svg class="h-7 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
                     <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
                 </svg>
             </a>
-            <div class="flex items-center gap-3">
-                <a id="back-to-hub" href="#" style="display: none;" class="inline-flex items-center justify-center gap-1.5 text-white bg-accent hover:bg-accentHover transition-all text-xs font-bold h-10 px-4 rounded-xl active:scale-95 duration-200 shadow-md">
-                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>HUB</span>
+            <div class="flex items-center gap-2">
+                <a id="back-to-hub" href="#" style="display: none;" class="pill inline-flex items-center justify-center gap-1.5 text-white bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-xs font-bold h-9 px-4 active:scale-95 duration-150">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">HUB</span>
                 </a>
-                <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Admin Mode
+                <div id="admin-indicator" class="hidden pill text-[10px] font-bold font-mono bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-3 py-1.5 items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>ADMIN
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10">
-        
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-24 pb-28 md:pb-16 relative z-10">
+
         <div id="main-loader" class="flex justify-center items-center py-32">
             <div class="loader !w-9 !h-9"></div>
         </div>
 
-        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-20 flex flex-col items-center">
-            <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
-                <i data-lucide="lock" class="w-7 h-7 text-white"></i>
+        <!-- LOCK -->
+        <div id="section-lock" class="hidden max-w-sm mx-auto text-center py-20 flex flex-col items-center">
+            <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent to-accentHover flex items-center justify-center mb-6 text-black shadow-lg shadow-accent/30">
+                <i data-lucide="lock" class="w-7 h-7"></i>
             </div>
-            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Piani Editoriali</h1>
-            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link directo cliente o credenziali amministratore.</p>
-            <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
+            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata</h1>
+            <p class="text-graytext text-sm font-light mb-8">Piano Editoriale — accesso tramite link cliente o login admin.</p>
+            <button onclick="openAuthModal()" class="btn-primary w-full h-13 py-3.5 px-6 text-black font-bold text-sm transition-all flex items-center justify-center gap-2 pill">
                 <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
             </button>
         </div>
 
+        <!-- ADMIN CATALOG -->
         <div id="section-admin-catalog" class="hidden">
-            <div class="mb-10 text-left">
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Gestione <span class="text-accent">Piani Editoriali</span></h1>
-                <p class="text-graytext text-sm font-light mt-1">Seleziona un cliente o creane uno nuovo da configurare.</p>
+            <div class="mb-8 flex items-end justify-between gap-4 flex-wrap">
+                <div class="text-left">
+                    <h1 class="text-2xl md:text-4xl font-extrabold tracking-tighter text-white">I tuoi <span class="text-accent">Clienti</span></h1>
+                    <p class="text-graytext text-sm font-light mt-1">Apri un piano o creane uno nuovo.</p>
+                </div>
+                <button id="btn-new-client-top" class="hidden sm:inline-flex btn-primary pill h-11 px-5 text-black font-bold text-sm items-center gap-2 transition-all">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Nuovo Cliente
+                </button>
             </div>
             <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             </div>
         </div>
 
+        <!-- CLIENT PLAN -->
         <div id="section-client-plan" class="hidden">
-            <div id="admin-plan-tools" class="hidden glass-card p-4 rounded-2xl border-accent/20 mb-8 bg-accent/5 flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center gap-2 text-sm font-medium text-white">
-                    <i data-lucide="sliders" class="text-accent w-4 h-4"></i> Pannello Controllo Piano
+
+            <div class="mb-6 flex flex-col gap-4">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                    <div class="text-left flex-1 min-w-[200px]">
+                        <span class="pill inline-block px-3 py-1 text-[10px] font-bold font-mono uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-2">Content Strategy</span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 id="client-title" class="text-2xl md:text-4xl font-extrabold tracking-tighter text-white">Piano Editoriale</h1>
+                            <button id="btn-edit-title" class="hidden h-8 w-8 rounded-full bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 flex items-center justify-center text-graytext transition-all" title="Modifica Titolo">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <div id="edit-title-container" class="hidden mt-3 flex items-center gap-2 max-w-md">
+                            <input type="text" id="input-client-title" class="h-11 bg-white/5 border border-white/10 px-4 text-sm text-white focus:outline-none focus:border-accent flex-1">
+                            <button id="btn-save-title" class="pill h-11 px-4 bg-accent hover:bg-accentHover text-black text-xs font-bold flex items-center justify-center transition-all">Salva</button>
+                            <button id="btn-cancel-title" class="pill h-11 px-4 bg-white/5 text-graytext hover:text-white text-xs flex items-center justify-center">Annulla</button>
+                        </div>
+                    </div>
+
+                    <!-- View Switcher (desktop) -->
+                    <div id="view-switcher" class="hidden md:flex items-center gap-0.5 bg-white/5 p-1 rounded-full border border-white/5 font-mono text-xs select-none">
+                        <button id="view-list-btn" class="pill px-4 py-2 text-white bg-accent font-bold transition-all flex items-center gap-1.5">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i> Lista
+                        </button>
+                        <button id="view-kanban-btn" class="pill px-4 py-2 text-graytext hover:text-white transition-all flex items-center gap-1.5">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Blocchi
+                        </button>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button id="btn-add-video" class="h-9 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Contenuto
-                    </button>
-                    <button id="btn-delete-plan" class="h-9 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Elimina Intero Piano
-                    </button>
+
+                <!-- Admin quick actions (desktop inline) -->
+                <div id="admin-plan-tools" class="hidden md:flex items-center justify-between gap-3 glass glass-sm px-5 py-3.5 border-accent/20">
+                    <div class="flex items-center gap-2 text-sm font-medium text-white">
+                        <i data-lucide="sliders" class="text-accent w-4 h-4"></i> Pannello Controllo
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="btn-add-video" class="btn-primary pill h-10 px-5 text-black text-xs font-bold flex items-center gap-1.5 transition-all">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Contenuto
+                        </button>
+                        <button id="btn-delete-plan" class="pill h-10 px-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 text-xs font-bold flex items-center gap-1.5 transition-all">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Elimina Piano
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="mb-10 text-left">
-                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-3">Content Strategy</span>
-                <div class="flex items-center gap-3 flex-wrap">
-                    <h1 id="client-title" class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Piano Editoriale</h1>
-                    <button id="btn-edit-title" class="hidden h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent border border-white/5 rounded-xl flex items-center justify-center text-graytext hover:text-white transition-all" title="Modifica Titolo Piano">
-                        <i data-lucide="pencil" class="w-4 h-4"></i>
-                    </button>
+            <!-- Progress + KPI -->
+            <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="glass glass-sm p-4 sm:col-span-1">
+                    <div class="flex justify-between items-center text-[10px] font-mono mb-2">
+                        <span class="text-graytext uppercase tracking-wider">Avanzamento</span>
+                        <span id="progress-text" class="text-accent font-bold">0/0 (0%)</span>
+                    </div>
+                    <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-accent to-[#FFB066] h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(255,122,0,0.5)]" style="width: 0%"></div>
+                    </div>
                 </div>
-                
-                <div id="edit-title-container" class="hidden mt-4 flex items-center gap-2 max-w-md">
-                    <input type="text" id="input-client-title" class="h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent flex-1">
-                    <button id="btn-save-title" class="h-11 px-4 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-xl flex items-center justify-center transition-all">Salva</button>
-                    <button id="btn-cancel-title" class="h-11 px-3 bg-white/5 text-graytext rounded-xl text-xs hover:text-white flex items-center justify-center">Annulla</button>
+                <div id="stats-dashboard" class="sm:col-span-2 grid grid-cols-4 gap-2.5">
                 </div>
-                <p class="text-graytext text-sm font-light mt-1">Tracciamento della produzione e del rilascio dei contenuti del brand.</p>
             </div>
 
-            <div id="stats-dashboard" class="flex flex-wrap justify-center items-center gap-3 mb-10">
+            <!-- Filtri stato -->
+            <div id="status-filters" class="flex items-center gap-2 mb-5 overflow-x-auto no-scrollbar pb-1">
             </div>
 
-            <div class="hidden md:block w-full overflow-x-auto glass-card rounded-2xl border border-white/5 no-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead>
-                        <tr id="video-table-header-row" class="border-b border-white/5 bg-white/[0.01] text-[11px] font-bold text-graytext uppercase tracking-wider">
-                            <th class="p-5">Stato</th>
-                            <th class="p-5">Formato</th>
-                            <th class="p-5">Contenuto / Concept</th>
-                            <th class="p-5">Data Pubblicazione</th>
-                            <th class="p-5">Note / Briefing</th>
-                            <th class="p-5 text-right">Azioni / Script</th>
-                        </tr>
-                    </thead>
-                    <tbody id="video-table-body" class="text-sm divide-y divide-white/5">
-                    </tbody>
-                </table>
+            <!-- DESKTOP LIST VIEW -->
+            <div id="desktop-list-view" class="hidden md:block">
+                <div id="media-modules-deck" class="space-y-3"></div>
             </div>
 
-            <div id="video-cards-container" class="block md:hidden space-y-4">
+            <!-- KANBAN BOARD -->
+            <div id="kanban-board-container" class="hidden md:grid grid-cols-5 gap-4">
+            </div>
+
+            <!-- MOBILE STREAM VIEW -->
+            <div id="mobile-stream" class="block md:hidden space-y-6">
             </div>
         </div>
     </main>
 
+    <!-- FAB mobile -->
+    <button id="fab-add" class="hidden fixed bottom-6 right-5 z-[90] w-14 h-14 rounded-full btn-primary text-black items-center justify-center active:scale-95 transition-all md:hidden">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+
+    <!-- AUTH / FORM MODAL -->
     <div id="auth-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
-        
-        <div class="glass-modal w-full sm:max-w-xl p-6 md:p-8 rounded-t-[2rem] sm:rounded-3xl relative transform translate-y-full sm:translate-y-10 transition-transform duration-400 max-h-[88vh] overflow-y-auto no-scrollbar pb-10">
-            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-            
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="closeAuthModal()"></div>
+
+        <div class="modal-panel w-full sm:max-w-lg p-6 md:p-8 relative transform translate-y-full sm:translate-y-10 transition-transform duration-300 rounded-t-[32px] sm:rounded-[32px] max-h-[88vh] overflow-y-auto no-scrollbar pb-10 sm:pb-8">
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-2 rounded-full hover:bg-white/5"><i data-lucide="x" class="w-5 h-5"></i></button>
+
             <div id="modal-step-auth">
-                <h3 class="text-xl font-bold mb-1 text-white">Autenticazione Admin</h3>
-                <p class="text-xs text-graytext mb-5">Inserisci i tuoi dati per sbloccare la gestione dei piani editoriali.</p>
+                <h3 class="text-xl font-bold mb-1 text-white">Login Admin</h3>
+                <p class="text-xs text-graytext mb-5">Accedi per gestire i piani editoriali.</p>
                 <form id="form-login" class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email</label>
-                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 px-4 text-base text-white focus:outline-none focus:border-accent">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
-                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 px-4 text-base text-white focus:outline-none focus:border-accent">
                     </div>
                     <div id="auth-error" class="text-xs text-red-500 hidden font-medium"></div>
-                    <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2">
+                    <button type="submit" class="pill w-full h-12 bg-white text-black hover:bg-accent font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2">
                         <span>Accedi</span><div id="login-loader" class="loader hidden"></div>
                     </button>
                 </form>
             </div>
 
             <div id="modal-step-create-client" class="hidden">
-                <h3 class="text-xl font-bold mb-0.5 text-white">Nuovo <span class="text-accent">Piano Cliente</span></h3>
-                <p class="text-xs text-graytext mb-4">Verrà creata una mappa vuota pronta per l'inserimento dei contenuti.</p>
+                <h3 class="text-xl font-bold mb-0.5 text-white">Nuovo <span class="text-accent">Cliente</span></h3>
+                <p class="text-xs text-graytext mb-4">Crea uno spazio vuoto pronto per i contenuti.</p>
                 <form id="form-create-client" class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Nome Cliente / Azienda</label>
-                        <input type="text" id="client-name-input" required placeholder="Es. Rossi Luxury Brand" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                        <input type="text" id="client-name-input" required placeholder="Es. Rossi Luxury Brand" class="w-full h-12 bg-white/5 border border-white/10 px-4 text-base text-white focus:outline-none focus:border-accent">
                     </div>
-                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2 shadow-lg">
+                    <button type="submit" class="btn-primary pill w-full h-12 text-black font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2">
                         <i data-lucide="send" class="w-4 h-4"></i> Crea Spazio Cliente
                     </button>
                 </form>
             </div>
 
             <div id="modal-step-add-video" class="hidden">
-                <h3 class="text-xl font-bold mb-0.5 text-white">Aggiungi <span class="text-accent">al Piano Editoriale</span></h3>
-                <p class="text-xs text-graytext mb-4">Configura le informazioni relative al prossimo contenuto programmato.</p>
-                <form id="form-add-video" class="space-y-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Titolo del Contenuto / Hook Principale</label>
-                        <input type="text" id="video-title" required placeholder="Es. 3 Errori che uccidono la tua Retention" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
+                <div class="flex items-center gap-3 mb-5">
+                    <div id="add-video-icon" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-accent to-accentHover flex items-center justify-center text-black shadow-lg shadow-accent/25 flex-shrink-0">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
                     </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Tipo di Pubblicazione / Formato</label>
-                            <select id="video-type" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                                <option value="Reel">📸 Reel (IG/FB)</option>
-                                <option value="TikTok">🎵 TikTok</option>
-                                <option value="YT Shorts">🩳 YT Shorts</option>
-                                <option value="Video YT">📺 Video YT</option>
-                                <option value="Storia">⏳ Storia</option>
-                                <option value="Post">🖼️ Post</option>
-                            </select>
+                    <div>
+                        <h3 id="add-video-title-heading" class="text-xl font-bold text-white leading-tight">Aggiungi <span class="text-accent">Contenuto</span></h3>
+                        <p class="text-xs text-graytext">Configura il prossimo contenuto programmato.</p>
+                    </div>
+                </div>
+                <form id="form-add-video" class="space-y-5">
+                    <div>
+                        <input type="text" id="video-title" required placeholder="Titolo / hook principale" class="w-full h-14 bg-white/[0.04] border border-white/10 rounded-2xl px-4 text-[15px] font-medium text-white placeholder:text-graytext/70 placeholder:font-normal focus:outline-none focus:border-accent focus:bg-white/[0.06] transition-all">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button type="button" id="video-type-field" class="field-row">
+                            <span class="field-row-label">Formato</span>
+                            <span id="video-type-field-display" class="field-row-value"></span>
+                            <svg class="field-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <button type="button" id="video-status-field" class="field-row">
+                            <span class="field-row-label">Stato</span>
+                            <span id="video-status-field-display" class="field-row-value"></span>
+                            <svg class="field-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="glass glass-sm p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold text-graytext uppercase tracking-wider">Pubblicazione</span>
+                            <button type="button" id="video-date-asap-toggle" class="pill text-[10px] font-bold px-3 py-1.5 border border-white/12 text-graytext transition-all">ASAP</button>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Stato di Avanzamento</label>
-                            <select id="video-status" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                                <option value="Idea">💡 Idea / Concept</option>
-                                <option value="Scrittura">📝 In Scrittura</option>
-                                <option value="In Produzione">🎥 In Produzione</option>
-                                <option value="Pronto">✅ Pronto per Pubblicare</option>
-                                <option value="Pubblicato">🚀 Pubblicato</option>
-                            </select>
+                        <div id="video-date-fields" class="grid grid-cols-2 gap-2.5 transition-opacity">
+                            <button type="button" id="video-date-field" class="field-row" style="height:56px;">
+                                <span class="field-row-label">Giorno</span>
+                                <span id="video-date-field-display" class="field-row-value"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="color:#FF7A00;"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Da definire</span></span>
+                            </button>
+                            <button type="button" id="video-time-field" class="field-row" style="height:56px;">
+                                <span class="field-row-label">Ora</span>
+                                <span id="video-time-field-display" class="field-row-value"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="color:#FF7A00;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>--:--</span></span>
+                            </button>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Data di Rilascio Prevista</label>
-                        <input type="text" id="video-date" placeholder="Es. 15 Giugno o ASAP" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
+                        <input type="text" id="video-script-link" placeholder="Link script (opzionale)" class="w-full h-14 bg-white/[0.04] border border-white/10 rounded-2xl px-4 text-[15px] font-medium text-white placeholder:text-graytext/70 placeholder:font-normal focus:outline-none focus:border-accent focus:bg-white/[0.06] transition-all">
                     </div>
 
-                    <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Note di Regia / Briefing (Opzionale)</label>
-                        <textarea id="video-notes" rows="3" placeholder="Info su inquadrature, copy da usare, hashtag o scadenze..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Link Diretto allo Script (Opzionale)</label>
-                        <input type="text" id="video-script-link" placeholder="Es. /script/?v=tagli-veloci" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                    </div>
-
-                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2 shadow-lg">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Inserisci nel Piano
+                    <button type="submit" id="add-video-submit-btn" class="btn-primary pill w-full h-12 text-black font-bold text-sm transition-all flex justify-center items-center gap-2 mt-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Salva Contenuto
                     </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
+    <!-- QUICK EDIT POPOVER (stato / tipo, solo admin) -->
+    <div id="quick-edit-popover" class="hidden field-popover fixed z-[260] glass glass-sm p-2 min-w-[190px]"></div>
+
+    <!-- CALENDARIO custom (sostituisce l'input data nativo) -->
+    <div id="date-picker-popover" class="hidden field-popover fixed z-[260] glass glass-sm p-4" style="width:288px;"></div>
+
+    <!-- OROLOGIO a rotelle custom (sostituisce l'input ora nativo) -->
+    <div id="time-picker-popover" class="hidden field-popover fixed z-[260] glass glass-sm p-4" style="width:200px;"></div>
+
+    <div id="quick-edit-backdrop" class="hidden fixed inset-0 z-[255]"></div>
+
+    <footer class="py-10 text-center border-t border-white/5 relative z-10 mt-auto hidden md:block">
         <p class="text-graytext text-sm mb-4">
-            © <script>document.write(new Date().getFullYear())</script> 
-            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
+            © <script>document.write(new Date().getFullYear())</script>
+            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) |
             <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
         </p>
-        <div class="px-6">
-            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
-            </p>
-        </div>
     </footer>
 </div>
 
