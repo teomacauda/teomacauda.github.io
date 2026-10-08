@@ -1,243 +1,181 @@
-<!DOCTYPE html>
-<html lang="it" class="scroll-smooth">
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Social Marketing | Teo Macauda</title>
-    
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z' fill='rgb(255,122,0)'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z' fill='rgb(255,122,0)'/></svg>">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../css/global.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
-                }
-            }
-        }
-    </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lavori · Teo Macauda</title>
+<meta name="description" content="Una selezione dei miei lavori: video su YouTube, casi studio con risultati e video cinematic.">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://teomacauda.it/lavori/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Teo Macauda">
+<meta property="og:locale" content="it_IT">
+<meta property="og:title" content="Lavori · Teo Macauda">
+<meta property="og:description" content="Una selezione dei miei lavori: video su YouTube, casi studio con risultati e video cinematic.">
+<meta property="og:url" content="https://teomacauda.it/lavori/">
+<meta property="og:image" content="https://teomacauda.it/img/og/og-lavori.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tre copertine di video verticali e la scritta Lavori scelti">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lavori · Teo Macauda">
+<meta name="twitter:description" content="Una selezione dei miei lavori: video su YouTube, casi studio con risultati e video cinematic.">
+<meta name="twitter:image" content="https://teomacauda.it/img/og/og-lavori.jpg">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Bebas+Neue&display=swap">
+<script>
+(function () {
+  var d = document.documentElement;
+  try { d.classList.add('js'); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('sc'); } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="../css/stile.css">
 </head>
-<body class="antialiased selection:bg-accent selection:text-white font-sans">
+<body>
+<a class="skip" href="#contenuto">Vai al contenuto</a>
 
-    <div class="ambient-glow"></div>
+<div class="progresso" id="progresso" aria-hidden="true"></div>
+<div class="capitolo" id="capitolo" aria-hidden="true"><div class="fl-riga" id="capNum"></div><i></i><div class="fl-riga" id="capNome"></div></div>
 
-    <header class="fixed top-0 w-full z-[135] glass-nav" id="navbar">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
-                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
-                </svg>
-            </a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 1018 723">
+    <path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/>
+    <path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/>
+  </symbol>
+</svg>
+
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="../" aria-label="Teo Macauda, vai alla home"><svg><use href="#logo"/></svg></a>
+    <nav class="nav" aria-label="Principale">
+      <a href="../" class="nav-link">Home</a>
+      <a href="./" class="nav-link attivo" aria-current="page">Lavori</a>
+      <a href="../#servizi" class="nav-link">Servizi</a>
+      <a href="../toolbox/" class="nav-link">Toolbox</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPannello" aria-label="Apri il menu"><span class="burger" aria-hidden="true"><i></i><i></i></span></button>
+    <div class="menu-pannello" id="menuPannello" role="dialog" aria-label="Menu">
+      <nav class="mp-nav" aria-label="Menu mobile">
+        <a class="mp-link" href="../"><span>Home</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+        <a class="mp-link attivo" href="./" aria-current="page"><span>Lavori</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+        <a class="mp-link" href="../#servizi"><span>Servizi</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+        <a class="mp-link" href="../toolbox/"><span>Toolbox</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+      </nav>
+      <div class="mp-fondo">
+        <a class="btn btn-primario" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener">Parliamo del tuo progetto? <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+        <div class="mp-ic">
+          <a class="ic" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8a9.2 9.2 0 0 0-7.9 13.9L2.8 21.2l4.6-1.2A9.2 9.2 0 1 0 12 2.8z"/><path class="pieno" d="M9.1 7.4c.35-.45.95-.4 1.2.1l.85 1.75c.15.3.1.65-.1.9l-.55.65c.7 1.35 1.75 2.4 3.15 3.05l.65-.6c.25-.2.6-.25.9-.1l1.75.9c.5.25.55.85.15 1.2-.8.75-1.9 1-2.9.65-3.2-1.1-5.5-3.5-6.4-6.4-.25-.9 0-1.5.3-2.1z"/></svg></a>
+          <a class="ic" href="tel:+393784142773" aria-label="Chiama"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 3.6h3.3l1.8 4.5-2.2 1.4a11.6 11.6 0 0 0 5.4 5.4l1.4-2.2 4.5 1.8v3.3a2 2 0 0 1-2.1 2A16.4 16.4 0 0 1 3.2 5.7a2 2 0 0 1 2-2.1z"/></svg></a>
+          <a class="ic" href="mailto:info@teomacauda.it" aria-label="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3.2"/><path d="M2.5 8 12 13.6 21.5 8"/></svg></a>
+          <a class="ic" href="https://instagram.com/teo.macauda" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle class="pieno" cx="17.5" cy="6.6" r="1"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="contenuto">
+  <section class="lv-hero" id="top" data-cap="00|Lavori">
+    <div class="wrap lv-hero-in">
+      <span class="eyebrow">Lavori</span>
+      <h1 class="titolo">Lavori <em>scelti</em></h1>
+      <p class="lv-lead">Video che hanno portato risultati: dai canali YouTube ai reel dei miei clienti, fino ai lavori cinematic.</p>
+      <nav class="lv-tabs" aria-label="Sezioni della pagina">
+        <a class="lv-tab" href="#youtube"><span class="ic"><svg viewBox="0 0 28 20" class="a-yt" aria-hidden="true"><defs><clipPath id="yt-clip"><rect width="28" height="20" rx="6"/></clipPath></defs><g class="yl"><rect class="bx" width="28" height="20" rx="6"/><path class="tri" d="M11.2 5.4v9.2l7.8-4.6z"/><g clip-path="url(#yt-clip)"><rect class="glint" x="-9" y="-3" width="6" height="26"/></g></g></svg></span><span class="tx"><b>Video su YouTube</b></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></i></a>
+        <a class="lv-tab" href="#casi-studio"><span class="ic"><svg viewBox="0 0 24 24" class="a-ch" aria-hidden="true"><path class="b b1" d="M5 20v-5"/><path class="b b2" d="M10 20V9.5"/><path class="b b3" d="M15 20v-7.5"/><path class="b b4" d="M20 20V4.5"/><path class="base" d="M2.5 21.5h19"/></svg></span><span class="tx"><b>Casi studio</b></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></i></a>
+        <a class="lv-tab" href="#cinematic"><span class="ic"><svg viewBox="0 0 24 24" class="a-fi" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path class="perf" d="M6.6 5.5v13"/><path class="perf" d="M17.4 5.5v13"/><circle class="pieno rec" cx="12" cy="12" r="2.3"/></svg></span><span class="tx"><b>Cinematic</b></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></i></a>
+      </nav>
+    </div>
+  </section>
+
+  <section class="lv-bl linea-top" id="youtube" data-cap="01|YouTube">
+    <div class="wrap">
+      <div class="lv-tt rv"><h2 class="titolo">Video su <em>YouTube</em></h2><p>Video lunghi per creator e per il mio canale.</p></div>
+      <div class="lv-g2">
+        <a class="vcard w " href="https://www.youtube.com/watch?v=RsEMXBRmyyA" target="_blank" rel="noopener" data-embed="https://www.youtube-nocookie.com/embed/RsEMXBRmyyA?autoplay=1&rel=0&playsinline=1&start=25" data-k="w" data-t="Astro Viktor" aria-label="Guarda: Astro Viktor"><span class="vim"><img src="../img/lavori/yt-RsEMXBRmyyA.jpg" alt="" width="960" height="540" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Astro Viktor</b></span></a>
+        <a class="vcard w " href="https://www.youtube.com/watch?v=GbimgPm4Hxk" target="_blank" rel="noopener" data-embed="https://www.youtube-nocookie.com/embed/GbimgPm4Hxk?autoplay=1&rel=0&playsinline=1" data-k="w" data-t="Matteo Marzolla" aria-label="Guarda: Matteo Marzolla"><span class="vim"><img src="../img/lavori/yt-GbimgPm4Hxk.jpg" alt="" width="960" height="540" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Matteo Marzolla</b></span></a>
+        <a class="vcard w " href="https://www.youtube.com/watch?v=W-MGFW-xsaw" target="_blank" rel="noopener" data-embed="https://www.youtube-nocookie.com/embed/W-MGFW-xsaw?autoplay=1&rel=0&playsinline=1" data-k="w" data-t="Microfono del Cestista" aria-label="Guarda: Microfono del Cestista"><span class="vim"><img src="../img/lavori/yt-W-MGFW-xsaw.jpg" alt="" width="960" height="540" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Microfono del Cestista</b></span></a>
+        <a class="vcard w " href="https://www.youtube.com/watch?v=ZYBKlJY46wA" target="_blank" rel="noopener" data-embed="https://www.youtube-nocookie.com/embed/ZYBKlJY46wA?autoplay=1&rel=0&playsinline=1" data-k="w" data-t="Teo Macauda" aria-label="Guarda: Teo Macauda"><span class="vim"><img src="../img/lavori/yt-ZYBKlJY46wA.jpg" alt="" width="960" height="540" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Teo Macauda</b></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="lv-bl linea-top" id="casi-studio" data-cap="02|Casi studio">
+    <div class="wrap">
+      <div class="lv-tt rv"><h2 class="titolo">Casi <em>studio</em></h2><p>Due clienti, i risultati e i reel che li hanno portati.</p></div>
+      <div class="lv-casi">
+        <article class="lv-caso rv">
+          <div class="lv-cs-t"><span class="eyebrow">Caso studio</span><h3 class="titolo">My Field</h3>
+            <div class="lv-nums"><div class="lv-big"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg></span><b class="num" data-count="328000" data-pre="" data-suf="+">328.000+</b><span class="lb">visualizzazioni dei reel</span><i class="barra" aria-hidden="true"></i></div><div class="lv-smalls"><div class="lv-sm"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><div><b class="num" data-count="500" data-pre="+" data-suf="%">+500%</b><span class="lb">di crescita</span></div></div><div class="lv-sm"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><div><b class="num" data-count="4" data-pre="" data-suf=" mesi">4 mesi</b><span class="lb">di lavoro</span></div></div></div></div>
+            <p class="lv-tx">In soli 4 mesi ho elevato lo standard dei contenuti. Oltre 328.000 persone hanno visualizzato i reel, portando follower e clienti.</p>
+          </div>
+          <div class="lv-reels">
+            <a class="vcard v" href="https://www.instagram.com/reel/DQWuo57jOl-/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DQWuo57jOl-/embed/" data-k="v" data-t="My Field" aria-label="Guarda: My Field"><span class="vim"><img src="../img/lavori/ig-DQWuo57jOl-.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>61,5k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>My Field</b></span></a>
+            <a class="vcard v" href="https://www.instagram.com/reel/DPq0Bo5DEBc/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DPq0Bo5DEBc/embed/" data-k="v" data-t="My Field" aria-label="Guarda: My Field"><span class="vim"><img src="../img/lavori/ig-DPq0Bo5DEBc.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>64k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>My Field</b></span></a>
+            <a class="vcard v" href="https://www.instagram.com/reel/DO0w_-nDDWM/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DO0w_-nDDWM/embed/" data-k="v" data-t="My Field" aria-label="Guarda: My Field"><span class="vim"><img src="../img/lavori/ig-DO0w_-nDDWM.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>31k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>My Field</b></span></a>
+            <a class="vcard v" href="https://www.instagram.com/reel/DSIPZUnDJ9y/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DSIPZUnDJ9y/embed/" data-k="v" data-t="My Field" aria-label="Guarda: My Field"><span class="vim"><img src="../img/lavori/ig-DSIPZUnDJ9y.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>41,3k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>My Field</b></span></a>
+          </div>
+        </article>
+        <article class="lv-caso rv inv">
+          <div class="lv-cs-t"><span class="eyebrow">Caso studio</span><h3 class="titolo">Ally</h3>
+            <div class="lv-nums"><div class="lv-big"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg></span><b class="num" data-count="160000" data-pre="" data-suf="+">160.000+</b><span class="lb">visualizzazioni</span><i class="barra" aria-hidden="true"></i></div><div class="lv-smalls"><div class="lv-sm"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><div><b class="num" data-count="700" data-pre="+" data-suf="%">+700%</b><span class="lb">di crescita in 2 mesi</span></div></div><div class="lv-sm"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.3"/><path d="M2.8 20c.4-3.4 3-5.5 6.2-5.5s5.8 2.1 6.2 5.5"/><path d="M16 5.6a3.2 3.2 0 0 1 0 6.1M18.2 14.8c1.9.7 3.2 2.4 3.4 5.2"/></svg></span><div><b class="num" data-count="1500" data-pre="+" data-suf="">+1.500</b><span class="lb">follower</span></div></div></div></div>
             
-            <nav class="hidden md:flex gap-1 items-center bg-white/5 p-1.5 rounded-full border border-white/5">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/lavori" class="nav-link active">Lavori</a>
-                <a href="/#servizi" class="nav-link">Servizi</a>
-                <a href="/toolbox" class="nav-link">Toolbox</a>
-            </nav>
-
-            <button onclick="toggleMobileMenu()" class="md:hidden text-white p-2 relative z-[150]">
-                <i data-lucide="menu" id="icon-menu" class="w-7 h-7"></i>
-                <i data-lucide="x" id="icon-x" class="w-7 h-7 hidden"></i>
-            </button>
-        </div>
-
-        <div id="mobileMenu" class="fixed inset-0 z-[140] opacity-0 pointer-events-none transition-all duration-300">
-            <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="toggleMobileMenu()"></div>
-            <div id="mobileMenuContent" class="absolute top-24 left-6 right-6 bg-[#0F0F0F] border border-white/10 p-8 rounded-3xl transform -translate-y-10 transition-transform duration-500 shadow-2xl">
-                <nav class="flex flex-col gap-8">
-                    <a href="/" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="home"></i> Home</a>
-                    <a href="/lavori" class="flex items-center gap-4 text-2xl font-bold text-accent"><i data-lucide="folder-kanban"></i> Lavori</a>
-                    <a href="/#servizi" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="layers"></i> Servizi</a>
-                    <a href="/toolbox" class="flex items-center gap-4 text-2xl font-bold text-white"><i data-lucide="package"></i> Toolbox</a>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <main class="pt-32 pb-24 px-6 max-w-7xl mx-auto relative z-10 overflow-x-hidden w-full">
-        <div class="text-center mb-12 reveal">
-            <h2 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight"><span class="text-accent">Social</span> Marketing.</h2>
-            <p class="text-graytext text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">Trasformo la comunicazione organica in risultati concreti per la tua attività.</p>
-        </div>
-
-        <div class="flex flex-wrap justify-center gap-3 mb-12 reveal">
-            <a href="/lavori" class="px-5 py-2 rounded-full bg-accent text-white text-xs md:text-sm font-medium shadow-lg shadow-accent/20">Social Marketing</a>
-            <a href="/cinematic" class="px-5 py-2 rounded-full border border-white/10 text-xs md:text-sm font-medium text-graytext hover:text-white hover:border-accent/50 transition-all">Cinematic</a>
-            <a href="/personali" class="px-5 py-2 rounded-full border border-white/10 text-xs md:text-sm font-medium text-graytext hover:text-white hover:border-accent/50 transition-all">Progetti Personali</a>
-        </div>
-
-        <div class="mb-16 reveal">
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-8 text-center">
-                <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl border-accent/10 col-span-2 md:col-span-1">
-                    <div class="text-accent text-2xl md:text-4xl font-black mb-1">328.000+</div>
-                    <div class="text-graytext text-[8px] md:text-[10px] uppercase tracking-widest font-bold">Views totali attività locale</div>
-                </div>
-                <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl">
-                    <div class="text-white text-2xl md:text-4xl font-black mb-1">In 4 mesi</div>
-                    <div class="text-graytext text-[8px] md:text-[10px] uppercase tracking-widest font-bold">Tempo esecuzione</div>
-                </div>
-                <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl">
-                    <div class="text-accent text-2xl md:text-4xl font-black mb-1">+600</div>
-                    <div class="text-graytext text-[8px] md:text-[10px] uppercase tracking-widest font-bold">Nuovi follower</div>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-[2rem] p-1 overflow-hidden max-w-full">
-                <div class="bg-white/5 rounded-[1.8rem] p-6 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-10">
-                    <div class="flex-1 text-center md:text-left">
-                        <h3 class="text-xl md:text-4xl font-bold mb-4">Non è fortuna, è un <span class="text-accent">metodo.</span> Il mio!</h3>
-                        <p class="text-graytext text-sm md:text-base mb-6 leading-relaxed">
-                            In soli 4 mesi ho elevato lo standard dei contenuti. Oltre 328.000 persone hanno visualizzato i reel, portando follower e clienti.
-                        </p>
-                        <div class="flex flex-wrap gap-2 justify-center md:justify-start">
-                            <span class="px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/20 text-[10px] font-bold uppercase text-accent">Crescita del +500%</span>
-                            <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold uppercase text-white">Business Locale</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto">
-                        <div class="flex flex-1 items-center gap-4 bg-black/40 p-4 pr-6 rounded-xl border border-white/5 min-w-0">
-                            <div class="text-[8px] font-bold text-graytext uppercase rotate-[-90deg] border-b border-white/20 pb-0.5 whitespace-nowrap">Prima</div>
-                            <div class="flex flex-col">
-                                <div class="flex items-center gap-2">
-                                    <div class="text-xl md:text-2xl font-black text-white/30 italic">~3.000</div>
-                                    <i data-lucide="minus" class="w-4 h-4 text-white/20"></i>
-                                </div>
-                                <div class="text-[8px] text-graytext font-bold uppercase tracking-widest">Media mensile</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-1 items-center gap-4 bg-accent/10 p-4 pr-8 rounded-xl border border-accent/30 shadow-lg min-w-0">
-                            <div class="text-[8px] font-bold text-accent uppercase rotate-[-90deg] border-b border-accent/50 pb-0.5 whitespace-nowrap">Dopo</div>
-                            <div class="flex flex-col">
-                                <div class="flex items-center gap-2">
-                                    <div class="text-2xl md:text-3xl font-black text-white whitespace-nowrap">82.500+</div>
-                                    <i data-lucide="trending-up" class="w-5 h-5 text-accent"></i>
-                                </div>
-                                <div class="text-[8px] text-accent font-bold uppercase tracking-widest">Media mensile</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex flex-col items-center justify-center mb-12 reveal">
-            <p class="text-accent text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Esplora i video</p>
-            <div class="animate-arrow"><i data-lucide="chevron-down" class="text-accent"></i></div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 reveal">
-            <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DQWuo57jOl-/embed', 'MyField Ferrara - Performance', true)">
-                <div class="view-badge border border-accent/30">61.0k Views</div>
-                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield1.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
-                <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
-                    <span class="text-accent text-[8px] font-black uppercase tracking-widest mb-1">Attività locale</span>
-                    <h4 class="text-xs md:text-sm font-bold text-white">MyField - Reel</h4>
-                </div>
-            </div>
-
-            <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DPq0Bo5DEBc/embed', 'MyField Ferrara - Performance', true)">
-                <div class="view-badge border border-white/10">63.0k Views</div>
-                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield2.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
-                <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
-                    <span class="text-accent text-[8px] font-bold uppercase tracking-widest mb-1">Attività locale</span>
-                    <h4 class="text-xs md:text-sm font-bold text-white">MyField - Reel</h4>
-                </div>
-            </div>
-
-            <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DO0w_-nDDWM/embed', 'MyField Ferrara - Performance', true)">
-                <div class="view-badge border border-white/10">32.2k Views</div>
-                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield3.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
-                <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
-                    <span class="text-accent text-[8px] font-bold uppercase tracking-widest mb-1">Attività locale</span>
-                    <h4 class="text-xs md:text-sm font-bold text-white">MyField - Reel</h4>
-                </div>
-            </div>
-
-            <div class="group relative aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden glass-card cursor-pointer" onclick="openVideoModal('https://www.instagram.com/reel/DSIPZUnDJ9y/embed', 'MyField Ferrara - Performance', true)">
-                <div class="view-badge border border-white/10">41.4k Views</div>
-                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/video/myfield4.webp" alt="Work" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 flex items-center justify-center z-10"><i data-lucide="play-circle" class="w-12 h-12 text-white group-hover:text-accent group-hover:scale-110 transition-all"></i></div>
-                <div class="work-overlay absolute inset-0 p-4 flex flex-col justify-end z-20">
-                    <span class="text-accent text-[8px] font-bold uppercase tracking-widest mb-1">Attività locale</span>
-                    <h4 class="text-xs md:text-sm font-bold text-white">My Field - Reel</h4>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="py-12 text-center border-t border-white/5 relative z-10">
-        <p class="text-graytext text-sm mb-4">
-            &copy; 2026 Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-            <a href="/privacy" class="underline hover:text-white transition-colors">Privacy Policy</a>
-        </p>
-        <div class="px-6">
-            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
-            </p>
-        </div>
-    </footer>
-
-    <div id="videoModal" class="fixed inset-0 z-[200] flex items-center justify-center px-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="absolute inset-0 bg-black/95 backdrop-blur-xl" onclick="closeVideoModal()"></div>
-        <div class="relative glass-modal rounded-3xl overflow-hidden transform scale-95 transition-all duration-500 flex flex-col w-full" id="videoModalContent">
-            <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-[210] text-white/50 hover:text-white bg-black/50 p-2 rounded-full backdrop-blur-md"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <div class="flex-1 bg-black flex items-center justify-center text-center p-8" id="videoContainer"></div>
-            <div class="p-5 bg-black/60 backdrop-blur-md border-t border-white/5"><h5 id="videoTitle" class="text-base font-bold text-white uppercase tracking-wide"></h5></div>
-        </div>
+          </div>
+          <div class="lv-reels">
+            <a class="vcard v" href="https://www.instagram.com/reel/DbX-3Q6I_sB/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DbX-3Q6I_sB/embed/" data-k="v" data-t="Ally" aria-label="Guarda: Ally"><span class="vim"><img src="../img/lavori/ig-DbX-3Q6I_sB.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>92,5k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Ally</b></span></a>
+            <a class="vcard v" href="https://www.instagram.com/reel/DaVDxPcoU6k/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DaVDxPcoU6k/embed/" data-k="v" data-t="Ally" aria-label="Guarda: Ally"><span class="vim"><img src="../img/lavori/ig-DaVDxPcoU6k.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>8,5k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Ally</b></span></a>
+            <a class="vcard v" href="https://www.instagram.com/reel/Daz8wV5o_zb/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/Daz8wV5o_zb/embed/" data-k="v" data-t="Ally" aria-label="Guarda: Ally"><span class="vim"><img src="../img/lavori/ig-Daz8wV5o_zb.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vviews" title="Visualizzazioni del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg><b>6,7k</b></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Ally</b></span></a>
+          </div>
+        </article>
+      </div>
     </div>
+  </section>
 
-    <button id="chat-pill" onclick="toggleContactModal()" class="chat-button">
-        <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 shrink-0">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .018 5.393 0 12.03c0 2.123.554 4.197 1.604 6.023L0 24l6.163-1.617a11.782 11.782 0 005.883 1.565h.005c6.635 0 12.031-5.394 12.035-12.031a11.77 11.77 0 00-3.483-8.511z"/>
-        </svg>
-        <span id="chat-text">Parliamo del tuo progetto?</span>
-    </button>
-
-    <div id="contactModal" class="fixed inset-0 z-[160] flex items-center justify-center px-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="toggleContactModal()"></div>
-        <div class="glass-modal w-full max-w-md p-8 rounded-3xl relative transform translate-y-10 transition-transform duration-500 shadow-2xl" id="contactModalContent">
-            <button onclick="toggleContactModal()" class="absolute top-6 right-6 text-graytext hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-3xl font-bold mb-2 text-white">E adesso? <br/><span class="text-accent">Contattami!</span></h3>
-            <div class="space-y-3 mt-8">
-                <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .018 5.393 0 12.03c0 2.123.554 4.197 1.604 6.023L0 24l6.163-1.617a11.782 11.782 0 005.883 1.565h.005c6.635 0 12.031-5.394 12.035-12.031a11.77 11.77 0 00-3.483-8.511z"/></svg>
-                    </div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">WhatsApp</div><div class="font-medium text-white">Scrivimi ora</div></div>
-                </a>
-                <a href="tel:+393784142773" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="phone" class="w-5 h-5"></i></div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">Chiamata</div><div class="font-medium text-white">+39 378 414 2773</div></div>
-                </a>
-                <a href="mailto:info@teomacauda.it" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="mail" class="w-5 h-5"></i></div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">Email</div><div class="text-xs font-medium text-white">info@teomacauda.it</div></div>
-                </a>
-                <a href="https://www.instagram.com/teo.macauda/" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-accent/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                    </div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-widest">Instagram</div><div class="font-medium text-white">@teo.macauda</div></div>
-                </a>
-            </div>
-        </div>
+  <section class="lv-bl linea-top" id="cinematic" data-cap="03|Cinematic">
+    <div class="wrap">
+      <div class="lv-tt rv"><h2 class="titolo"><em>Cinematic</em></h2><p>Narrazione visiva: l'Etna, la Yamaha R7 e GL Coaching.</p></div>
+      <div class="lv-cin">
+        <a class="vcard w vbig" href="https://www.youtube.com/watch?v=DWQPP8C6h9E" target="_blank" rel="noopener" data-embed="https://www.youtube-nocookie.com/embed/DWQPP8C6h9E?autoplay=1&rel=0&playsinline=1" data-k="w" data-t="Etna" aria-label="Guarda: Etna"><span class="vim"><img src="../img/lavori/yt-DWQPP8C6h9E.jpg" alt="" width="960" height="540" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Etna</b></span></a>
+        <a class="vcard v " href="https://www.instagram.com/reel/DTao5EADGay/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DTao5EADGay/embed/" data-k="v" data-t="Yamaha R7" aria-label="Guarda: Yamaha R7"><span class="vim"><img src="../img/lavori/ig-DTao5EADGay.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Yamaha R7</b></span></a>
+        <a class="vcard v " href="https://www.instagram.com/reel/DNNndH_sLEB/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DNNndH_sLEB/embed/" data-k="v" data-t="Yamaha R7" aria-label="Guarda: Yamaha R7"><span class="vim"><img src="../img/lavori/ig-DNNndH_sLEB.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>Yamaha R7</b></span></a>
+        <a class="vcard v " href="https://www.instagram.com/reel/DIlgSB2oHe2/" target="_blank" rel="noopener" data-embed="https://www.instagram.com/reel/DIlgSB2oHe2/embed/" data-k="v" data-t="GL Coaching" aria-label="Guarda: GL Coaching"><span class="vim"><img src="../img/lavori/ig-DIlgSB2oHe2.jpg" alt="" width="640" height="1136" loading="lazy" draggable="false"></span><span class="vpl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5v14l11-7z"/></svg></span><span class="vml"><b>GL Coaching</b></span></a>
+      </div>
     </div>
+  </section>
 
-    <script src="main.js"></script>
+  <section class="sezione" id="contatti" data-cap="04|Contatto">
+    <div class="wrap">
+      <div class="cta rv-cta" id="cta">
+        <div class="cta-griglia">
+          <div class="cta-testa">
+            <span class="eyebrow">Contattami</span>
+            <h2 class="titolo">Hai un progetto <em>in mente?</em></h2>
+            <a class="btn btn-primario" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener">Parliamo del tuo progetto? <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+          </div>
+          <div class="contatti" id="contatti-lista">
+            <a class="contatto" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener" aria-label="WhatsApp: scrivimi ora"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8a9.2 9.2 0 0 0-7.9 13.9L2.8 21.2l4.6-1.2A9.2 9.2 0 1 0 12 2.8z"/><path class="pieno" d="M9.1 7.4c.35-.45.95-.4 1.2.1l.85 1.75c.15.3.1.65-.1.9l-.55.65c.7 1.35 1.75 2.4 3.15 3.05l.65-.6c.25-.2.6-.25.9-.1l1.75.9c.5.25.55.85.15 1.2-.8.75-1.9 1-2.9.65-3.2-1.1-5.5-3.5-6.4-6.4-.25-.9 0-1.5.3-2.1z"/></svg></span><span class="val">Scrivimi ora</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+            <a class="contatto" href="tel:+393784142773" aria-label="Chiama il +39 378 414 2773"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 3.6h3.3l1.8 4.5-2.2 1.4a11.6 11.6 0 0 0 5.4 5.4l1.4-2.2 4.5 1.8v3.3a2 2 0 0 1-2.1 2A16.4 16.4 0 0 1 3.2 5.7a2 2 0 0 1 2-2.1z"/></svg></span><span class="val">+39 378 414 2773</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+            <a class="contatto" href="mailto:info@teomacauda.it" aria-label="Scrivi un'email a info@teomacauda.it"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3.2"/><path d="M2.5 8 12 13.6 21.5 8"/></svg></span><span class="val">info@teomacauda.it</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+            <a class="contatto" href="https://instagram.com/teo.macauda" rel="noopener" aria-label="Instagram: @teo.macauda"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle class="pieno" cx="17.5" cy="6.6" r="1"/></svg></span><span class="val">@teo.macauda</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="riga"><span>© Matteo Maria Macauda · P.IVA 02153520891 · Via Teofane, 2 – 96100 Siracusa (SR)</span><nav class="legale-link" aria-label="Note legali"><a href="../privacy/">Privacy Policy</a><a href="../diritti-riservati/">Diritti riservati</a></nav></div>
+  </div>
+</footer>
+
+<div class="lbx" id="lbx" role="dialog" aria-modal="true" aria-label="Video"></div>
+<script src="../js/main.js"></script>
+<script src="../js/lavori.js"></script>
 </body>
 </html>

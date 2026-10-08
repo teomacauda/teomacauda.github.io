@@ -1,286 +1,210 @@
-<!DOCTYPE html>
-<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Script | Teo Macauda</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Teo Script">
-    <link rel="apple-touch-icon" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/AppleIcon2.png">
-    
-    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
-        
-        #page-wrapper { 
-            overflow-x: hidden; 
-            width: 100%; 
-            position: relative; 
-            min-height: 100vh;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        
-        .glass-nav { 
-            background: transparent; 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            transition: all 0.4s ease;
-            margin-top: env(safe-area-inset-top);
-        }
-        
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; 
-            backface-visibility: hidden; 
-            transform-style: preserve-3d;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .glass-card:hover { 
-            transform: translateY(-8px); 
-            border-color: rgba(255, 122, 0, 0.3); 
-            box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.1); 
-        }
-        .glass-card:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-        
-        .plus-card {
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.01);
-        }
-        .plus-card:hover {
-            border-color: rgba(255, 122, 0, 0.5);
-            background: rgba(255, 122, 0, 0.02);
-        }
-        
-        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
-        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.25) 0%, rgba(255, 122, 0, 0.05) 40%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
-        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.03) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; z-index: 1; pointer-events: none; }
-
-        @media (min-width: 768px) {
-            .nav-link { padding: 0.6rem 1.4rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 500; color: #AAAAAA; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); border: 1px solid transparent; }
-            .nav-link:hover { color: white; background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
-            .nav-link.active { background: rgba(255, 122, 0, 0.1); color: #FF7A00; border-color: rgba(255, 122, 0, 0.4); font-weight: 600; }
-        }
-
-        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Script · Teo Macauda</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Script">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>try { if (localStorage.getItem('ped_admin') === '1') document.documentElement.classList.add('adm-pre'); } catch (e) {}</script>
+<link rel="stylesheet" href="../raw/raw.css">
+<link rel="stylesheet" href="../raw/tool.css">
+<link rel="stylesheet" href="script.css">
 </head>
-<body class="antialiased selection:bg-accent selection:text-white">
+<body>
+<div class="sfondo" aria-hidden="true"><i></i><i></i><i></i></div>
 
-<div id="page-wrapper" class="flex flex-col">
-    <div class="ambient-glow"></div>
-    <div class="hero-grid"></div>
+<!-- barra: per il cliente solo logo; per te, con l'accesso, anche Raw OS e il selettore degli strumenti -->
+<header class="os-bar" id="bar">
+  <a class="os-marchio" id="marchio" href="../raw/" aria-label="RAW OS"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg><span>Script</span></a>
+  <span class="os-admin" id="admin-indicator" hidden>Admin</span>
+  <a class="pill" id="btnRaw" href="../raw/" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5h12V10"/></svg>Raw OS</a>
+  <button class="pill os-strumenti" type="button" id="btnStrumenti" data-raw-strumenti hidden aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Strumenti <kbd>⌘K</kbd></button>
+</header>
 
-    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center">
-        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
-                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
-                </svg>
-            </a>
-            
-            <div class="flex items-center gap-3">
-                <a id="back-to-ped" href="#" style="display: none;" class="inline-flex items-center justify-center gap-1.5 text-white bg-accent hover:bg-accentHover transition-all text-xs font-bold h-10 px-4 rounded-xl active:scale-95 duration-200 shadow-md">
-                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>PED</span>
-                </a>
-                <div id="admin-indicator" class="hidden text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>Admin
-                </div>
-            </div>
+<main class="tool" id="contenuto">
+
+  <div class="caricamento" id="main-loader"><span class="spin"></span></div>
+
+  <!-- non loggato e senza link di uno script -->
+  <section id="section-lock" hidden>
+    <div class="blocco-lock">
+      <span class="lucchetto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+      <h1>Area <em>riservata</em></h1>
+      <p>Se sei un cliente, apri il link dello script che ti ho mandato.</p>
+      <button class="btn v" type="button" id="btn-open-login">Accesso admin</button>
+    </div>
+  </section>
+
+  <!-- home: i clienti -->
+  <section id="section-home" hidden>
+    <div class="intest">
+      <div>
+        <span class="eyebrow">Script</span>
+        <h1>Script per i <em>clienti</em></h1>
+        <p class="sotto">Scegli un cliente per vedere e scrivere i suoi script.</p>
+      </div>
+      <button class="btn" type="button" id="btn-new-client-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nuovo cliente</button>
+    </div>
+    <div class="banner-assegna vetro" id="banner-assegna" hidden>
+      <div><b id="banner-titolo"></b><p id="banner-testo"></p></div>
+      <button class="btn v s" type="button" id="btn-assegna">Assegna in automatico</button>
+    </div>
+    <div class="cat-griglia" id="cat-clienti"></div>
+  </section>
+
+  <!-- schermata del cliente: i suoi script -->
+  <section id="section-cliente" hidden>
+    <nav class="crumb" id="crumb-home"><a class="btn-back" href="./"><span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>Torna ai clienti</a></nav>
+    <div class="intest">
+      <div>
+        <span class="eyebrow">Script del cliente</span>
+        <div class="titolo-riga">
+          <span class="avatar xl" id="cl-avatar" aria-hidden="true"></span>
+          <h1 id="cl-nome">Cliente</h1>
         </div>
-    </header>
+        <p class="sotto" id="cl-sotto"></p>
+      </div>
+      <div class="az-intest"><button class="btn" type="button" id="btn-new-script"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nuovo script</button></div>
+    </div>
+    <div class="cerca-riga" id="cerca-riga">
+      <label class="cerca"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="cerca-script" placeholder="Cerca per titolo…" autocomplete="off" spellcheck="false" aria-label="Cerca uno script"></label>
+    </div>
+    <div class="filtri" id="filtri-formato"></div>
+    <div class="sc-griglia" id="cat-script"></div>
+    <div class="piano-vuoto vetro" id="script-vuoto" hidden>
+      <h3>Nessuno script <em>qui</em></h3>
+      <p id="script-vuoto-testo">Scrivi il primo script per questo cliente.</p>
+    </div>
+  </section>
 
+  <!-- dettaglio di uno script (lo vede anche il cliente) -->
+  <section id="section-detail" hidden>
+    <nav class="crumb" id="crumb-detail" hidden>
+      <a class="btn-back" id="back-cliente" href="./"><span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span><span id="back-testo">Torna agli script</span></a>
+      <a class="btn-back sec" id="back-to-ped" href="#" hidden><span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>Torna al piano</a>
+    </nav>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10">
-        
-        <div id="main-loader" class="flex justify-center items-center py-32">
-            <div class="loader !w-9 !h-9"></div>
-        </div>
-
-        <div id="section-lock" class="hidden flex flex-col items-center justify-center py-24 text-center max-w-md mx-auto">
-            <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-accent mb-6 shadow-xl">
-                <i data-lucide="lock" class="w-8 h-8"></i>
-            </div>
-            <h2 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata</h2>
-            <p class="text-graytext text-sm font-light mb-8 leading-relaxed">Questa repository contiene la struttura strategica ed i copy dei video. Effettua l'accesso per sbloccare la dashboard.</p>
-            <button onclick="openAuthModal()" class="h-12 px-8 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all duration-300 shadow-lg flex items-center gap-2">
-                <i data-lucide="key-round" class="w-4 h-4"></i> Accedi come Admin
-            </button>
-        </div>
-
-        <div id="section-catalog" class="hidden">
-            <div class="mb-10 text-left">
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Repository <span class="text-accent">Script</span></h1>
-                <p class="text-graytext text-sm md:text-base font-light mt-1">La struttura e il copy dietro ogni mio contenuto video.</p>
-            </div>
-            
-            <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-        </div>
-
-        <div id="section-detail" class="hidden">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-               <a id="btn-close-script" href="/script" class="inline-flex items-center gap-2 text-graytext hover:text-white transition-colors text-xs h-10 px-4 bg-white/5 border border-white/5 hover:border-white/10 rounded-full active:scale-95 duration-200">
-                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Chiudi Script
-                </a>
-                
-                <div id="admin-script-tools" class="hidden flex items-center gap-2.5">
-                    <button id="btn-copy-link" class="inline-flex items-center gap-2 text-xs h-10 px-4 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white text-emerald-400 rounded-full transition-all font-medium active:scale-95 duration-200">
-                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copia Link</span>
-                    </button>
-                    <button id="btn-edit-script" class="inline-flex items-center gap-2 text-xs h-10 px-4 bg-white/5 border border-white/10 hover:border-accent hover:text-white rounded-full transition-all font-medium active:scale-95 duration-200">
-                        <i data-lucide="pencil" class="w-3.5 h-3.5 text-accent"></i> Modifica Script
-                    </button>
-                    <button id="btn-delete-script" class="inline-flex items-center gap-2 text-xs h-10 px-4 bg-red-500/10 border border-red-500/20 hover:bg-red-500 hover:text-white text-red-400 rounded-full transition-all font-medium active:scale-95 duration-200">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Elimina Script
-                    </button>
-                </div>
-            </div>
-            
-            <div class="mb-8">
-                <span id="detail-category" class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-accent mb-3">Categoria</span>
-                <h1 id="detail-title" class="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight text-white">Titolo Video</h1>
-            </div>
-
-            <div class="grid grid-cols-1 gap-5 lg:gap-6">
-                <div class="glass-card p-5 md:p-8 rounded-2xl border-l-2 border-l-accent">
-                    <div class="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-accent/80">
-                        <i data-lucide="magnet" class="w-4 h-4"></i> Hook / Gancio
-                    </div>
-                    <p id="detail-hook" class="text-[17px] md:text-lg text-white font-normal leading-relaxed whitespace-pre-wrap select-text"></p>
-                </div>
-
-                <div class="glass-card p-5 md:p-8 rounded-2xl border-l-2 border-l-blue-500">
-                    <div class="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-400">
-                        <i data-lucide="align-left" class="w-4 h-4"></i> Contenuto Centrale
-                    </div>
-                    <p id="detail-corpo" class="text-[17px] md:text-lg text-white font-normal leading-relaxed whitespace-pre-wrap select-text"></p>
-                </div>
-
-                <div class="glass-card p-5 md:p-8 rounded-2xl border-l-2 border-l-emerald-500">
-                    <div class="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                        <i data-lucide="megaphone" class="w-4 h-4"></i> Call To Action
-                    </div>
-                    <p id="detail-cta" class="text-[17px] md:text-lg text-white font-normal leading-relaxed whitespace-pre-wrap select-text"></p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div id="auth-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
-        
-        <div class="glass-modal w-full sm:max-w-xl p-6 md:p-8 rounded-t-[2rem] sm:rounded-3xl relative transform translate-y-full sm:translate-y-10 transition-transform duration-400 max-h-[88vh] overflow-y-auto no-scrollbar pb-10 sm:pb-8">
-            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 sm:hidden"></div>
-            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-graytext hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-            
-            <div id="modal-step-auth">
-                <h3 class="text-xl font-bold mb-1 text-white">Autenticazione</h3>
-                <p class="text-xs text-graytext mb-5">Verifica dei dati per attuare modifiche e sbloccare l'editor.</p>
-                <form id="form-login" class="space-y-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email</label>
-                        <input type="email" id="login-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
-                        <input type="password" id="login-pass" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
-                    </div>
-                    <div id="auth-error" class="text-xs text-red-500 hidden font-medium"></div>
-                    <button type="submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2">
-                        <span>Accedi</span><div id="login-loader" class="loader hidden"></div>
-                    </button>
-                </form>
-            </div>
-
-            <div id="modal-step-create" class="hidden">
-                <h3 id="modal-create-title" class="text-xl font-bold mb-0.5 text-white">Nuovo <span class="text-accent">Video Script</span></h3>
-                <p class="text-xs text-graytext mb-4">I moduli supportano pienamente le emoji native.</p>
-                <form id="form-create-script" class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Titolo</label>
-                            <input type="text" id="script-title" required placeholder="Es. Come velocizzare i tagli" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Format</label>
-                            <select id="script-category" class="w-full h-12 bg-[#141414] border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent">
-                                <option value="Tutorial">Tutorial</option>
-                                <option value="Content Marketing">Content Marketing</option>
-                                <option value="Behind the Scenes">Behind the Scenes</option>
-                                <option value="Short Form">Short Form / Reel</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-accent uppercase tracking-wider mb-1 flex items-center gap-1"><i data-lucide="magnet" class="w-3 h-3"></i> Hook</label>
-                        <textarea id="form-hook" rows="3" required placeholder="Gancio iniziale... 🎯" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-base text-white focus:outline-none focus:border-accent resize-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-1"><i data-lucide="align-left" class="w-3 h-3"></i> Corpo del video</label>
-                        <textarea id="form-corpo" rows="5" required placeholder="Spiega l'argomento centrale..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-base text-white focus:outline-none focus:border-accent resize-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1 flex items-center gap-1"><i data-lucide="megaphone" class="w-3 h-3"></i> CTA</label>
-                        <textarea id="form-cta" rows="2" required placeholder="Call to action finale... 👇" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-base text-white focus:outline-none focus:border-accent resize-none"></textarea>
-                    </div>
-                    <button type="submit" id="btn-submit-script" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2 shadow-lg">
-                        <i data-lucide="send" class="w-4 h-4"></i> Pubblica nel Sito
-                    </button>
-                </form>
-            </div>
-        </div>
+    <div class="intest">
+      <div style="min-width:0;flex:1">
+        <span class="pillola-f" id="detail-category">Formato</span>
+        <h1 class="titolo-script" id="detail-title">Titolo</h1>
+        <p class="sotto" id="detail-cliente" hidden></p>
+      </div>
     </div>
 
-    <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
-        <p class="text-graytext text-sm mb-4">
-            © <script>document.write(new Date().getFullYear())</script> 
-            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
-        </p>
-        <div class="px-6">
-            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
-            </p>
+    <div class="az-admin" id="admin-script-tools" hidden>
+      <button class="btn v" type="button" id="btn-copy-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span>Copia link</span></button>
+      <button class="btn v" type="button" id="btn-copy-text"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5v-1a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h1"/></svg><span>Copia il testo</span></button>
+      <button class="btn v" type="button" id="btn-duplicate-script"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="11" height="11" rx="3"/><rect x="9.5" y="9.5" width="11" height="11" rx="3"/></svg>Duplica</button>
+      <button class="btn v" type="button" id="btn-link-pub"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg>Collega a una pubblicazione</button>
+      <button class="btn" type="button" id="btn-edit-script"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>Modifica</button>
+      <span class="sp"></span>
+      <button class="btn p s" type="button" id="btn-delete-script"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>Elimina</button>
+    </div>
+
+    <div class="blocchi">
+      <article class="blocco-t vetro"><header><span class="ic-b"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="4.6" r="1.7"/><path d="M15 6.3V15a4.6 4.6 0 0 1-9.2 0v-3.4"/><path d="M5.8 11.6l2.3 2.3"/></svg></span>Hook</header><p id="detail-hook"></p></article>
+      <article class="blocco-t vetro"><header><span class="ic-b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>Contenuto centrale</header><p id="detail-corpo"></p></article>
+      <article class="blocco-t vetro"><header><span class="ic-b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4a1 1 0 0 0 1 1h3l6 4V5L8 9H5a1 1 0 0 0-1 1z"/><path d="M17.5 9a4.5 4.5 0 0 1 0 6"/></svg></span>Call to action</header><p id="detail-cta"></p></article>
+    </div>
+
+    <div class="uso vetro" id="detail-uso" hidden>
+      <h4>Dove esce</h4>
+      <div id="detail-uso-lista"></div>
+    </div>
+  </section>
+</main>
+
+<!-- finestre: accesso, nuovo cliente, script -->
+<div class="mod" id="auth-modal" aria-hidden="true">
+  <div class="mod-panel" role="dialog" aria-modal="true" id="modal-panel">
+
+    <div id="modal-step-auth" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+        <div><h3>Accesso <em>admin</em></h3><p>Solo per te: il cliente non ha bisogno di entrare.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-login">
+        <div><label class="etich" for="login-email">Email</label><input class="campo" type="email" id="login-email" required autocomplete="username"></div>
+        <div><label class="etich" for="login-pass">Password</label><input class="campo" type="password" id="login-pass" required autocomplete="current-password"></div>
+        <div class="errore" id="auth-error" hidden></div>
+        <button class="btn blocco" type="submit"><span>Accedi</span></button>
+      </form>
+    </div>
+
+    <div id="modal-step-create-client" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.6"/><path d="M2.8 20c.4-3.5 3-5.6 6.2-5.6s5.8 2.1 6.2 5.6M19 8v6M16 11h6"/></svg></span>
+        <div><h3>Nuovo <em>cliente</em></h3><p>È lo stesso cliente dei Piani editoriali.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-create-client">
+        <div><label class="etich" for="client-name-input">Nome del cliente</label><input class="campo" type="text" id="client-name-input" required placeholder="Es. Rossi Luxury Brand"></div>
+        <div><label class="etich" for="client-ig-input">Profilo Instagram (facoltativo)</label><input class="campo" type="text" id="client-ig-input" placeholder="https://instagram.com/nomeprofilo" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+        <p class="nota-foto">Dal link prendo da solo la foto profilo, che diventa l'immagine del cliente.</p>
+        <button class="btn blocco" type="submit">Crea cliente</button>
+      </form>
+    </div>
+
+    <div id="modal-step-link" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></span>
+        <div><h3>Collega a una <em>pubblicazione</em></h3><p id="link-sotto">Scegli dove esce questo script.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div id="link-lista" class="lk-lista"></div>
+    </div>
+
+    <div id="modal-step-script" hidden>
+      <div class="mod-testa">
+        <span class="ic" id="script-icon"></span>
+        <div><h3 id="modal-create-title">Nuovo <em>script</em></h3><p>Hook, contenuto centrale e call to action.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-create-script">
+        <div><label class="etich" for="script-title">Titolo</label><input class="campo" type="text" id="script-title" required placeholder="Es. Come velocizzare i tagli"></div>
+        <div class="duo">
+          <div><label class="etich" for="script-category">Formato</label><select class="campo" id="script-category">
+            <option value="Tutorial">Tutorial</option><option value="Content Marketing">Content Marketing</option><option value="Behind the Scenes">Behind the Scenes</option><option value="Short Form">Short Form / Reel</option>
+          </select></div>
+          <div><label class="etich" for="script-cliente">Cliente</label><select class="campo" id="script-cliente"></select></div>
         </div>
-    </footer>
+        <div><label class="etich" for="form-hook">Hook</label><textarea class="campo area" id="form-hook" rows="3" required placeholder="Gancio iniziale… 🎯"></textarea></div>
+        <div><label class="etich" for="form-corpo">Contenuto centrale</label><textarea class="campo area" id="form-corpo" rows="6" required placeholder="Spiega l'argomento centrale…"></textarea></div>
+        <div><label class="etich" for="form-cta">Call to action</label><textarea class="campo area" id="form-cta" rows="3" required placeholder="Call to action finale… 👇"></textarea></div>
+        <button class="btn blocco" type="submit" id="btn-submit-script">Salva script</button>
+      </form>
+    </div>
+
+  </div>
 </div>
 
-<script type="module" src="./main.js"></script>
+<div class="mod conf" id="conf-modal" aria-hidden="true">
+  <div class="mod-panel" role="alertdialog" aria-modal="true" aria-labelledby="conf-titolo">
+    <div class="mod-testa">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg></span>
+      <div><h3 id="conf-titolo">Sei sicuro?</h3><p id="conf-testo"></p></div>
+    </div>
+    <div class="det-az">
+      <button class="btn v" type="button" id="conf-no">Annulla</button>
+      <button class="btn p" type="button" id="conf-ok">Elimina</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+<script src="../raw/tool.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>

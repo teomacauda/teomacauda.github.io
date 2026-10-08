@@ -1,0 +1,101 @@
+/* RAW OS · stile condiviso (centro + tool)
+   Stessa identità del sito: nero, arancio #DA5512, vetro, pillole, shine.
+   Questo file è la base comune: la barra in alto (.os-bar) sarà quella di tutti i tool. */
+
+:root {
+  --nero: #000;
+  --grafite: #1F1F1F;
+  --arancio: #DA5512;
+  --arancio-chiaro: #F2874F;
+  --testo-2: rgba(255,255,255,.62);
+  --linea: rgba(255,255,255,.12);
+  --vetro: rgba(255,255,255,.06);
+  --vetro-bordo: rgba(255,255,255,.14);
+  --font-titoli: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-corsivo: "Instrument Serif", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.23, 1, .32, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: #000; -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; background: transparent; color: #fff; font-family: var(--font-titoli); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; }
+:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.solo-lettori { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- sfondo: macchie arancioni che si muovono piano ---------- */
+.sfondo { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: #000; }
+.sfondo i { position: absolute; border-radius: 50%; filter: blur(90px); will-change: transform; }
+.sfondo i:nth-child(1) { width: 62vmax; height: 62vmax; left: -18vmax; top: -22vmax; background: radial-gradient(circle, rgba(218,85,18,.55), rgba(218,85,18,0) 68%); animation: deriva1 26s ease-in-out infinite alternate; }
+.sfondo i:nth-child(2) { width: 54vmax; height: 54vmax; right: -20vmax; bottom: -24vmax; background: radial-gradient(circle, rgba(218,85,18,.42), rgba(218,85,18,0) 68%); animation: deriva2 32s ease-in-out infinite alternate; }
+.sfondo i:nth-child(3) { width: 30vmax; height: 30vmax; right: 8vmax; top: -10vmax; background: radial-gradient(circle, rgba(242,135,79,.22), rgba(242,135,79,0) 68%); animation: deriva3 22s ease-in-out infinite alternate; }
+.sfondo::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 75%); mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 75%); }
+@keyframes deriva1 { to { transform: translate(14vmax, 10vmax) scale(1.12); } }
+@keyframes deriva2 { to { transform: translate(-12vmax, -9vmax) scale(1.08); } }
+@keyframes deriva3 { to { transform: translate(-10vmax, 12vmax) scale(.9); } }
+
+/* ---------- barra in alto (comune a tutti i tool) ---------- */
+.os-bar { min-height: 64px; position: fixed; z-index: 40; top: 14px; left: 0; right: 0; margin: 0 auto; width: min(calc(100% - 28px), 1100px); display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: rgba(20,20,20,.5); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 40px -22px rgba(0,0,0,.9); }
+.os-marchio { display: inline-flex; align-items: center; gap: 12px; margin-right: auto; }
+.os-marchio svg { width: 34px; height: auto; color: var(--arancio); display: block; }
+.os-marchio span { font-family: var(--font-mono); font-size: .72rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+.os-marchio b { color: var(--arancio-chiaro); font-weight: 500; }
+
+/* ---------- pulsanti: pillola + shine ---------- */
+.pill { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: .55em; padding: .8rem 1.3rem; border-radius: 999px; border: 1px solid var(--vetro-bordo); background: var(--vetro); font-size: .88rem; font-weight: 600; line-height: 1; transition: transform .4s var(--ease), background-color .3s, border-color .3s; }
+.pill::after { content: ""; position: absolute; inset: 0; right: auto; width: 100%; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent); transition: left .55s; pointer-events: none; }
+.pill svg { width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pill { white-space: nowrap; }
+.pill:active { transform: scale(.97); }
+.pill:focus-visible::after { left: 100%; }
+@media (hover: hover) {
+  .pill:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); transform: translateY(-1px); }
+  .pill:hover::after { left: 100%; }
+}
+
+/* ---------- intro (logo che si disegna) ---------- */
+.intro { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #000; transition: opacity .6s ease, visibility 0s linear .6s; cursor: pointer; }
+.intro.via { opacity: 0; visibility: hidden; }
+.intro svg { width: min(46vw, 300px); height: auto; overflow: visible; }
+.intro path { fill: var(--arancio); fill-opacity: 0; stroke: var(--arancio); stroke-width: 5; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: disegna 1.5s cubic-bezier(.6,.05,.3,1) forwards, riempi .6s ease 1.3s forwards; }
+.intro path:nth-child(2) { animation-delay: .15s, 1.35s; }
+@keyframes disegna { to { stroke-dashoffset: 0; } }
+@keyframes riempi { to { fill-opacity: 1; stroke-opacity: 0; } }
+
+/* ---------- bottone "Strumenti" in barra ---------- */
+.os-strumenti { padding-right: .8rem; }
+.os-strumenti kbd, .cmd kbd { font-family: var(--font-mono); font-size: .66rem; padding: 3px 7px; border-radius: 8px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.75); line-height: 1; }
+@media (max-width: 640px) { .os-strumenti kbd { display: none; } .os-marchio span { display: none; } .lungo { display: none; } .sito { display: inline-block; } .sito::first-letter { text-transform: uppercase; } .pill { padding: .8rem 1.05rem; } }
+
+/* ---------- selettore rapido (⌘K) ---------- */
+body.cmd-aperto { overflow: hidden; }
+.cmd { position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-start; justify-content: center; padding: 12vh 16px 16px; background: rgba(0,0,0,.66); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility 0s linear .25s; }
+.cmd.on { opacity: 1; visibility: visible; transition: opacity .25s ease; }
+.cmd-box { width: 100%; max-width: 620px; max-height: 76vh; display: flex; flex-direction: column; border-radius: 28px; background: rgba(22,22,22,.88); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 40px 90px -30px rgba(0,0,0,.95); overflow: hidden; transform: translateY(-14px) scale(.98); transition: transform .45s var(--ease); }
+.cmd.on .cmd-box { transform: none; }
+.cmd-cerca { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--linea); }
+.cmd-cerca svg { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--arancio-chiaro); stroke-width: 2; stroke-linecap: round; }
+.cmd-cerca input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: #fff; font: 500 1.05rem var(--font-titoli); }
+.cmd-cerca input::placeholder { color: rgba(255,255,255,.4); }
+.cmd-lista { list-style: none; margin: 0; padding: 8px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.cmd-lista li { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 18px; cursor: pointer; transition: background-color .15s; }
+.cmd-lista li.on { background: rgba(255,255,255,.09); box-shadow: inset 0 0 0 1px rgba(218,85,18,.55); }
+.cmd-lista .ci { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(218,85,18,.14); color: var(--arancio); }
+.cmd-lista .ci svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.cmd-lista .ct { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cmd-lista .ct b { font-size: .98rem; font-weight: 600; }
+.cmd-lista .ct small { font-size: .78rem; color: var(--testo-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmd-lista em { font-style: normal; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: rgba(218,85,18,.18); color: var(--arancio-chiaro); }
+.cmd-lista .cn { font-family: var(--font-mono); font-size: .7rem; color: rgba(255,255,255,.35); width: 18px; text-align: right; }
+.cmd-vuoto { padding: 22px; text-align: center; color: var(--testo-2); cursor: default; }
+.cmd-piede { display: flex; gap: 18px; flex-wrap: wrap; padding: 12px 18px; border-top: 1px solid var(--linea); font-size: .74rem; color: rgba(255,255,255,.5); }
+.cmd-piede kbd { margin-right: 3px; }
+@media (max-width: 640px) { .cmd { padding-top: 70px; } .cmd-piede { display: none; } .cmd-lista .ct small { white-space: normal; } }
+@media (prefers-reduced-motion: reduce) { .cmd, .cmd-box { transition: none; } }
+
+/* tool: se in questo browser sei già entrato come admin, i tuoi tasti sono visibili fin dal primo istante (niente comparsa a metà caricamento) */
+html.adm-pre #btnRaw[hidden], html.adm-pre #btnStrumenti[hidden] { display: inline-flex !important; }
+html.adm-pre #admin-indicator[hidden] { display: inline-block !important; }

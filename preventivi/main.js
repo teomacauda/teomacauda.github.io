@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { PDFDocument, StandardFonts, rgb } from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -15,6 +14,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// ===== Preventivi · logica =====
+// Sopra (collegamento a Firebase) è copiato dalla versione precedente.
+// Qui sotto, IDENTICI alla versione precedente (copiati parola per parola): i pacchetti, formattaPrezzo e generaFlatPDF,
+// cioè il codice che scrive i dati nei punti giusti del PDF (template.pdf). Non vanno modificati.
+// Dati: collezione "preventivi" { clientName, clientCf, clientVat, clientStreet, clientCityZip, expiryDate, packageType, servizi[{descrizione, prezzo}],
+//   totale, durataMesi, durataPeriodo, durata, mensile, createdAt }.
+
+// pdf-lib si carica solo quando serve (al clic su "Scarica"), così la pagina non dipende da quel servizio
+let PDFDocument, StandardFonts, rgb;
+async function caricaPdfLib() { if (!PDFDocument) ({ PDFDocument, StandardFonts, rgb } = await import("https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm")); }
+function showLoader() { document.getElementById('pdf-attesa').hidden = false; }
+function hideLoader() { document.getElementById('pdf-attesa').hidden = true; }
 
 // Data Mapping strutturato dei Pacchetti
 const pacchettiPredefiniti = {
@@ -62,22 +74,6 @@ const pacchettiPredefiniti = {
     }
 };
 
-const loaderEl = document.getElementById('main-loader');
-const gateSection = document.getElementById('section-gate');
-const authSection = document.getElementById('section-auth');
-const adminSection = document.getElementById('section-admin');
-const clientSection = document.getElementById('section-client');
-const packageTypeSelect = document.getElementById('package-type');
-const customServicesSection = document.getElementById('custom-services-section');
-const durationMonthsInput = document.getElementById('agreement-months');
-const durationPeriodInput = document.getElementById('agreement-period');
-const monthlyPriceInput = document.getElementById('monthly-price');
-
-const urlParams = new URLSearchParams(window.location.search);
-const preventivoId = urlParams.get('id');
-
-let datiPreventivoCorrente = null; 
-
 // Helper per formattare i prezzi in euro con ,00
 function formattaPrezzo(val) {
     if (val === undefined || val === null || val === "") return "";
@@ -92,268 +88,246 @@ function formattaPrezzo(val) {
     return "€ " + num.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-    if (preventivoId) {
-        await caricaVistaCliente(preventivoId);
-    } else {
-        onAuthStateChanged(auth, (user) => {
-            hideLoader();
-            if (user) {
-                document.getElementById('admin-indicator').classList.remove('hidden');
-                showSection(adminSection);
-                setupAdminLogic();
-            } else {
-                document.getElementById('admin-indicator').classList.add('hidden');
-                showSection(gateSection);
-                setupAuthLogic();
-            }
-        });
-    }
-});
 
-function hideLoader() { loaderEl.classList.add('opacity-0', 'pointer-events-none'); setTimeout(() => loaderEl.classList.add('hidden'), 300); }
-function showLoader() { loaderEl.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); }
+const { $, esc, avviso, conferma, erroreTesto, copiaTesto } = window.RawUI;
 
-function showSection(section) {
-    gateSection.classList.add('hidden');
-    authSection.classList.add('hidden');
-    adminSection.classList.add('hidden');
-    clientSection.classList.add('hidden');
-    section.classList.remove('hidden');
-}
+const urlParams = new URLSearchParams(window.location.search);
+const preventivoId = urlParams.get('id');
+const nuovo = urlParams.get('nuovo') === '1';
+const anteprima = urlParams.get('anteprima') === '1';
 
-function setupAuthLogic() {
-    // Gestione passaggio da schermata gate a form di login
-    const btnGoToLogin = document.getElementById('btn-go-to-login');
-    if (btnGoToLogin) {
-        btnGoToLogin.addEventListener('click', () => {
-            showSection(authSection);
-        });
-    }
+let datiPreventivoCorrente = null;
+let corrente = null, preventivi = [], sporco = false;
+let rawCaricato = false;
+function caricaRaw() { if (rawCaricato) return; rawCaricato = true; const s = document.createElement('script'); s.src = '../raw/raw.js'; document.head.appendChild(s); }
 
-    const form = document.getElementById('auth-form');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showLoader();
-        const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            alert("Rifiutato.");
-            hideLoader();
-        }
-    });
-}
+const NOMI_PACCHETTO = { custom: 'Su misura', start: 'Start', pro: 'Pro', elite: 'Elite' };
+const MESI = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+const dataBreve = (iso) => { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${parseInt(m[3], 10)} ${MESI[parseInt(m[2], 10) - 1]} ${m[1]}` : '—'; };
+const oggiStr = () => new Date().toLocaleDateString('sv-SE');     // data locale: non scade prima del tempo per il fuso UTC
+const scaduto = (p) => !!p.expiryDate && oggiStr() > p.expiryDate;
+const creatoIl = (p) => { const t = Date.parse(p.createdAt && p.createdAt.toDate ? p.createdAt.toDate().toISOString() : p.createdAt); return isNaN(t) ? 0 : t; };
+const linkCliente = (id) => `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(id)}`;
 
-function setupAdminLogic() {
-    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
-
-    packageTypeSelect.addEventListener('change', (e) => {
-        const val = e.target.value;
-        const descInputs = customServicesSection.querySelectorAll('.service-desc');
-        if (val === 'custom') {
-            customServicesSection.classList.remove('hidden');
-            descInputs.forEach(input => input.setAttribute('required', ''));
-        } else {
-            customServicesSection.classList.add('hidden');
-            descInputs.forEach(input => input.removeAttribute('required'));
-        }
-    });
-
-    const container = document.getElementById('services-container');
-    document.getElementById('btn-add-service').addEventListener('click', () => {
-        const row = document.createElement('div');
-        row.className = "service-row grid grid-cols-12 gap-3 items-center";
-        row.innerHTML = `
-            <div class="col-span-7 sm:col-span-9">
-                <input type="text" placeholder="Attività..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-            </div>
-            <div class="col-span-4 sm:col-span-2">
-                <input type="number" step="0.01" placeholder="Prezzo" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-            </div>
-            <div class="col-span-1 flex justify-center">
-                <button type="button" class="btn-remove-row text-red-500 hover:text-red-400 transition-colors">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                </button>
-            </div>
-        `;
-        container.appendChild(row);
-        lucide.createIcons();
-        row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
-    });
-
-    document.getElementById('preventivo-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showLoader();
-
-        const clientName = document.getElementById('client-name').value;
-        const clientCf = document.getElementById('client-cf').value;
-        const clientVat = document.getElementById('client-vat').value;
-        const clientStreet = document.getElementById('client-street').value;
-        const clientCityZip = document.getElementById('client-city-zip').value;
-        const expiryDate = document.getElementById('expiry-date').value;
-        const packageType = packageTypeSelect.value;
-        const mensileStr = monthlyPriceInput.value;
-        const durataMesi = durationMonthsInput.value;
-        const durataPeriodo = durationPeriodInput.value;
-        const totaleStr = mensileStr;
-
-        let listaServizi = [];
-        if (packageType === 'custom') {
-            document.querySelectorAll('.service-row').forEach(row => {
-                const desc = row.querySelector('.service-desc').value;
-                const pVal = row.querySelector('.service-price').value;
-                const price = pVal !== "" ? parseFloat(pVal) : null;
-                listaServizi.push({ descrizione: desc, prezzo: price });
-            });
-        }
-
-        try {
-            const docRef = await addDoc(collection(db, "preventivi"), {
-                clientName,
-                clientCf,
-                clientVat,
-                clientStreet,
-                clientCityZip,
-                expiryDate,
-                packageType,
-                servizi: listaServizi,
-                totale: totaleStr,
-                durataMesi,
-                durataPeriodo,
-                durata: `${durataMesi} / ${durataPeriodo}`,
-                mensile: mensileStr,
-                createdAt: new Date().toISOString()
-            });
-
-            const shareableUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
-            document.getElementById('generated-url').value = shareableUrl;
-            document.getElementById('output-link-box').classList.remove('hidden');
-            document.getElementById('output-link-box').scrollIntoView({ behavior: 'smooth' });
-        } catch (error) {
-            console.error(error);
-            alert("Errore Firestore.");
-        } finally {
-            hideLoader();
-        }
-    });
-
-    document.getElementById('btn-copy-link').addEventListener('click', () => {
-        const inputUrl = document.getElementById('generated-url');
-        inputUrl.select();
-        navigator.clipboard.writeText(inputUrl.value);
-        alert("Copiato.");
-    });
-}
-
-async function caricaVistaCliente(id) {
+// ---------- router ----------
+const SEZIONI = ['section-lock', 'section-home', 'section-editor', 'section-client'];
+function mostra(sez) { SEZIONI.forEach(id => { $(id).hidden = id !== sez; }); $('main-loader').hidden = true; }
+async function initRouter(user) {
+    $('main-loader').hidden = false; SEZIONI.forEach(id => { $(id).hidden = true; });
+    try { localStorage.setItem('ped_admin', user ? '1' : '0'); } catch (e) {}
+    document.documentElement.classList.remove('adm-pre');
+    const vistaCliente = !!preventivoId && (!user || anteprima);
+    $('admin-indicator').hidden = !user; $('btnStrumenti').hidden = !user; $('btnRaw').hidden = !user;
+    $('bar').hidden = !user || vistaCliente;
+    $('anteprima-admin').hidden = !(user && vistaCliente);
+    document.body.classList.toggle('vista-cliente', vistaCliente);
+    if (user) caricaRaw();
     try {
-        const docRef = doc(db, "preventivi", id);
-        const docSnap = await getDoc(docRef);
-        const contentArea = document.getElementById('client-content-area');
-
-        if (docSnap.exists()) {
-            const dataDoc = docSnap.data();
-            
-            // Utilizza la data locale (fuso orario italiano) per evitare che scada prima del tempo basandosi sul fuso UTC
-            const oggiStr = new Date().toLocaleDateString('sv-SE');
-            if (dataDoc.expiryDate && oggiStr > dataDoc.expiryDate) {
-                await deleteDoc(docRef);
-                contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Questo link di proposta commerciale è scaduto ed è stato rimosso.</p>`;
-                showSection(clientSection);
-                hideLoader();
+        if (preventivoId) {
+            const ref = doc(db, "preventivi", preventivoId), snap = await getDoc(ref);
+            if (!snap.exists()) {
+                if (vistaCliente) { $('client-view-title').textContent = 'Preventivo non trovato'; $('client-view-date').textContent = ''; $('client-content-area').innerHTML = '<p class="pv-scaduto">Questo link non è valido o il preventivo è stato rimosso.</p>'; $('btn-download-pdf').hidden = true; mostra('section-client'); avviaRivelazioni(); }
+                else { avviso('Preventivo non trovato.'); window.location.href = './'; }
                 return;
             }
-
-            datiPreventivoCorrente = dataDoc;
-            showSection(clientSection);
-
-            document.getElementById('client-view-title').innerText = `Proposta per: ${datiPreventivoCorrente.clientName}`;
-            const dataFormattata = new Date(datiPreventivoCorrente.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('client-view-date').innerText = `Termini validi fino al ${dataFormattata}`;
-
-            // Box riepilogativo dati anagrafici Fornitore & Cliente
-            let anagraficaHtml = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white/[0.01] border border-white/10 rounded-2xl text-sm mb-6">
-                    <div class="space-y-2">
-                        <span class="text-xs text-accent font-semibold uppercase tracking-wider block">Fornitore</span>
-                        <div class="text-white font-semibold">Matteo Maria Macauda</div>
-                        <div class="text-graytext text-xs">C.F.: MCDMTM04H18I754Q</div>
-                        <div class="text-graytext text-xs">P.IVA: 02153520891</div>
-                        <div class="text-graytext text-xs">Via teofane 2, 96100, Siracusa (SR)</div>
-                    </div>
-                    <div class="space-y-2 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
-                        <span class="text-xs text-accent font-semibold uppercase tracking-wider block">Cliente</span>
-                        <div class="text-white font-semibold">${datiPreventivoCorrente.clientName.toUpperCase()}</div>
-                        <div class="text-graytext text-xs">${datiPreventivoCorrente.clientCf ? `C.F.: ${datiPreventivoCorrente.clientCf.toUpperCase()}` : ''}</div>
-                        ${datiPreventivoCorrente.clientVat ? `<div class="text-graytext text-xs">P.IVA: ${datiPreventivoCorrente.clientVat.toUpperCase()}</div>` : ''}
-                        <div class="text-graytext text-xs">${datiPreventivoCorrente.clientStreet ? datiPreventivoCorrente.clientStreet.toUpperCase() : ''}</div>
-                        <div class="text-graytext text-xs">${datiPreventivoCorrente.clientCityZip ? datiPreventivoCorrente.clientCityZip.toUpperCase() : ''}</div>
-                    </div>
-                </div>
-            `;
-            contentArea.innerHTML = anagraficaHtml;
-
-            if (datiPreventivoCorrente.packageType === 'custom') {
-                let tableHtml = `
-                    <div class="border border-white/10 rounded-xl overflow-hidden bg-white/[0.01] mb-4">
-                        <div class="grid grid-cols-12 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-graytext">
-                            <div class="col-span-9">Descrizione Attività</div>
-                            <div class="col-span-3 text-right">Importo</div>
-                        </div>
-                        <div class="divide-y divide-white/5">
-                `;
-
-                datiPreventivoCorrente.servizi.forEach(s => {
-                    const prezzoTxt = (s.prezzo !== undefined && s.prezzo !== null) ? formattaPrezzo(s.prezzo) : `—`;
-                    tableHtml += `
-                        <div class="grid grid-cols-12 px-4 py-4 text-sm items-center">
-                            <div class="col-span-9 font-medium text-white/90 pr-2">${s.descrizione}</div>
-                            <div class="col-span-3 text-right text-graytext font-mono">${prezzoTxt}</div>
-                        </div>
-                    `;
-                });
-
-                tableHtml += `
-                        </div>
-                    </div>
-                `;
-                contentArea.insertAdjacentHTML('beforeend', tableHtml);
-            } else {
-                const pkg = pacchettiPredefiniti[datiPreventivoCorrente.packageType];
-                let pkgHtml = `
-                    <div class="border border-white/10 rounded-2xl p-6 bg-white/[0.01] space-y-4 mb-4">
-                        <h2 class="text-xl font-black text-white tracking-tight">${pkg.titolo} — <span class="text-accent">${pkg.sottotitolo}</span></h2>
-                        <p class="text-sm text-white/70 italic">"${pkg.descrizione}"</p>
-                        <ul class="space-y-2 pt-2">
-                `;
-                pkg.voci.forEach(v => {
-                    pkgHtml += `<li class="text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>${v}</li>`;
-                });
-                pkgHtml += `</ul></div>`;
-                contentArea.insertAdjacentHTML('beforeend', pkgHtml);
-            }
-
-            const durataInfo = `${(datiPreventivoCorrente.durataMesi || '').toUpperCase()} / ${(datiPreventivoCorrente.durataPeriodo || '').toUpperCase()}`;
-            let summaryBox = `
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-xl text-sm">
-                    <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Durata Accordo</span><strong class="text-accent text-lg">${durataInfo}</strong></div>
-                    <div><span class="text-xs text-graytext block uppercase font-semibold mb-1">Prezzo Mensile (IVA Incl.)</span><strong class="text-accent text-lg">${formattaPrezzo(datiPreventivoCorrente.mensile)}</strong></div>
-                </div>
-            `;
-            contentArea.insertAdjacentHTML('beforeend', summaryBox);
-
-            document.getElementById('btn-download-pdf').addEventListener('click', generaFlatPDF);
-        } else {
-            alert("Non trovato.");
-        }
+            const d = { id: snap.id, ...snap.data() };
+            if (vistaCliente) {
+                if (user) $('anteprima-torna').href = `?id=${encodeURIComponent(preventivoId)}`;
+                await caricaVistaCliente(d, ref, !!user);
+            } else { corrente = d; renderEditor(); mostra('section-editor'); }
+        } else if (user) {
+            if (nuovo) { corrente = null; renderEditor(); mostra('section-editor'); }
+            else { await caricaTutti(); renderHome(); mostra('section-home'); }
+        } else mostra('section-lock');
     } catch (error) {
         console.error(error);
-    } finally {
-        hideLoader();
+        if (preventivoId && !user) { $('main-loader').hidden = true; avviso('Non riesco a caricare il preventivo.'); }
+        else { $('main-loader').hidden = true; avviso('Non riesco a caricare i dati. ' + erroreTesto(error)); }
     }
 }
+async function caricaTutti() { const s = await getDocs(collection(db, "preventivi")); preventivi = []; s.forEach(d => preventivi.push({ id: d.id, ...d.data() })); }
+
+// ---------- elenco ----------
+let selezione = new Set(), modoSel = false;
+const SPUNTA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function renderHome() {
+    document.title = 'Preventivi · Teo Macauda';
+    const lista = preventivi.slice().sort((a, b) => creatoIl(b) - creatoIl(a));
+    selezione = new Set([...selezione].filter(id => lista.some(p => p.id === id)));
+    const grid = $('pv-griglia'); grid.innerHTML = '';
+    lista.forEach(p => {
+        const sc = scaduto(p), el = document.createElement('a'); el.className = 'au-card vetro' + (modoSel ? ' sel-modo' : '') + (selezione.has(p.id) ? ' sel' : ''); el.href = `?id=${encodeURIComponent(p.id)}`; el.dataset.id = p.id;
+        el.innerHTML = `${modoSel ? `<span class="pv-spunta">${SPUNTA}</span>` : ''}<span class="stato-tag ${sc ? 's-scaduto' : 's-risposto'}">${sc ? 'Scaduto' : 'Valido'}</span><h3>${esc(p.clientName || 'Senza nome')}</h3><p class="chi">${esc(NOMI_PACCHETTO[p.packageType] || p.packageType || '')} · scade il ${esc(dataBreve(p.expiryDate))}</p><div class="cifre">${p.mensile ? `<span class="prezzo"><b>${esc(formattaPrezzo(p.mensile))}</b> al mese</span>` : ''}${p.durataMesi ? `<span>${esc(p.durataMesi)}</span>` : ''}</div>`;
+        grid.appendChild(el);
+    });
+    $('pv-vuoti').hidden = lista.length > 0;
+    $('btn-seleziona').hidden = !lista.length;
+    $('pv-barra').hidden = !modoSel; $('pv-fisso').hidden = !modoSel;
+    $('btn-seleziona').querySelector('span').textContent = modoSel ? 'Annulla selezione' : 'Seleziona';
+    $('pv-conta').textContent = selezione.size === 1 ? '1 selezionato' : `${selezione.size} selezionati`;
+    $('btn-elimina-sel').disabled = !selezione.size; $('btn-elimina-sel').style.opacity = selezione.size ? '' : '.45';
+}
+function impostaSel(on) { modoSel = on; if (!on) selezione.clear(); renderHome(); }
+$('btn-seleziona').addEventListener('click', () => impostaSel(!modoSel));
+$('btn-fine-sel').addEventListener('click', () => impostaSel(false));
+$('btn-sel-tutti').addEventListener('click', () => { const tutti = preventivi.every(p => selezione.has(p.id)); selezione = new Set(tutti ? [] : preventivi.map(p => p.id)); renderHome(); });
+$('btn-sel-scaduti').addEventListener('click', () => { const sc = preventivi.filter(scaduto); if (!sc.length) { avviso('Nessun preventivo scaduto.'); return; } selezione = new Set(sc.map(p => p.id)); renderHome(); });
+$('pv-griglia').addEventListener('click', (e) => {
+    if (!modoSel) return;
+    const c = e.target.closest('.au-card'); if (!c) return; e.preventDefault();
+    const id = c.dataset.id; if (selezione.has(id)) selezione.delete(id); else selezione.add(id);
+    renderHome();
+});
+$('btn-elimina-sel').addEventListener('click', async () => {
+    const n = selezione.size; if (!n) return;
+    const nomi = preventivi.filter(p => selezione.has(p.id)).slice(0, 4).map(p => p.clientName || 'Senza nome').join(', ');
+    if (!(await conferma(`${n === 1 ? 'Verrà eliminato 1 preventivo' : `Verranno eliminati ${n} preventivi`} (${nomi}${n > 4 ? '…' : ''}) e i loro link smetteranno di funzionare. L'azione non si può annullare.`, n === 1 ? 'Elimina' : `Elimina ${n}`, 'Eliminare i preventivi?'))) return;
+    let fatti = 0;
+    try { for (const id of [...selezione]) { await deleteDoc(doc(db, "preventivi", id)); preventivi = preventivi.filter(p => p.id !== id); selezione.delete(id); fatti++; } avviso(fatti === 1 ? '1 preventivo eliminato.' : `${fatti} preventivi eliminati.`); impostaSel(false); }
+    catch (err) { console.error(err); avviso(`Eliminati ${fatti}, poi si è fermato. ` + erroreTesto(err)); renderHome(); }
+});
+
+// ---------- editor ----------
+function segna(v) { sporco = v; $('stato').innerHTML = v ? 'Modifiche non salvate.' : '&nbsp;'; }
+window.addEventListener('beforeunload', (e) => { if (sporco) { e.preventDefault(); e.returnValue = ''; } });
+const CAMPI = { clientName: 'client-name', clientCf: 'client-cf', clientVat: 'client-vat', clientStreet: 'client-street', clientCityZip: 'client-city-zip', expiryDate: 'expiry-date', durataMesi: 'agreement-months', durataPeriodo: 'agreement-period', mensile: 'monthly-price' };
+function rigaServizio(desc, prezzo) {
+    const r = document.createElement('div'); r.className = 'sv service-row';
+    r.innerHTML = `<input class="campo service-desc" type="text" placeholder="Attività…" value="${esc(desc || '')}"><input class="campo service-price sv-prezzo" type="number" step="0.01" placeholder="Prezzo (facoltativo)" value="${prezzo !== undefined && prezzo !== null && prezzo !== '' ? esc(prezzo) : ''}"><button class="rnd p btn-remove-row" type="button" aria-label="Togli la voce"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg></button>`;
+    r.querySelector('.btn-remove-row').addEventListener('click', () => { r.remove(); segna(true); });
+    $('services-container').appendChild(r);
+}
+function aggiornaTipo() {
+    const v = $('package-type').value, custom = v === 'custom';
+    $('custom-services-section').hidden = !custom;
+    const pk = pacchettiPredefiniti[v]; $('pk-anteprima').hidden = custom || !pk;
+    if (pk && !custom) $('pk-anteprima').innerHTML = `<b>${esc(pk.titolo)} — ${esc(pk.sottotitolo)}</b><p>Nel PDF e nella pagina del cliente compaiono queste voci:</p><ul>${pk.voci.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+}
+function renderEditor() {
+    const p = corrente;
+    document.title = p ? `${p.clientName} · Preventivi` : 'Nuovo preventivo · Preventivi';
+    $('ed-eyebrow').textContent = p ? 'Preventivo' : 'Nuovo preventivo';
+    $('ed-titolo').textContent = p ? (p.clientName || 'Preventivo') : 'Nuovo preventivo';
+    $('ed-info').textContent = p ? `${scaduto(p) ? 'Scaduto' : 'Valido'} · il link vale fino al ${dataBreve(p.expiryDate)}` : 'Compila i dati: il PDF si compila da solo.';
+    $('ed-azioni').hidden = !p; $('btn-duplica').hidden = !p; $('btn-elimina').hidden = !p;
+    if (p) {
+        $('btn-anteprima').href = `?id=${encodeURIComponent(p.id)}&anteprima=1`;
+        $('btn-copia-link').onclick = () => copiaTesto(linkCliente(p.id), $('btn-copia-link').querySelector('span'));
+    }
+    Object.entries(CAMPI).forEach(([k, id]) => { $(id).value = p && p[k] !== undefined && p[k] !== null ? p[k] : ''; });
+    $('package-type').value = p && pacchettiPredefiniti[p.packageType] ? p.packageType : (p && p.packageType === 'custom' ? 'custom' : 'custom');
+    $('services-container').innerHTML = '';
+    const sv = p && Array.isArray(p.servizi) ? p.servizi : [];
+    if (sv.length) sv.forEach(s => rigaServizio(s.descrizione, s.prezzo)); else rigaServizio('', '');
+    aggiornaTipo(); segna(false);
+}
+$('package-type').addEventListener('change', () => { aggiornaTipo(); segna(true); });
+$('btn-add-service').addEventListener('click', () => { rigaServizio('', ''); segna(true); const i = $('services-container').querySelectorAll('.service-desc'); i[i.length - 1].focus(); });
+$('preventivo-form').addEventListener('input', () => segna(true));
+$('preventivo-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const packageType = $('package-type').value, v = (id) => $(id).value;
+    const listaServizi = [];
+    if (packageType === 'custom') {
+        let manca = false;
+        document.querySelectorAll('.service-row').forEach(row => {
+            const desc = row.querySelector('.service-desc').value.trim(), pVal = row.querySelector('.service-price').value;
+            if (!desc) { if (pVal !== '') manca = true; return; }     // le righe vuote si ignorano
+            listaServizi.push({ descrizione: desc, prezzo: pVal !== '' ? parseFloat(pVal) : null });
+        });
+        if (manca) { avviso('Una voce ha il prezzo ma non la descrizione.'); return; }
+        if (!listaServizi.length) { avviso('Aggiungi almeno un\'attività.'); return; }
+    }
+    const dati = {
+        clientName: v('client-name'), clientCf: v('client-cf'), clientVat: v('client-vat'), clientStreet: v('client-street'), clientCityZip: v('client-city-zip'),
+        expiryDate: v('expiry-date'), packageType, servizi: listaServizi, totale: v('monthly-price'),
+        durataMesi: v('agreement-months'), durataPeriodo: v('agreement-period'), durata: `${v('agreement-months')} / ${v('agreement-period')}`, mensile: v('monthly-price')
+    };
+    const b = $('btn-salva'); b.disabled = true; $('stato').textContent = 'Salvo…';
+    try {
+        if (corrente) {
+            await updateDoc(doc(db, "preventivi", corrente.id), dati); Object.assign(corrente, dati); sporco = false; renderEditor(); avviso('Preventivo salvato.');
+        } else {
+            const ref = await addDoc(collection(db, "preventivi"), { ...dati, createdAt: new Date().toISOString() });
+            sporco = false; window.location.href = `?id=${encodeURIComponent(ref.id)}`;
+        }
+    } catch (error) { console.error(error); $('stato').textContent = 'Modifiche non salvate.'; avviso('Salvataggio non riuscito. ' + erroreTesto(error)); }
+    finally { b.disabled = false; }
+});
+$('btn-duplica').addEventListener('click', async () => {
+    try {
+        const { id, ...resto } = corrente;
+        const ref = await addDoc(collection(db, "preventivi"), { ...resto, clientName: `${corrente.clientName} (copia)`, createdAt: new Date().toISOString() });
+        sporco = false; window.location.href = `?id=${encodeURIComponent(ref.id)}`;
+    } catch (err) { console.error(err); avviso('Duplicazione non riuscita. ' + erroreTesto(err)); }
+});
+$('btn-elimina').addEventListener('click', async () => {
+    if (!(await conferma(`Il preventivo per "${corrente.clientName}" verrà eliminato e il suo link smetterà di funzionare. L'azione non si può annullare.`, 'Elimina il preventivo', 'Eliminare il preventivo?'))) return;
+    try { sporco = false; await deleteDoc(doc(db, "preventivi", corrente.id)); window.location.href = './'; }
+    catch (err) { console.error(err); avviso('Preventivo non eliminato. ' + erroreTesto(err)); }
+});
+
+// ---------- vista del cliente ----------
+async function caricaVistaCliente(dataDoc, docRef, admin) {
+    const contentArea = $('client-content-area');
+    document.title = `Proposta per ${dataDoc.clientName || ''} | Teo Macauda`;
+    if (scaduto(dataDoc)) {
+        if (!admin) { try { await deleteDoc(docRef); } catch (e) { console.error(e); } }   // come prima: un link scaduto, aperto dal cliente, viene rimosso
+        $('client-view-title').textContent = 'Proposta scaduta'; $('client-view-date').textContent = '';
+        contentArea.innerHTML = admin ? '<p class="pv-scaduto">Questo preventivo è scaduto: il cliente non lo vede più. (Dall\'anteprima non lo rimuovo.)</p>' : '<p class="pv-scaduto">Questo link di proposta commerciale è scaduto ed è stato rimosso.</p>';
+        $('btn-download-pdf').hidden = true; mostra('section-client'); avviaRivelazioni(); return;
+    }
+    datiPreventivoCorrente = dataDoc;
+    $('client-view-title').textContent = `Proposta per ${dataDoc.clientName}`;
+    const dataFormattata = new Date(dataDoc.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+    $('client-view-date').textContent = `Termini validi fino al ${dataFormattata}`;
+    const d = dataDoc, up = (s) => esc(String(s || '').toUpperCase());
+    let html = `<div class="pv-anag"><div><span class="e">Fornitore</span><b>Matteo Maria Macauda</b><small>C.F.: MCDMTM04H18I754Q</small><small>P.IVA: 02153520891</small><small>Via teofane 2, 96100, Siracusa (SR)</small></div>
+        <div><span class="e">Cliente</span><b>${up(d.clientName)}</b>${d.clientCf ? `<small>C.F.: ${up(d.clientCf)}</small>` : ''}${d.clientVat ? `<small>P.IVA: ${up(d.clientVat)}</small>` : ''}${d.clientStreet ? `<small>${up(d.clientStreet)}</small>` : ''}${d.clientCityZip ? `<small>${up(d.clientCityZip)}</small>` : ''}</div></div>`;
+    if (d.packageType === 'custom') {
+        html += `<div class="pv-tab"><div class="t"><span>Descrizione attività</span><span>Importo</span></div>` + (d.servizi || []).map(s => `<div class="r"><span>${esc(s.descrizione)}</span><span>${(s.prezzo !== undefined && s.prezzo !== null) ? esc(formattaPrezzo(s.prezzo)) : '—'}</span></div>`).join('') + `</div>`;
+    } else {
+        const pkg = pacchettiPredefiniti[d.packageType];
+        if (pkg) html += `<div class="pv-pacchetto"><h2>${esc(pkg.titolo)} — <em>${esc(pkg.sottotitolo)}</em></h2><p>"${esc(pkg.descrizione)}"</p><ul>${pkg.voci.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
+    }
+    const durataInfo = `${(d.durataMesi || '').toUpperCase()} / ${(d.durataPeriodo || '').toUpperCase()}`;
+    html += `<div class="pv-riepilogo"><div><small>Durata accordo</small><strong>${esc(durataInfo)}</strong></div><div><small>Prezzo mensile (IVA incl.)</small><strong>${esc(formattaPrezzo(d.mensile))}</strong></div></div>`;
+    contentArea.innerHTML = html;
+    $('btn-download-pdf').hidden = false;
+    $('btn-download-pdf').onclick = async () => {
+        showLoader();
+        try { await caricaPdfLib(); } catch (e) { hideLoader(); avviso('Non riesco a preparare il PDF: controlla la connessione e riprova.'); return; }
+        generaFlatPDF();
+    };
+    mostra('section-client'); avviaRivelazioni();
+}
+function avviaRivelazioni() {
+    const io = new IntersectionObserver((voci) => voci.forEach(v => { if (v.isIntersecting) { v.target.classList.add('in'); io.unobserve(v.target); } }), { threshold: 0.1 });
+    document.querySelectorAll('.rv-e').forEach(e => io.observe(e));
+}
+
+// ---------- accesso ----------
+$('form-login').addEventListener('submit', async (e) => {
+    e.preventDefault(); const err = $('auth-error'); err.hidden = true;
+    try { await signInWithEmailAndPassword(auth, $('login-email').value, $('login-pass').value); closeAuthModal(); $('form-login').reset(); }
+    catch (error) { err.hidden = false; err.innerText = 'Credenziali non valide.'; }
+});
+$('btn-open-login').addEventListener('click', () => openCustomStep('login'));
+onAuthStateChanged(auth, (user) => { initRouter(user); });
+
+// ---------- finestre ----------
+function openCustomStep() {
+    $('modal-step-auth').hidden = false;
+    $('auth-modal').classList.add('on'); $('auth-modal').setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+}
+function closeAuthModal() { $('auth-modal').classList.remove('on'); $('auth-modal').setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+$('auth-modal').addEventListener('mousedown', (e) => { if (e.target === $('auth-modal')) closeAuthModal(); });
+document.querySelectorAll('[data-chiudi-mod]').forEach(b => b.addEventListener('click', closeAuthModal));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('auth-modal').classList.contains('on') && !$('conf-modal').classList.contains('on')) closeAuthModal(); });
+window.openAuthModal = openCustomStep;
+window.closeAuthModal = closeAuthModal;
+
+// ===================== da qui in poi: identico alla versione precedente =====================
 
 async function generaFlatPDF() {
     if (!datiPreventivoCorrente) return;

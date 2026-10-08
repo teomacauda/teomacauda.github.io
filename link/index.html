@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link · Teo Macauda</title>
+<meta name="description" content="Teo Macauda, videomaker e content marketing. Guarda i lavori o scrivimi su WhatsApp e via email.">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://teomacauda.it/link/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="it_IT">
+<meta property="og:site_name" content="Teo Macauda">
+<meta property="og:title" content="Teo Macauda · Videomaker e Content Marketing">
+<meta property="og:description" content="Guarda i miei lavori o parliamo del tuo progetto.">
+<meta property="og:url" content="https://teomacauda.it/link/">
+<meta property="og:image" content="https://teomacauda.it/img/og/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Teo Macauda · Videomaker e Content Marketing">
+<meta name="twitter:description" content="Guarda i miei lavori o parliamo del tuo progetto.">
+<meta name="twitter:image" content="https://teomacauda.it/img/og/og-home.jpg">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Pagina link (per la bio di Instagram): autonoma, pensata per telefono.
+   Stile del sito: nero, arancio #DA5512, vetro, pillole, shine sui bottoni. */
+:root { --arancio: #DA5512; --arancio-chiaro: #F2874F; --vetro: rgba(255,255,255,.07); --bordo: rgba(255,255,255,.16); --linea: rgba(255,255,255,.12); }
+*, *::before, *::after { box-sizing: border-box; }
+html { min-height: 100%; background: #000; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; background: #000; color: #fff; font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; }
+:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+body.aperto { overflow: hidden; }
+
+.pagina { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding: 28px 20px 24px; }
+.pagina::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 150px; width: min(760px, 150vw); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(218,85,18,.42), rgba(218,85,18,.07) 48%, rgba(218,85,18,0) 70%); }
+.colonna { width: 100%; max-width: 440px; flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+.logo { width: 46px; color: var(--arancio); display: block; margin-bottom: 26px; transition: transform .4s cubic-bezier(.23,1,.32,1); }
+.logo svg { display: block; width: 100%; height: auto; }
+
+.ritratto { position: relative; width: 132px; aspect-ratio: 1; border-radius: 50%; background: var(--arancio); overflow: hidden; box-shadow: 0 24px 60px -20px rgba(218,85,18,.7); }
+.ritratto::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.ritratto img { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; display: block; }
+
+h1 { margin: 22px 0 0; text-align: center; font-size: clamp(2.2rem, 10vw, 2.9rem); font-weight: 700; letter-spacing: -.035em; line-height: 1; text-transform: uppercase; }
+h1 em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; text-transform: none; color: var(--arancio); font-size: 1.12em; letter-spacing: -.01em; }
+.ruolo { margin: 12px 0 0; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.62); text-align: center; }
+
+.azioni { width: 100%; margin-top: 34px; display: flex; flex-direction: column; gap: 12px; }
+.voce { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; width: 100%; padding: 12px 16px 12px 12px; border-radius: 999px; text-align: left; border: 1px solid var(--bordo); background: var(--vetro); -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); transition: transform .4s cubic-bezier(.23,1,.32,1), background-color .3s, border-color .3s; }
+.voce::after { content: ""; position: absolute; inset: 0; right: auto; width: 100%; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent); transition: left .55s; pointer-events: none; }
+.voce:active { transform: scale(.98); }
+.voce .ic { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.1); }
+.voce .ic svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.voce .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.voce .tx b { font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.15; }
+.voce .tx span { font-size: .8rem; color: rgba(255,255,255,.62); line-height: 1.3; }
+.voce .fr { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.08); transition: transform .4s cubic-bezier(.23,1,.32,1), background-color .3s; }
+.voce .fr svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.voce.primaria { background: var(--arancio); border-color: transparent; color: #000; box-shadow: 0 18px 44px -18px rgba(218,85,18,.9), inset 0 1px 0 rgba(255,255,255,.3); }
+.voce.primaria::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); }
+.voce.primaria .ic { background: rgba(0,0,0,.14); }
+.voce.primaria .tx span { color: rgba(0,0,0,.66); }
+.voce.primaria .fr { background: rgba(0,0,0,.14); }
+
+.piede { margin-top: auto; padding-top: 44px; width: 100%; text-align: center; font-size: .72rem; color: rgba(255,255,255,.45); line-height: 1.7; }
+.piede a { text-decoration: underline; text-decoration-color: rgba(255,255,255,.3); text-underline-offset: 3px; transition: color .3s, text-decoration-color .3s; }
+.piede .sep { margin: 0 .4em; opacity: .5; }
+
+/* finestra dei contatti: sale dal basso su telefono, al centro su schermi grandi */
+.velo { position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-end; justify-content: center; padding: 0; background: rgba(0,0,0,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility 0s linear .3s; }
+.velo.on { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+.foglio { position: relative; width: 100%; max-width: 480px; padding: 12px 20px calc(22px + env(safe-area-inset-bottom)); border-radius: 32px 32px 0 0; background: rgba(22,22,22,.86); border: 1px solid var(--bordo); border-bottom: 0; -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 -30px 80px -30px rgba(0,0,0,.9); transform: translateY(40px); opacity: 0; transition: transform .5s cubic-bezier(.23,1,.32,1), opacity .35s ease; }
+.velo.on .foglio { transform: none; opacity: 1; }
+@media (min-width: 640px) { .velo { align-items: center; padding: 20px; } .foglio { border-radius: 32px; border-bottom: 1px solid var(--bordo); padding-bottom: 22px; } }
+.maniglia { width: 44px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.22); margin: 0 auto 16px; }
+@media (min-width: 640px) { .maniglia { display: none; } .foglio { padding-top: 24px; } }
+.pannello[hidden] { display: none; }
+.testa { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.testa .t { flex: 1; min-width: 0; }
+.testa h2 { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -.025em; line-height: 1.1; text-transform: uppercase; }
+.testa h2 em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; text-transform: none; color: var(--arancio); font-size: 1.12em; }
+.testa p { margin: 4px 0 0; font-size: .8rem; color: rgba(255,255,255,.6); }
+.rnd { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--vetro); border: 1px solid var(--bordo); transition: background-color .3s, transform .3s cubic-bezier(.23,1,.32,1); }
+.rnd svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lista { display: flex; flex-direction: column; gap: 10px; }
+.voce .ic.wa { background: rgba(218,85,18,.22); color: var(--arancio-chiaro); }
+.voce .tag { display: inline-block; margin-top: 3px; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--arancio-chiaro); }
+.indirizzo { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-radius: 999px; background: var(--vetro); border: 1px solid var(--bordo); font-weight: 600; font-size: .98rem; word-break: break-all; }
+.indirizzo i { font-style: normal; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--arancio-chiaro); flex: none; }
+.btn { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: .6em; width: 100%; padding: 1.05rem 1.6rem; border-radius: 999px; background: var(--arancio); color: #000; font-weight: 600; font-size: 1rem; line-height: 1; transition: transform .4s cubic-bezier(.23,1,.32,1), background-color .3s; }
+.btn::after { content: ""; position: absolute; inset: 0; right: auto; width: 100%; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); transition: left .5s; pointer-events: none; }
+.btn:active { transform: scale(.97); }
+.btn svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.corpo { display: flex; flex-direction: column; gap: 14px; }
+.alt { text-align: center; font-size: .8rem; color: rgba(255,255,255,.6); }
+.alt a { text-decoration: underline; text-decoration-color: rgba(255,255,255,.3); text-underline-offset: 3px; }
+
+/* effetti al passaggio del mouse: solo dove esiste il mouse (su telefono resterebbero "incollati" dopo il tocco) */
+@media (hover: hover) {
+  .logo:hover { transform: scale(1.06); }
+  .voce:hover { transform: translateY(-2px); background: rgba(255,255,255,.11); border-color: rgba(255,255,255,.3); }
+  .voce:hover::after, .voce:focus-visible::after { left: 100%; }
+  .voce:hover .fr { transform: translateX(3px); }
+  .voce.primaria:hover { background: #F0651D; border-color: transparent; }
+  .piede a:hover { color: #fff; text-decoration-color: var(--arancio); }
+  .rnd:hover { background: rgba(255,255,255,.14); transform: scale(1.06); }
+  .btn:hover { background: #F0651D; transform: translateY(-1px); }
+  .btn:hover::after { left: 100%; }
+  .alt a:hover { color: #fff; }
+}
+
+/* ingresso a cascata */
+.rv { opacity: 0; transform: translateY(14px); }
+.pronto .rv { opacity: 1; transform: none; transition: opacity .8s cubic-bezier(.23,1,.32,1) calc(var(--n, 0) * 90ms), transform .8s cubic-bezier(.23,1,.32,1) calc(var(--n, 0) * 90ms); }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } .pronto .rv, .velo, .foglio, .voce, .voce::after, .btn, .btn::after { transition: none; } }
+</style>
+</head>
+<body>
+<main class="pagina" id="contenuto">
+  <div class="colonna">
+    <a class="logo rv" style="--n:0" href="../" aria-label="Teo Macauda, vai al sito"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg></a>
+
+    <div class="ritratto rv" style="--n:1"><img src="../img/profilo.webp" alt="Teo Macauda" width="400" height="400"></div>
+    <h1 class="rv" style="--n:2">Teo <em>Macauda</em></h1>
+    <p class="ruolo rv" style="--n:3">Videomaker &amp; Content Marketing</p>
+
+    <div class="azioni">
+      <a class="voce primaria rv" style="--n:4" href="../">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M10 8.6v6.8l5.6-3.4z" fill="currentColor"/></svg></span>
+        <span class="tx"><b>Guarda i miei lavori</b><span>Sito web e video portfolio</span></span>
+        <span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </a>
+      <button class="voce rv" style="--n:5" type="button" id="apri" aria-haspopup="dialog">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.1-4.4A8.5 8.5 0 1 1 20.5 12z"/><path d="M8.5 11h7M8.5 14h4.2"/></svg></span>
+        <span class="tx"><b>Lavoriamo insieme</b><span>Parliamo del tuo progetto</span></span>
+        <span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </button>
+    </div>
+
+    <p class="piede rv" style="--n:6">
+      © <span id="anno">2026</span> Matteo Maria Macauda<span class="sep">·</span>P.IVA 02153520891<br>
+      Via Teofane, 2 – 96100 Siracusa (SR)<br>
+      <a href="../privacy/">Privacy Policy</a><span class="sep">·</span><a href="../diritti-riservati/">Diritti riservati</a>
+    </p>
+  </div>
+</main>
+
+<div class="velo" id="velo" aria-hidden="true">
+  <div class="foglio" role="dialog" aria-modal="true" aria-labelledby="tit-contatti">
+    <div class="maniglia" aria-hidden="true"></div>
+
+    <div class="pannello" id="p-scelta">
+      <div class="testa">
+        <div class="t"><h2 id="tit-contatti">Fai il <em>primo passo</em></h2><p>Scegli come preferisci scrivermi</p></div>
+        <button class="rnd" type="button" data-chiudi aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="lista">
+        <a class="voce primaria" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener" target="_blank">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8a9.2 9.2 0 0 0-7.9 13.9L2.8 21.2l4.6-1.2A9.2 9.2 0 1 0 12 2.8z"/><path fill="currentColor" stroke="none" d="M9.1 7.4c.35-.45.95-.4 1.2.1l.85 1.75c.15.3.1.65-.1.9l-.55.65c.7 1.35 1.75 2.4 3.15 3.05l.65-.6c.25-.2.6-.25.9-.1l1.75.9c.5.25.55.85.15 1.2-.8.75-1.9 1-2.9.65-3.2-1.1-5.5-3.5-6.4-6.4-.25-.9 0-1.5.3-2.1z"/></svg></span>
+          <span class="tx"><b>Chat su WhatsApp</b><span>Il modo più veloce per avere risposta</span></span>
+          <span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+        </a>
+        <button class="voce" type="button" id="vai-email">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3.2"/><path d="M2.5 8 12 13.6 21.5 8"/></svg></span>
+          <span class="tx"><b>Invia una email</b><span>info@teomacauda.it</span></span>
+          <span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pannello" id="p-email" hidden>
+      <div class="testa">
+        <button class="rnd" type="button" id="indietro" aria-label="Torna indietro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t"><h2>Contatto <em>email</em></h2><p>Copia l'indirizzo o apri la tua app di posta</p></div>
+        <button class="rnd" type="button" data-chiudi aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="corpo">
+        <div class="indirizzo"><span id="mail">info@teomacauda.it</span><i>Email</i></div>
+        <button class="btn" type="button" id="copia"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5v-1a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h1"/></svg><span id="copia-t">Copia indirizzo email</span></button>
+        <p class="alt"><a href="mailto:info@teomacauda.it">Oppure apri l'app di posta</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var velo = $('velo'), pScelta = $('p-scelta'), pEmail = $('p-email'), ultimo = null;
+  try { $('anno').textContent = new Date().getFullYear(); } catch (e) {}
+  requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.add('pronto'); }); });
+
+  function mostra(p) { pScelta.hidden = p !== 'scelta'; pEmail.hidden = p !== 'email'; }
+  function apri() {
+    ultimo = document.activeElement; mostra('scelta');
+    velo.classList.add('on'); velo.setAttribute('aria-hidden', 'false'); document.body.classList.add('aperto');
+    setTimeout(function () { var f = velo.querySelector('.pannello:not([hidden]) a, .pannello:not([hidden]) button'); if (f) f.focus(); }, 60);
+  }
+  function chiudi() {
+    velo.classList.remove('on'); velo.setAttribute('aria-hidden', 'true'); document.body.classList.remove('aperto');
+    $('copia-t').textContent = 'Copia indirizzo email';
+    if (ultimo && ultimo.focus) ultimo.focus();
+  }
+  $('apri').addEventListener('click', apri);
+  velo.addEventListener('click', function (e) { if (e.target === velo) chiudi(); });
+  Array.prototype.forEach.call(velo.querySelectorAll('[data-chiudi]'), function (b) { b.addEventListener('click', chiudi); });
+  $('vai-email').addEventListener('click', function () { mostra('email'); $('copia').focus(); });
+  $('indietro').addEventListener('click', function () { mostra('scelta'); $('vai-email').focus(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && velo.classList.contains('on')) chiudi(); });
+
+  $('copia').addEventListener('click', function () {
+    var t = $('mail').textContent, fatto = function () {
+      $('copia-t').textContent = 'Copiato!';
+      setTimeout(function () { $('copia-t').textContent = 'Copia indirizzo email'; }, 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(fatto, function () { window.location.href = 'mailto:' + t; });
+    else window.location.href = 'mailto:' + t;
+  });
+})();
+</script>
+</body>
+</html>

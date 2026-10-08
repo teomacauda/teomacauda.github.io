@@ -1,918 +1,402 @@
-<!DOCTYPE html>
-<html lang="it" class="h-full bg-black selection:bg-accent selection:text-white">
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>RAW // Central OS</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RAW OS · Teo Macauda</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RAW">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="raw.css">
+<style>
+/* ---------- centro RAW OS: elenco + vetrina ---------- */
+.centro { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding: 112px 20px 28px; }
+.testa { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: clamp(28px, 5vw, 46px); }
+.eyebrow { font-family: var(--font-mono); font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--arancio-chiaro); }
+.testa h1 { margin: 0; font-size: clamp(3.2rem, 11vw, 6.4rem); font-weight: 700; letter-spacing: -.045em; line-height: .92; text-transform: uppercase; }
+.testa h1 em { font-family: var(--font-corsivo); font-style: italic; font-weight: 400; text-transform: none; color: var(--arancio); font-size: 1.1em; letter-spacing: -.01em; }
+.testa p { margin: 0; max-width: 42ch; color: var(--testo-2); font-size: clamp(.98rem, 1.6vw, 1.08rem); text-wrap: balance; }
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="RAW">
-    
-    <link class="fav-icon" rel="apple-touch-icon" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
-    <link class="fav-icon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/RawIcon.png?v=2">
+.lancio { width: 100%; max-width: 1080px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 16px; align-items: stretch; }
+.vetro { border-radius: 32px; background: var(--vetro); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%); box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 30px 60px -34px rgba(0,0,0,.95); }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;500;700&display=swap" rel="stylesheet">
+/* elenco */
+.elenco { padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.fase { display: flex; align-items: center; gap: 12px; padding: 14px 12px 6px; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.42); }
+.fase:first-child { padding-top: 6px; }
+.fase::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
+.riga { position: relative; display: flex; align-items: center; gap: 14px; padding: 10px 14px 10px 10px; border-radius: 22px; border: 1px solid transparent; transition: background-color .25s, border-color .25s, transform .4s var(--ease); }
+.riga .ci { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.07); color: var(--arancio); transition: background-color .3s, color .3s, transform .5s var(--ease); }
+.riga .ci svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.riga .ct { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.riga .ct b { font-size: 1.08rem; font-weight: 700; letter-spacing: -.01em; text-transform: uppercase; line-height: 1.1; }
+.riga .ct small { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.riga em { font-style: normal; font-family: var(--font-mono); font-size: .56rem; letter-spacing: .14em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: rgba(218,85,18,.18); color: var(--arancio-chiaro); }
+.riga .cn { font-family: var(--font-mono); font-size: .68rem; color: rgba(255,255,255,.3); width: 14px; text-align: center; }
+.riga .fr { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.06); transition: background-color .3s, color .3s, transform .45s var(--ease); }
+.riga .fr svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.riga.on { background: rgba(255,255,255,.08); border-color: rgba(218,85,18,.55); }
+.riga.on .ci { background: var(--arancio); color: #000; transform: scale(1.06); }
+.riga.on .fr { background: var(--arancio); color: #000; transform: translateX(2px); }
+.riga:active { transform: scale(.985); }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+/* vetrina */
+.vetrina { position: relative; overflow: hidden; padding: 26px; display: flex; flex-direction: column; gap: 18px; min-height: 560px; isolation: isolate; }
+.vetrina::before { content: ""; position: absolute; z-index: -1; right: -20%; top: -25%; width: 80%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(218,85,18,.32), transparent 65%); }
+.vtesta { display: flex; flex-direction: column; gap: 8px; }
+.vfase { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .24em; text-transform: uppercase; color: var(--arancio-chiaro); }
+.vtesta h2 { margin: 0; font-size: clamp(1.8rem, 3.4vw, 2.5rem); font-weight: 700; letter-spacing: -.035em; line-height: 1; text-transform: uppercase; }
+.vtesta p { margin: 0; color: var(--testo-2); max-width: 36ch; }
+.vtesta, .scena { transition: opacity .25s ease, transform .35s var(--ease); }
+.vetrina.cambia .vtesta { opacity: 0; transform: translateY(6px); }
+.scena { position: relative; flex: 1; min-height: 280px; }
+.prev { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transform: translateY(10px) scale(.98); transition: opacity .35s ease, transform .5s var(--ease), visibility 0s linear .35s; }
+.prev.on { opacity: 1; visibility: visible; transform: none; transition: opacity .35s ease, transform .5s var(--ease); }
+.vazioni { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: .6em; padding: 1rem 1.6rem; border-radius: 999px; background: var(--arancio); color: #000; font-weight: 600; font-size: .98rem; line-height: 1; transition: transform .4s var(--ease), background-color .3s; box-shadow: 0 16px 36px -16px rgba(218,85,18,.9), inset 0 1px 0 rgba(255,255,255,.3); }
+.btn::after { content: ""; position: absolute; inset: 0; right: auto; width: 100%; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); transition: left .5s; pointer-events: none; }
+.btn svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.btn:active { transform: scale(.97); }
+@media (hover: hover) { .btn:hover { background: #F0651D; transform: translateY(-1px); } .btn:hover::after { left: 100%; } }
+.suggerimento { font-size: .78rem; color: rgba(255,255,255,.45); display: flex; align-items: center; gap: 6px; }
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
-                    },
-                    colors: { 
-                        dark: '#000000', 
-                        console: '#08080a',
-                        accent: '#FF7A00', 
-                        accentHover: '#E56D00',
-                        graytext: '#8E8E93',
-                    }
-                }
-            }
-        }
-    </script>
+/* mini-schermate animate (solo decorazione, nessun dato vero) */
+.fin { width: min(100%, 400px); border-radius: 22px; background: rgba(10,10,10,.7); border: 1px solid var(--vetro-bordo); box-shadow: 0 30px 60px -30px #000; overflow: hidden; }
+.fin .bar { display: flex; align-items: center; gap: 6px; padding: 11px 14px; border-bottom: 1px solid var(--linea); font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.fin .bar i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); }
+.fin .bar span { margin-left: 8px; }
+.fin .corpo { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.tag { align-self: flex-start; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .16em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; background: rgba(218,85,18,.2); color: var(--arancio-chiaro); }
+.tag.g { background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); }
+.ln { height: 9px; border-radius: 9px; background: rgba(255,255,255,.18); width: 0; }
+.ln.o { background: rgba(218,85,18,.7); }
+.on .ln { animation: largo .7s var(--ease) forwards; animation-delay: calc(var(--i, 0) * .14s + .15s); }
+@keyframes largo { to { width: var(--w, 80%); } }
+.cur { display: inline-block; width: 2px; height: 14px; background: var(--arancio); margin-left: 4px; vertical-align: middle; animation: lampeggia 1s steps(1) infinite; }
+@keyframes lampeggia { 50% { opacity: 0; } }
+.on .pop { animation: pop .5s var(--ease) both; animation-delay: calc(var(--i, 0) * .09s + .2s); }
+@keyframes pop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+.pop { opacity: 0; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 14px 16px 16px; }
+.cal b { font-family: var(--font-mono); font-size: .52rem; letter-spacing: .1em; text-align: center; color: rgba(255,255,255,.4); font-weight: 400; padding-bottom: 2px; }
+.cal span { aspect-ratio: 1; border-radius: 9px; background: rgba(255,255,255,.06); position: relative; }
+.cal span.p::after { content: ""; position: absolute; inset: 22%; border-radius: 50%; background: var(--arancio); opacity: 0; }
+.on .cal span.p::after { animation: pop .5s var(--ease) both; animation-delay: calc(var(--i, 0) * .12s + .25s); }
+.on .cal span.p { animation: accendi .5s ease both; animation-delay: calc(var(--i, 0) * .12s + .25s); }
+@keyframes accendi { to { background: rgba(218,85,18,.22); } }
+.film { position: relative; aspect-ratio: 16 / 9; margin: 14px 16px 0; border-radius: 16px; background: linear-gradient(135deg, #2a1208, #0c0c0c 55%, #3a1a0b); overflow: hidden; }
+.film .pl { position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.14); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.25); }
+.film .pl::before { content: ""; border-left: 14px solid #fff; border-top: 9px solid transparent; border-bottom: 9px solid transparent; margin-left: 4px; }
+.film .pr { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.2); }
+.film .pr i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 4px; background: var(--arancio); }
+.on .film .pr i { animation: largo 2.4s linear forwards; --w: 100%; }
+.film .pin { position: absolute; bottom: 8px; width: 14px; height: 14px; border-radius: 50%; background: var(--arancio); border: 2px solid #000; left: var(--x); transform: translateX(-50%); }
+.riga-in { display: flex; align-items: center; gap: 10px; padding: 14px 16px 16px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 999px; font-size: .78rem; font-weight: 600; background: rgba(255,255,255,.1); }
+.chip svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.chip.ok { background: rgba(218,85,18,.22); color: var(--arancio-chiaro); }
+.bolla { margin: 12px 16px 0; padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: rgba(255,255,255,.09); display: flex; flex-direction: column; gap: 6px; }
+.doc { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.doc .rg { display: flex; justify-content: space-between; gap: 18px; }
+.doc .rg .ln { flex: 1; } .doc .rg .ln + .ln { flex: none; }
+.firma { height: 54px; margin-top: 4px; }
+.firma path { fill: none; stroke: var(--arancio); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.on .firma path { animation: disegna 1.4s ease .9s forwards; }
+.cli { display: flex; align-items: center; gap: 12px; padding: 4px 0; }
+.av { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: .85rem; background: rgba(218,85,18,.2); color: var(--arancio-chiaro); }
+.cli .ln { flex: 1; } .cli .pt { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--arancio); }
+.on .cli { animation: entra .6s var(--ease) both; animation-delay: calc(var(--i, 0) * .12s + .15s); }
+.cli { opacity: 0; }
+@keyframes entra { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+.grafico { position: relative; height: 170px; margin: 14px 16px 6px; display: flex; align-items: flex-end; gap: 12px; }
+.grafico i { flex: 1; border-radius: 10px 10px 4px 4px; background: rgba(255,255,255,.14); height: 0; }
+.grafico i:last-child { background: var(--arancio); }
+.on .grafico i { animation: alza .9s var(--ease) forwards; animation-delay: calc(var(--i, 0) * .1s + .15s); }
+@keyframes alza { to { height: var(--h); } }
+.linea-g { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.linea-g path { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .8; }
+.on .linea-g path { animation: disegna 1.4s ease .5s forwards; }
+@keyframes disegna { to { stroke-dashoffset: 0; } }
+.audit { display: flex; align-items: center; gap: 22px; padding: 18px; }
+.anello { flex: none; width: 112px; height: 112px; }
+.anello circle { fill: none; stroke-width: 9; stroke-linecap: round; }
+.anello .f { stroke: rgba(255,255,255,.12); } .anello .v { stroke: var(--arancio); stroke-dasharray: 289; stroke-dashoffset: 289; transform: rotate(-90deg); transform-origin: center; }
+.on .anello .v { animation: anello 1.6s var(--ease) .2s forwards; }
+@keyframes anello { to { stroke-dashoffset: 62; } }
+.punti { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.punti div { display: flex; align-items: center; gap: 10px; }
+.punti .ck { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: rgba(218,85,18,.25); color: var(--arancio-chiaro); }
+.punti .ck svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.punti .ln { flex: 1; }
 
-    <style>
-        /* --- SHADER DI SFONDO GLOBALE PERMANENTE --- */
-        .shader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            z-index: 0;
-            background-color: #000000;
-            background-image: 
-                radial-gradient(circle at 0% 0%, #ff7a00, transparent 80%), 
-                radial-gradient(circle at 100% 0%, #000000, transparent 80%), 
-                radial-gradient(circle at 100% 100%, #000000, transparent 80%), 
-                radial-gradient(circle at 0% 100%, #ff7a00, transparent 80%);
-        }
+.piede { margin-top: auto; padding-top: 44px; text-align: center; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.38); }
 
-        /* --- STILI INTRO SPLASH SCREEN (DISEGNO LOGO) --- */
-        .splash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 50;
-            transition: opacity 0.4s ease, visibility 0.4s;
-        }
 
-        .logo-wrapper {
-            width: 320px;
-            max-width: 60%;
-            height: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .logo-path {
-            fill: transparent;
-            stroke: rgb(255, 122, 0); 
-            stroke-width: 3;            
-            stroke-dasharray: 8000; 
-            stroke-dashoffset: 8000;
-            filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.8));
-        }
-
-        .start-animation .logo-path {
-            animation: 
-                drawLine 3s cubic-bezier(0.4, 0, 0.2, 1) forwards, 
-                fillLogo 1.5s ease-in-out 3s forwards;          
-        }
-
-        @keyframes drawLine {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes fillLogo {
-            0% {
-                fill: transparent;
-                filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.8));
-            }
-            100% {
-                fill: rgb(255, 122, 0);
-                filter: drop-shadow(0 0 25px rgba(255, 122, 0, 0.6));
-                stroke-width: 0;
-            }
-        }
-
-        .splash-overlay.fade-out {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        /* 8. Video Audit: Eye/Radar scanning focus animation */
-        .scanner-brackets {
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: 12px 12px;
-        }
-        .futuristic-blade:hover .scanner-brackets {
-            transform: scale(0.9) rotate(90deg);
-        }
-        .scanner-line {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            transform-origin: 12px 12px;
-        }
-        .futuristic-blade:hover .scanner-line {
-            opacity: 1;
-            animation: scanMotion 1.5s ease-in-out infinite;
-        }
-        @keyframes scanMotion {
-            0%, 100% { transform: translateY(-4px); }
-            50% { transform: translateY(4px); }
-        }
-
-        /* --- CONCEZIONE BADGE: FLOATING SCI-FI TABLETS --- */
-        .cards-container {
-            perspective: 1500px;
-        }
-
-        .futuristic-blade {
-            position: relative;
-            background: rgba(8, 8, 10, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-radius: 2.25rem;
-            transition: border-color 0.4s, background-color 0.4s, box-shadow 0.4s;
-            transform-style: preserve-3d;
-            will-change: transform, border-color, box-shadow;
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.9);
-        }
-
-        /* Spot di luce dinamico */
-        .futuristic-blade::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(250px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 122, 0, 0.15), transparent 50%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .futuristic-blade:hover::before {
-            opacity: 1;
-        }
-
-        .futuristic-blade:hover {
-            border-color: rgba(255, 122, 0, 0.45);
-            background: rgba(12, 12, 16, 0.97);
-            box-shadow: 
-                0 15px 45px rgba(255, 122, 0, 0.12),
-                inset 0 0 20px rgba(255, 122, 0, 0.02);
-        }
-
-        .inner-content {
-            transform: translateZ(40px);
-            z-index: 10;
-        }
-
-        /* --- ANIMAZIONI LOGHI SVG (UNA VOLTA SOLA AD OGNI HOVER) --- */
-        .icon-container-svg {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* 1. Consegna: Play/Pause Morphing */
-        .play-icon, .pause-icon {
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            transform-origin: 12px 12px;
-        }
-        .futuristic-blade:hover .play-icon {
-            transform: scale(0);
-            opacity: 0;
-        }
-        .futuristic-blade:hover .pause-icon {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        /* 2. Script: Scrittura delle linee con penna occlusiva */
-        .script-line {
-            stroke-dasharray: 20;
-            stroke-dashoffset: 20;
-            transition: stroke-dashoffset 0.5s ease;
-        }
-        .futuristic-blade:hover .script-line-1 { stroke-dashoffset: 0; transition-delay: 0.05s; }
-        .futuristic-blade:hover .script-line-2 { stroke-dashoffset: 0; transition-delay: 0.15s; }
-        .futuristic-blade:hover .script-line-3 { stroke-dashoffset: 0; transition-delay: 0.25s; }
-
-        .pen-group {
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            transform: translate(-5px, 5px) scale(0.9);
-            opacity: 0;
-        }
-        .futuristic-blade:hover .pen-group {
-            transform: translate(0, 0) scale(1);
-            opacity: 1;
-        }
-
-        /* 3. Piani: Cerchi del calendario che compaiono in sequenza all'hover ed escono in ordine inverso al leave */
-        .calendar-dot {
-            transform: scale(0);
-            transform-origin: center;
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.25);
-        }
-        
-        .dot-1 { transition-delay: 0.20s; }
-        .dot-2 { transition-delay: 0.15s; }
-        .dot-3 { transition-delay: 0.10s; }
-        .dot-4 { transition-delay: 0.05s; }
-        .dot-active { transition-delay: 0s; }
-
-        .futuristic-blade:hover .dot-1 { transform: scale(1); transition-delay: 0.04s; }
-        .futuristic-blade:hover .dot-2 { transform: scale(1); transition-delay: 0.08s; }
-        .futuristic-blade:hover .dot-3 { transform: scale(1); transition-delay: 0.12s; }
-        .futuristic-blade:hover .dot-4 { transform: scale(1); transition-delay: 0.16s; }
-        .futuristic-blade:hover .dot-active { transform: scale(1); transition-delay: 0.22s; }
-
-        /* 4. Report: Allungamento freccia verso l'alto a destra */
-        .futuristic-blade[data-id="report"]:hover .graph-line-path {
-            animation: animGraphStretch 0.6s cubic-bezier(0.25, 1, 0.5, 1) 1;
-        }
-        @keyframes animGraphStretch {
-            0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.08) translate(1px, -1px); }
-            100% { transform: scale(1) translate(0, 0); }
-        }
-
-        /* 5. Preventivi: Euro che sale e appare & oscillazione */
-        .euro-draw {
-            opacity: 0;
-            transform: translateY(5px) scale(0.7);
-            transform-origin: 12px 13px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
-        }
-        .tag-path-wrapper {
-            transition: transform 0.45s ease;
-            transform-origin: 12px 2px;
-        }
-        .futuristic-blade:hover .tag-path-wrapper {
-            transform: rotate(-12deg);
-        }
-        .futuristic-blade:hover .euro-draw {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            transition-delay: 0.12s;
-        }
-
-        /* 6. Revisioni: Disegno del checkmark sullo schermo */
-        .check-draw-path {
-            stroke-dasharray: 20;
-            stroke-dashoffset: 20;
-            transition: stroke-dashoffset 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .futuristic-blade:hover .check-draw-path {
-            stroke-dashoffset: 0;
-            transition-delay: 0.15s;
-        }
-
-        /* 7. Hub Clienti: People/Team expanding animation */
-        .hub-user {
-            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .hub-user-left {
-            transform-origin: 8.5px 15px;
-        }
-        .hub-user-right {
-            transform-origin: 15.5px 15px;
-        }
-        .hub-user-main {
-            transform-origin: 12px 15px;
-        }
-        .futuristic-blade:hover .hub-user-left {
-            transform: translate(-3px, 0.5px) scale(0.95);
-        }
-        .futuristic-blade:hover .hub-user-right {
-            transform: translate(3px, 0.5px) scale(0.95);
-        }
-        .futuristic-blade:hover .hub-user-main {
-            transform: translateY(-1.5px) scale(1.05);
-        }
-
-        /* Ingressi GSAP */
-        .ui-element-gsap {
-            opacity: 0;
-            transform: translateY(24px) scale(0.96);
-        }
-
-        /* Sfondo reticolo */
-        .sci-fi-grid {
-            position: absolute;
-            inset: 0;
-            background-size: 60px 60px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 122, 0, 0.015) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 122, 0, 0.015) 1px, transparent 1px);
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.8;
-        }
-    </style>
+/* ---------- telefono: mazzo di schede da sfogliare + dock in basso ---------- */
+.deck, .dock { display: none; }
+@media (max-width: 899px) {
+  .lancio { display: none; }
+  .centro { padding-bottom: 110px; }
+  .deck { display: flex; width: calc(100% + 40px); margin: 0 -20px; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; padding: 6px calc((100vw - min(80vw, 332px)) / 2) 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .deck::-webkit-scrollbar { display: none; }
+  .carta { position: relative; flex: none; width: min(80vw, 332px); scroll-snap-align: center; scroll-snap-stop: always; display: flex; flex-direction: column; gap: 14px; padding: 18px 18px 20px; border-radius: 32px; background: var(--vetro); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%); box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 30px 60px -34px rgba(0,0,0,.95); overflow: hidden; isolation: isolate; opacity: .5; transform: scale(.94); transition: opacity .4s ease, transform .5s var(--ease), border-color .4s; }
+  .carta::before { content: ""; position: absolute; z-index: -1; right: -30%; top: -20%; width: 90%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(218,85,18,.3), transparent 65%); }
+  .carta.on { opacity: 1; transform: none; border-color: rgba(218,85,18,.5); }
+  .carta .ct1 { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--arancio-chiaro); }
+  .carta .ct1 em { font-style: normal; font-size: .56rem; letter-spacing: .14em; padding: 4px 8px; border-radius: 999px; background: rgba(218,85,18,.18); }
+  .carta .vis { height: 268px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .carta .vis .fin { flex: none; width: 400px; transform: scale(var(--s, .66)); }
+  .carta h2 { margin: 0; font-size: 1.9rem; font-weight: 700; letter-spacing: -.035em; line-height: 1; text-transform: uppercase; }
+  .carta p { margin: 0; color: var(--testo-2); font-size: .92rem; min-height: 2.7em; }
+  .carta .btn { width: 100%; }
+  .dock { position: fixed; z-index: 30; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom)); margin: 0 auto; width: fit-content; max-width: calc(100% - 20px); display: flex; gap: 3px; padding: 7px; border-radius: 999px; background: rgba(20,20,20,.55); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 40px -18px rgba(0,0,0,.95); }
+  .dock button { position: relative; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: rgba(255,255,255,.65); transition: background-color .3s, color .3s, transform .4s var(--ease); }
+  .dock button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .dock button { z-index: 1; }
+  .dock button.on { color: #000; transform: scale(1.1); }
+  .dock .bd { position: absolute; z-index: 0; left: 0; top: 0; width: 38px; height: 38px; border-radius: 50%; background: var(--arancio); box-shadow: 0 8px 22px -6px rgba(218,85,18,.85), inset 0 1px 0 rgba(255,255,255,.35); pointer-events: none; will-change: transform; }
+  .piede { padding-top: 24px; }
+}
+.rv { opacity: 0; transform: translateY(18px) scale(.98); }
+.pronto .rv { opacity: 1; transform: none; transition: opacity .9s var(--ease) calc(var(--n, 0) * 80ms), transform .9s var(--ease) calc(var(--n, 0) * 80ms); }
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; } .pronto .rv { transition: none; }
+  .sfondo i { animation: none; } .intro { display: none; }
+  .on .ln, .on .pop, .on .cli, .on .grafico i, .on .film .pr i, .on .cal span.p, .on .cal span.p::after, .on .firma path, .on .linea-g path, .on .anello .v { animation-duration: .01s; animation-delay: 0s; }
+}
+</style>
 </head>
-<body class="min-h-screen bg-dark text-white font-sans flex flex-col justify-between overflow-x-hidden select-none antialiased relative">
+<body>
+<div class="sfondo" aria-hidden="true"><i></i><i></i><i></i></div>
 
-    <!-- Canvas Shader di Sfondo -->
-    <div class="shader-container">
-        <canvas id="shader-nurvdz8xx" style="width: 100%; height: 100%; display: block; filter: blur(100px); opacity: 0.95; mix-blend-mode: normal;"></canvas>
-    </div>
+<div class="intro" id="intro" aria-hidden="true">
+  <svg viewBox="0 0 1018 723" pathLength="1"><path pathLength="1" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path pathLength="1" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg>
+</div>
 
-    <div class="sci-fi-grid"></div>
+<header class="os-bar rv" style="--n:0">
+  <a class="os-marchio" href="./" aria-label="RAW OS, centro"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg><span>Raw <b>OS</b></span></a>
+  <button class="pill os-strumenti" type="button" data-raw-strumenti aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Strumenti <kbd>⌘K</kbd></button>
+  <a class="pill" href="../"><span class="lungo">Torna al </span><span class="sito">sito</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+</header>
 
-    <!-- INTRO SPLASH SCREEN (PERFETTAMENTE INVARIATO) -->
-    <div class="splash-overlay" id="splashScreen">
-        <div class="logo-wrapper">
-            <svg width="100%" height="100%" viewBox="-30 -30 1078 783" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;overflow:visible;">
-                <path class="logo-path" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill-rule:nonzero;"/>
-                <path class="logo-path" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill-rule:nonzero;"/>
-            </svg>
-        </div>
-    </div>
+<main class="centro" id="contenuto">
+  <div class="testa">
+    <span class="eyebrow rv" style="--n:1">Central OS</span>
+    <h1 class="rv" style="--n:2">Raw <em>OS</em></h1>
+    <p class="rv" style="--n:3">Tutti i tuoi strumenti di lavoro in un posto solo.</p>
+  </div>
 
-    <!-- SCHERMATA DI LOGIN -->
-    <div id="login-container" class="fixed inset-0 z-40 flex items-center justify-center px-4 opacity-0 pointer-events-none transition-all duration-500" style="transform: translateY(30px) scale(0.95);">
-        <div class="w-full max-w-md bg-white/[0.03] border border-white/10 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative">
-            
-            <!-- Glow superiore decorativo -->
-            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-accent/20 rounded-full blur-[60px] pointer-events-none"></div>
+  <div class="lancio rv" style="--n:4">
+    <nav class="elenco vetro" id="elenco" aria-label="Strumenti"></nav>
 
-            <div class="text-center mb-8 space-y-2">
-                <span class="text-[10px] font-mono font-bold tracking-[0.4em] text-accent uppercase">Central OS // RAW</span>
-                <h2 class="text-2xl font-black text-white tracking-tight uppercase">Autenticazione</h2>
-                <p class="text-[11px] text-graytext/60 max-w-[280px] mx-auto leading-relaxed">Inserisci le tue credenziali amministratore per accedere al pannello strumenti.</p>
-            </div>
+    <section class="vetrina vetro" id="vetrina" aria-live="polite">
+      <div class="vtesta">
+        <span class="vfase" id="vFase"></span>
+        <h2 id="vNome"></h2>
+        <p id="vDesc"></p>
+      </div>
+      <div class="scena" aria-hidden="true">
 
-            <form id="login-form" class="space-y-5">
-                <div class="space-y-1.5">
-                    <label class="block text-[9px] font-mono font-bold text-graytext uppercase tracking-widest pl-1">Email</label>
-                    <div class="relative group">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-graytext/60 group-focus-within:text-accent transition-colors">
-                            <i data-lucide="mail" class="w-4 h-4"></i>
-                        </span>
-                        <input type="email" id="login-email" required placeholder="admin@example.com" 
-                               class="w-full h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-sm text-white placeholder:text-graytext/30 focus:outline-none focus:border-accent focus:bg-white/[0.04] transition-all duration-300">
-                    </div>
-                </div>
+        <div class="prev" data-id="script"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Script · Video</span></div><div class="corpo">
+          <span class="tag">Hook</span><div class="ln o" style="--w:92%;--i:0"></div><div class="ln" style="--w:76%;--i:1"></div>
+          <span class="tag g">Corpo</span><div class="ln" style="--w:88%;--i:3"></div><div class="ln" style="--w:64%;--i:4"></div><div class="ln" style="--w:40%;--i:5"></div>
+          <span class="tag g">Chiusura</span><div style="display:flex;align-items:center"><div class="ln o" style="--w:58%;--i:7"></div><span class="cur"></span></div>
+        </div></div></div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-[9px] font-mono font-bold text-graytext uppercase tracking-widest pl-1">Password</label>
-                    <div class="relative group">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-graytext/60 group-focus-within:text-accent transition-colors">
-                            <i data-lucide="key-round" class="w-4 h-4"></i>
-                        </span>
-                        <input type="password" id="login-password" required placeholder="••••••••" 
-                               class="w-full h-12 pl-11 pr-12 bg-white/[0.02] border border-white/10 rounded-2xl text-sm text-white placeholder:text-graytext/30 focus:outline-none focus:border-accent focus:bg-white/[0.04] transition-all duration-300">
-                        <button type="button" id="toggle-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-graytext/60 hover:text-white transition-colors">
-                            <i data-lucide="eye" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
+        <div class="prev" data-id="piani"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Calendario contenuti</span></div><div class="cal">
+          <b>L</b><b>M</b><b>M</b><b>G</b><b>V</b><b>S</b><b>D</b>
+          <span></span><span class="p" style="--i:0"></span><span></span><span class="p" style="--i:1"></span><span></span><span></span><span></span>
+          <span class="p" style="--i:2"></span><span></span><span></span><span class="p" style="--i:3"></span><span></span><span class="p" style="--i:4"></span><span></span>
+          <span></span><span></span><span class="p" style="--i:5"></span><span></span><span class="p" style="--i:6"></span><span></span><span></span>
+          <span class="p" style="--i:7"></span><span></span><span></span><span class="p" style="--i:8"></span><span></span><span></span><span class="p" style="--i:9"></span>
+          <span></span><span class="p" style="--i:10"></span><span></span><span></span><span></span><span></span><span></span>
+        </div></div></div>
 
-                <div id="login-error" class="text-xs text-red-500 hidden font-mono text-center bg-red-500/10 border border-red-500/20 py-2.5 px-3 rounded-xl"></div>
+        <div class="prev" data-id="consegna"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Consegna</span></div>
+          <div class="film"><span class="pl"></span><div class="pr"><i></i></div></div>
+          <div class="riga-in"><span class="chip ok pop" style="--i:12">CHK Consegnato</span><span class="chip pop" style="--i:14">Scarica</span></div>
+        </div></div>
 
-                <button type="submit" id="btn-login-submit" class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-2xl font-bold text-xs tracking-wider uppercase transition-all duration-300 active:scale-[0.98] flex justify-center items-center gap-2 mt-4 shadow-lg hover:shadow-accent/20">
-                    <span>Accedi al Sistema</span>
-                    <div id="login-spinner" class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin hidden"></div>
-                </button>
-            </form>
-        </div>
-    </div>
+        <div class="prev" data-id="revisioni"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Revisione</span></div>
+          <div class="film"><span class="pl"></span><div class="pr"><i></i></div><span class="pin pop" style="--x:22%;--i:3"></span><span class="pin pop" style="--x:51%;--i:7"></span><span class="pin pop" style="--x:78%;--i:11"></span></div>
+          <div class="bolla pop" style="--i:6"><div class="ln" style="--w:86%;--i:7"></div><div class="ln" style="--w:52%;--i:8"></div></div>
+          <div class="riga-in"><span class="chip ok pop" style="--i:16">CHK Approvato</span></div>
+        </div></div>
 
-    <!-- CONTENUTO CENTRAL HUB -->
-    <main class="w-full max-w-6xl mx-auto px-6 flex-grow flex flex-col justify-center relative z-10 py-16 md:py-24">
-        
-        <!-- Header -->
-        <div id="header-element" class="ui-element-gsap text-center mb-16 md:mb-20 space-y-3">
-            <h1 class="text-xs font-mono font-black tracking-[0.5em] text-[#FF7A00] uppercase" style="text-shadow: 0 0 12px rgba(255, 122, 0, 0.65);">Central OS</h1>
-            <p class="text-5xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">RAW</p>
-        </div>
+        <div class="prev" data-id="preventivi"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Accordo</span></div><div class="doc">
+          <div class="rg"><div class="ln o" style="--w:100%;--i:0"></div><div class="ln" style="--w:46px;--i:0"></div></div>
+          <div class="rg"><div class="ln" style="--w:100%;--i:1"></div><div class="ln" style="--w:46px;--i:1"></div></div>
+          <div class="rg"><div class="ln" style="--w:100%;--i:2"></div><div class="ln" style="--w:46px;--i:2"></div></div>
+          <div class="rg"><div class="ln" style="--w:100%;--i:3"></div><div class="ln" style="--w:46px;--i:3"></div></div>
+          <svg class="firma" viewBox="0 0 200 54" preserveAspectRatio="none"><path pathLength="1" d="M6 40c14-30 24-34 26-24s-14 30-4 28 20-26 28-22-6 22 4 20 18-14 22-12c0 8 4 12 14 4 12-10 18-16 22-8 4 10 16 4 28-4 8-6 22-4 26-2"/></svg>
+          <span class="chip ok pop" style="--i:14;align-self:flex-start">CHK Firmato</span>
+        </div></div></div>
 
-        <!-- Grid dei Floating Tablets -->
-        <div class="flex flex-wrap justify-center gap-6 max-w-[712px] mx-auto w-full cards-container" id="cardsGrid">
-            
-            <!-- Badge 1: Consegna -->
-            <a href="/consegnavideo" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="consegna">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="16" rx="3" stroke-linecap="round" stroke-linejoin="round" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 9h4M17 9h4M3 15h4M17 15h4" />
-                                <path class="play-icon" stroke-linecap="round" stroke-linejoin="round" d="M10.5 9.5l4 2.5-4 2.5V9.5z" />
-                                <path class="pause-icon opacity-0 scale-0" stroke-linecap="round" stroke-linejoin="round" d="M10 9h1v6h-1zm3 0h1v6h-1z" />
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Consegna</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Video hub</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+        <div class="prev" data-id="hubclienti"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Clienti</span></div><div class="corpo" style="gap:14px">
+          <div class="cli" style="--i:0"><span class="av">A</span><div class="ln" style="--w:100%;width:100%;animation:none"></div><span class="pt"></span></div>
+          <div class="cli" style="--i:1"><span class="av">B</span><div class="ln" style="width:100%;animation:none"></div><span class="pt" style="opacity:.35"></span></div>
+          <div class="cli" style="--i:2"><span class="av">C</span><div class="ln" style="width:100%;animation:none"></div><span class="pt"></span></div>
+          <div class="cli" style="--i:3"><span class="av">D</span><div class="ln" style="width:100%;animation:none"></div><span class="pt" style="opacity:.35"></span></div>
+        </div></div></div>
 
-            <!-- Badge 2: Script -->
-            <a href="/script" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="script">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent relative">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-6 3h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                <path class="script-line script-line-1" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h3" />
-                                <path class="script-line script-line-2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 10h6" />
-                                <path class="script-line script-line-3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h4" />
-                                
-                                <g class="pen-group">
-                                    <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" fill="none" stroke="#08080a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-                                    <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Script</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Copywriting</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+        <div class="prev" data-id="report"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Report mensile</span></div>
+          <div class="grafico"><i style="--h:34%;--i:0"></i><i style="--h:48%;--i:1"></i><i style="--h:42%;--i:2"></i><i style="--h:63%;--i:3"></i><i style="--h:58%;--i:4"></i><i style="--h:80%;--i:5"></i><i style="--h:100%;--i:6"></i>
+            <svg class="linea-g" viewBox="0 0 100 100" preserveAspectRatio="none"><path pathLength="1" vector-effect="non-scaling-stroke" d="M4 70 L18 58 L32 63 L46 42 L60 47 L74 26 L92 4"/></svg></div>
+          <div class="riga-in"><span class="chip ok pop" style="--i:10">Crescita</span></div>
+        </div></div>
 
-            <!-- Badge 3: Piani -->
-            <a href="/pianieditoriali" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="piani">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="15" rx="3" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M16 2v4M8 2v4M3 9h18" stroke-linecap="round" stroke-linejoin="round" />
-                                <circle class="calendar-dot dot-1" cx="7" cy="12" r="0.75" fill="currentColor" />
-                                <circle class="calendar-dot dot-2" cx="12" cy="12" r="0.75" fill="currentColor" />
-                                <circle class="calendar-dot dot-3" cx="17" cy="12" r="0.75" fill="currentColor" />
-                                <circle class="calendar-dot dot-4" cx="7" cy="16" r="0.75" fill="currentColor" />
-                                <circle class="calendar-dot dot-active" cx="12" cy="16" r="0.75" fill="#FF7A00" />
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Piani</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Editorial grid</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+        <div class="prev" data-id="videoaudit"><div class="fin"><div class="bar"><i></i><i></i><i></i><span>Audit</span></div><div class="audit">
+          <svg class="anello" viewBox="0 0 112 112"><circle class="f" cx="56" cy="56" r="46"/><circle class="v" cx="56" cy="56" r="46"/></svg>
+          <div class="punti">
+            <div class="pop" style="--i:3"><span class="ck">CHK</span><div class="ln" style="--w:100%;width:100%;animation:none"></div></div>
+            <div class="pop" style="--i:6"><span class="ck">CHK</span><div class="ln" style="width:80%;animation:none"></div></div>
+            <div class="pop" style="--i:9"><span class="ck">CHK</span><div class="ln" style="width:64%;animation:none"></div></div>
+          </div></div></div></div>
 
-            <!-- Badge 4: Report -->
-            <a href="/report" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="report">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 20h16M4 4v16" />
-                                <g class="graph-line-path">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l5-5 4 3 7-9" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 5h4v4" />
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Report</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Performance</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+      </div>
+      <div class="vazioni">
+        <a class="btn" id="vApri" href="#">Apri strumento <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+        <span class="suggerimento"><kbd style="font-family:var(--font-mono);font-size:.64rem;padding:3px 7px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)">↑↓</kbd> per scorrere, <kbd style="font-family:var(--font-mono);font-size:.64rem;padding:3px 7px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)">1–8</kbd> per saltare</span>
+      </div>
+    </section>
+  </div>
 
-            <!-- Badge 5: Preventivi -->
-            <a href="/preventivi" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="preventivi">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg">
-                                <g class="tag-path-wrapper">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L5 8v11a2 2 0 002 2h10a2 2 0 002-2V8l-7-6z" />
-                                    <circle cx="12" cy="6" r="1" fill="currentColor" />
-                                    <g class="euro-draw">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.5 11.5a2.2 2.2 0 00-3.5 1.8 2.2 2.2 0 003.5 1.8m-4.2-2.5h3.5m-3.5 1.2h3" />
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Preventivi</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Budgeting</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+  <div class="deck rv" id="deck" style="--n:4" aria-label="Strumenti, scorri di lato"></div>
+  <nav class="dock rv" id="dock" style="--n:5" aria-label="Salta a uno strumento"></nav>
 
-            <!-- Badge 6: Revisioni -->
-            <a href="/revisioni" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="revisioni">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="4" width="20" height="12" rx="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M7 20h10M12 16v4" stroke-linecap="round" stroke-linejoin="round" />
-                                <path class="check-draw-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 9.5l2 2 4-4" />
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Revisioni</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Approval</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+  <p class="piede rv" style="--n:6">Accesso privato · 2026 · Teo Macauda, videomaker</p>
+</main>
 
-            <!-- Badge 7: Hub Clienti -->
-            <a href="/hubclienti" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="hubclienti">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Left User -->
-                                <g class="hub-user hub-user-left">
-                                    <circle cx="8.5" cy="8.5" r="1.5" />
-                                    <path d="M5 15a3.5 3.5 0 017 0" stroke-linecap="round" />
-                                </g>
-                                <!-- Right User -->
-                                <g class="hub-user hub-user-right">
-                                    <circle cx="15.5" cy="8.5" r="1.5" />
-                                    <path d="M12 15a3.5 3.5 0 017 0" stroke-linecap="round" />
-                                </g>
-                                <!-- Central Main User (occludes background paths with solid color) -->
-                                <g class="hub-user hub-user-main">
-                                    <circle cx="12" cy="7" r="2" fill="#08080a" />
-                                    <path d="M7 15a5 5 0 0110 0" fill="#08080a" stroke-linecap="round" />
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Hub Clienti</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Workspace</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+<script src="raw.js"></script>
+<script>
+(function () {
+  var root = document.documentElement, riduci = false, visto = false;
+  try { riduci = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  try { visto = sessionStorage.getItem('raw_intro') === '1'; } catch (e) {}
+  var intro = document.getElementById('intro');
 
-            <!-- Badge 8: Video Audit -->
-            <a href="/videoaudit" class="futuristic-blade ui-element-gsap w-[calc(50%-12px)] md:w-[160px] aspect-[3/4] md:aspect-[3/4.4] flex flex-col justify-end p-5 md:p-7 group" data-id="videoaudit">
-                <div class="inner-content flex flex-col justify-between h-full w-full">
-                    <div class="flex items-start justify-between">
-                        <span class="text-[9px] font-bold text-accent font-mono tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH</span>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-8">
-                        <div class="icon-container-svg text-accent">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Eye Icon -->
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
-                                <circle cx="12" cy="12" r="2.5" />
-                                
-                                <!-- Focus Brackets -->
-                                <g class="scanner-brackets">
-                                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3" stroke-linecap="round" stroke-linejoin="round" />
-                                </g>
-                                <!-- Scanner Line -->
-                                <line class="scanner-line" x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                            </svg>
-                        </div>
-                        <div class="space-y-1 h-12 flex flex-col justify-end">
-                            <h2 class="text-base font-extrabold tracking-wide text-white uppercase font-sans">Video Audit</h2>
-                            <p class="text-[9px] font-mono text-graytext/50 uppercase">Analysis</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
+  function parti() {
+    if (document.body.classList.contains('pronto')) return;
+    intro.classList.add('via');
+    setTimeout(function () { document.body.classList.add('pronto'); }, riduci ? 0 : 250);
+  }
+  // l'introduzione si vede una volta a sessione: tornando dai tool il centro appare subito
+  if (riduci || visto) { intro.style.display = 'none'; requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.add('pronto'); }); }); }
+  else {
+    try { sessionStorage.setItem('raw_intro', '1'); } catch (e) {}
+    intro.addEventListener('click', parti);
+    setTimeout(parti, 2300);
+  }
 
-        </div>
-    </main>
+  // ---- elenco degli strumenti (la stessa lista usata dal selettore rapido) ----
+  var T = RawOS.tools, elenco = document.getElementById('elenco'), vet = document.getElementById('vetrina');
+  var fase = '', h = '', ult = RawOS.ultimo(), CK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  T.forEach(function (t) {
+    if (t.fase !== fase) { fase = t.fase; h += '<div class="fase">' + fase + '</div>'; }
+    h += '<a class="riga" href="' + t.href + '" data-id="' + t.id + '"><span class="ci">' + t.ico + '</span><span class="ct"><b>' + t.nome + '</b><small>' + t.sub + '</small></span>' +
+         (ult === t.id ? '<em>Ultimo</em>' : '') + '<span class="cn">' + t.n + '</span><span class="fr">' + RawOS.arrow + '</span></a>';
+  });
+  elenco.innerHTML = h;
+  Array.prototype.forEach.call(document.querySelectorAll('.prev'), function (p) { p.innerHTML = p.innerHTML.replace(/CHK/g, CK); });
 
-    <!-- Footer Aggiornato -->
-    <footer id="footer-element" class="ui-element-gsap py-8 text-center text-[9px] font-mono text-graytext/40 tracking-[0.25em] uppercase relative z-10">
-        Accesso privato / 2026 / Teo Macauda - Videomaker
-    </footer>
+  var righe = Array.prototype.slice.call(elenco.querySelectorAll('.riga')), prevs = {}, cur = -1, tm = 0;
+  Array.prototype.forEach.call(document.querySelectorAll('.prev'), function (p) { prevs[p.getAttribute('data-id')] = p; });
+  function scegli(i, subito) {
+    if (i === cur || i < 0 || i >= T.length) return;
+    cur = i; var t = T[i];
+    righe.forEach(function (r, k) { r.classList.toggle('on', k === i); });
+    function metti() {
+      document.getElementById('vFase').textContent = String(t.n).padStart(2, '0') + ' · ' + t.fase;
+      document.getElementById('vNome').textContent = t.nome;
+      document.getElementById('vDesc').textContent = t.desc;
+      document.getElementById('vApri').setAttribute('href', t.href);
+      Object.keys(prevs).forEach(function (k) { prevs[k].classList.toggle('on', k === t.id); });
+      vet.classList.remove('cambia');
+    }
+    clearTimeout(tm);
+    if (subito || riduci) metti(); else { vet.classList.add('cambia'); tm = setTimeout(metti, 140); }
+  }
+  // all'inizio: l'ultimo strumento usato, oppure il primo
+  var i0 = Math.max(0, ult ? T.map(function (t) { return t.id; }).indexOf(ult) : 0);
+  scegli(i0, true);
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Configurazione Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
-            authDomain: "script-sito.firebaseapp.com",
-            projectId: "script-sito",
-            storageBucket: "script-sito.firebasestorage.app",
-            messagingSenderId: "863535754551",
-            appId: "G-7YHRQZCNMN"
-        };
+  // ---- telefono: mazzo di schede (stesse mini-schermate) + dock ----
+  var deck = document.getElementById('deck'), dock = document.getElementById('dock'), carte = [], dots = [], att = -1, raf = 0, bd = document.createElement('i'), bdX = null, bdAnim = null, forza = null, tf = 0;
+  bd.className = 'bd'; dock.appendChild(bd);
+  T.forEach(function (t, i) {
+    var c = document.createElement('div'); c.className = 'carta'; c.setAttribute('data-i', i);
+    c.innerHTML = '<div class="ct1"><span>' + String(t.n).padStart(2, '0') + ' · ' + t.fase + '</span>' + (ult === t.id ? '<em>Ultimo</em>' : '') + '</div>' +
+      '<div class="vis" aria-hidden="true">' + prevs[t.id].innerHTML + '</div>' +
+      '<h2>' + t.nome + '</h2><p>' + t.desc + '</p>' +
+      '<a class="btn" href="' + t.href + '">Apri strumento ' + RawOS.arrow + '</a>';
+    c.querySelector('.btn').addEventListener('click', function () { try { localStorage.setItem('raw_ultimo', t.id); } catch (e) {} });
+    c.addEventListener('click', function (e) { if (i !== att && !e.target.closest('.btn')) { e.preventDefault(); vaiA(i); } });
+    deck.appendChild(c); carte.push(c);
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', t.nome); b.innerHTML = t.ico;
+    b.addEventListener('click', function () { forza = i === att ? null : i; clearTimeout(tf); tf = setTimeout(function () { forza = null; }, 1800); attiva(i); vaiA(i); }); dock.appendChild(b); dots.push(b);
+  });
+  function vaiA(i, subito) {
+    var c = carte[i]; if (!c) return;
+    deck.scrollTo({ left: c.offsetLeft - (deck.clientWidth - c.offsetWidth) / 2, behavior: subito || riduci ? 'auto' : 'smooth' });
+  }
+  function aggiorna() {
+    var mezzo = deck.scrollLeft + deck.clientWidth / 2, best = 0, d = 1e9;
+    carte.forEach(function (c, i) { var x = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mezzo); if (x < d) { d = x; best = i; } });
+    if (forza !== null) { if (best !== forza) return; forza = null; }   // dopo un tocco sul dock il pallino va subito al punto d'arrivo
+    attiva(best);
+  }
+  function attiva(best) {
+    if (best === att) return; att = best;
+    carte.forEach(function (c, i) { c.classList.toggle('on', i === best); dots[i].classList.toggle('on', i === best); });
+    muoviBolla(best, bdX !== null);
+  }
+  // pallino arancione unico che scivola da un'icona all'altra (si allunga mentre viaggia)
+  function muoviBolla(i, anima) {
+    var b = dots[i]; if (!b || !b.offsetWidth) return;
+    var x = b.offsetLeft + (b.offsetWidth - bd.offsetWidth) / 2, y = b.offsetTop + (b.offsetHeight - bd.offsetHeight) / 2;
+    var da = bdX === null ? x : bdX; bdX = x;
+    bd.style.top = y + 'px';
+    if (bdAnim) { bdAnim.cancel(); bdAnim = null; }
+    if (!anima || riduci || !bd.animate || da === x) { bd.style.transform = 'translateX(' + x + 'px)'; return; }
+    var lungo = Math.abs(x - da), str = 1 + Math.min(lungo / 130, .9), mezzo = (da + x) / 2;
+    bd.style.transform = 'translateX(' + x + 'px)';
+    bdAnim = bd.animate([
+      { transform: 'translateX(' + da + 'px) scale(1,1)', offset: 0 },
+      { transform: 'translateX(' + mezzo + 'px) scale(' + str.toFixed(2) + ',.86)', offset: .42 },
+      { transform: 'translateX(' + x + 'px) scale(1,1)', offset: 1 }
+    ], { duration: 560, easing: 'cubic-bezier(.34,1.3,.5,1)' });
+  }
+  deck.addEventListener('scroll', function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(aggiorna); }, { passive: true });
+  function scala() { var v = deck.querySelector('.vis'); if (v && v.clientWidth) deck.style.setProperty('--s', (Math.min(v.clientWidth, 400) / 400).toFixed(4)); }
+  scala();
+  window.addEventListener('resize', function () { scala(); bdX = null; att = -1; aggiorna(); });
+  if (matchMedia('(max-width: 899px)').matches) { vaiA(i0, true); }
+  aggiorna();
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        window.auth = auth;
-
-        let isSplashFinished = false;
-        let authInitialized = false;
-        let currentUser = null;
-        let routed = false;
-
-        // --- 1. SHADER DI SFONDO CANVAS ---
-        (function() {
-          const canvas = document.getElementById('shader-nurvdz8xx');
-          if (!canvas) return;
-          
-          const ctx = canvas.getContext('2d');
-          let w, h;
-          let time = 0;
-          
-          const speed = 0.01;
-          const blendMode = 'overlay';
-          
-          const blobs = [
-            { color: '#ff7a00', x: 0, y: 0, vx: 1, vy: 1, s: 1, t: 0 },
-            { color: '#000000', x: 0, y: 0, vx: -1, vy: 1, s: 1, t: 2 },
-            { color: '#000000', x: 0, y: 0, vx: -1, vy: -1, s: 1, t: 4 },
-            { color: '#ff7a00', x: 0, y: 0, vx: 1, vy: -1, s: 1, t: 6 }
-          ];
-
-          function resize() {
-            if (!canvas.parentElement) return;
-            canvas.width = 128; 
-            canvas.height = 128;
-          }
-
-          window.addEventListener('resize', resize);
-          resize();
-
-          function animate() {
-            time += speed;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = blendMode;
-
-            blobs.forEach((b) => {
-              const movementX = Math.sin(time + b.t) * 0.5 + Math.sin(time * 0.5 + b.t * 2) * 0.5;
-              const movementY = Math.cos(time + b.t) * 0.5 + Math.cos(time * 0.6 + b.t * 2) * 0.5;
-              
-              const x = (canvas.width / 2) + movementX * (canvas.width * 0.35);
-              const y = (canvas.height / 2) + movementY * (canvas.height * 0.35);
-
-              const radius = canvas.width * 0.55; 
-              const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
-              g.addColorStop(0, b.color);
-              g.addColorStop(1, 'rgba(0,0,0,0)');
-              
-              ctx.fillStyle = g;
-              ctx.beginPath();
-              ctx.arc(x, y, radius, 0, Math.PI * 2);
-              ctx.fill();
-            });
-            
-            requestAnimationFrame(animate);
-          }
-          animate();
-        })();
-
-        // --- 2. LOGO SPLASH SCREEN INITIALIZATION (INVARIATO) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const splash = document.getElementById('splashScreen');
-            if (!splash) return;
-
-            const paths = document.querySelectorAll('.logo-path');
-            paths.forEach(path => {
-                const length = Math.ceil(path.getTotalLength()) + 20;
-                path.style.strokeDasharray = length;
-                path.style.strokeDashoffset = length;
-            });
-            
-            void splash.offsetWidth;
-            splash.classList.add('start-animation');
-
-            setTimeout(() => {
-                splash.classList.add('fade-out'); 
-                
-                setTimeout(() => {
-                    splash.remove();
-                    isSplashFinished = true;
-                    onSplashOrAuthReady();
-                }, 400); 
-            }, 4500); 
-        });
-
-        function onSplashOrAuthReady() {
-            if (!isSplashFinished || !authInitialized || routed) return;
-            routed = true;
-            
-            if (currentUser) {
-                showDashboard();
-            } else {
-                showLoginForm();
-            }
-        }
-
-        function showLoginForm() {
-            const loginContainer = document.getElementById('login-container');
-            if (!loginContainer) return;
-            
-            // Nasconde la dashboard e il footer per evitare sovrapposizioni visive o di layout durante il login
-            const mainEl = document.querySelector('main');
-            const footerEl = document.getElementById('footer-element');
-            if (mainEl) mainEl.style.display = 'none';
-            if (footerEl) footerEl.style.display = 'none';
-            
-            loginContainer.classList.remove('pointer-events-none');
-            gsap.to(loginContainer, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.5,
-                ease: "power4.out"
-            });
-        }
-
-        function showDashboard() {
-            const loginContainer = document.getElementById('login-container');
-            
-            const runDashboardIntro = () => {
-                const mainEl = document.querySelector('main');
-                const footerEl = document.getElementById('footer-element');
-                
-                // Ripristina la visualizzazione di dashboard e footer
-                if (mainEl) mainEl.style.display = '';
-                if (footerEl) footerEl.style.display = '';
-                
-                // Inizio animazione d'ingresso GSAP dei vari elementi
-                gsap.to(".ui-element-gsap", {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 1.0,
-                    stagger: 0.08,
-                    ease: "power4.out"
-                });
-            };
-
-            if (loginContainer && loginContainer.parentNode) {
-                loginContainer.classList.add('pointer-events-none');
-                gsap.to(loginContainer, {
-                    opacity: 0,
-                    y: 40,
-                    scale: 0.92,
-                    duration: 0.55,
-                    ease: "power3.inOut",
-                    onComplete: () => {
-                        loginContainer.remove();
-                        runDashboardIntro();
-                    }
-                });
-            } else {
-                runDashboardIntro();
-            }
-        }
-
-        // Firebase auth listener
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            authInitialized = true;
-            
-            if (routed) {
-                if (user) {
-                    showDashboard();
-                }
-            } else {
-                onSplashOrAuthReady();
-            }
-        });
-
-        // Form Login Submit
-        document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('login-error');
-            const spinner = document.getElementById('login-spinner');
-            const submitBtn = document.getElementById('btn-login-submit');
-
-            errorEl.classList.add('hidden');
-            spinner.classList.remove('hidden');
-            submitBtn.disabled = true;
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                console.error(error);
-                errorEl.innerText = "Credenziali non valide.";
-                errorEl.classList.remove('hidden');
-                spinner.classList.add('hidden');
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Toggle Password Visibility
-        const togglePasswordBtn = document.getElementById('toggle-password');
-        const passwordInput = document.getElementById('login-password');
-        
-        togglePasswordBtn?.addEventListener('click', () => {
-            const isPassword = passwordInput.getAttribute('type') === 'password';
-            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-            const icon = togglePasswordBtn.querySelector('i');
-            if (icon) {
-                if (isPassword) {
-                    togglePasswordBtn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4"></i>';
-                } else {
-                    togglePasswordBtn.innerHTML = '<i data-lucide="eye" class="w-4 h-4"></i>';
-                }
-                lucide.createIcons();
-            }
-        });
-
-        // --- 3. EFFETTO MOUSE GLOW & 3D TILT PARALLAX (GSAP) ---
-        const blades = document.querySelectorAll('.futuristic-blade');
-        
-        blades.forEach(blade => {
-            blade.addEventListener('mousemove', (e) => {
-                const rect = blade.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                blade.style.setProperty('--mouse-x', `${x}px`);
-                blade.style.setProperty('--mouse-y', `${y}px`);
-                
-                const width = rect.width;
-                const height = rect.height;
-                const rotateX = ((y - height / 2) / height) * -12;
-                const rotateY = ((x - width / 2) / width) * 12;
-                
-                gsap.to(blade, {
-                    rotateX: rotateX,
-                    rotateY: rotateY,
-                    y: -10,
-                    transformPerspective: 1500,
-                    duration: 0.35,
-                    ease: "power2.out",
-                    overwrite: "auto"
-                });
-            });
-            
-            blade.addEventListener('mouseleave', () => {
-                gsap.to(blade, {
-                    rotateX: 0,
-                    rotateY: 0,
-                    y: 0,
-                    transformPerspective: 1500,
-                    duration: 0.5,
-                    ease: "power2.out",
-                    overwrite: "auto"
-                });
-            });
-        });
-        
-        // Inizializza icone Lucide
-        lucide.createIcons();
-    </script>
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    righe.forEach(function (r, k) { r.addEventListener('mouseenter', function () { scegli(k); }); });
+  }
+  righe.forEach(function (r, k) {
+    r.addEventListener('focus', function () { scegli(k); });
+    r.addEventListener('click', function () { try { localStorage.setItem('raw_ultimo', T[k].id); } catch (e) {} });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (document.body.classList.contains('cmd-aperto') || e.metaKey || e.ctrlKey || e.altKey) return;
+    var tag = (e.target && e.target.tagName || '').toLowerCase(); if (tag === 'input' || tag === 'textarea') return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault(); var n = (cur + (e.key === 'ArrowDown' ? 1 : -1) + T.length) % T.length; righe[n].focus();
+    } else if (/^[1-8]$/.test(e.key)) { RawOS.vai(T[+e.key - 1]); }
+  });
+})();
+</script>
 </body>
 </html>

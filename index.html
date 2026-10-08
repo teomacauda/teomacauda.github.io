@@ -1,502 +1,215 @@
-<!DOCTYPE html>
-<html lang="it" class="scroll-smooth">
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Teo Macauda | Videomaker</title>
-    
-    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
-    
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/index.css">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
-                }
-            }
-        }
-    </script>
-
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teo Macauda · Videomaker e Content Marketing</title>
+<meta name="description" content="Videomaking e content marketing: catturo l'attenzione e trasformo i tuoi contenuti in clienti.">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://teomacauda.it/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Teo Macauda">
+<meta property="og:locale" content="it_IT">
+<meta property="og:title" content="Teo Macauda · Videomaker e Content Marketing">
+<meta property="og:description" content="Videomaking e content marketing: catturo l'attenzione e trasformo i tuoi contenuti in clienti.">
+<meta property="og:url" content="https://teomacauda.it/">
+<meta property="og:image" content="https://teomacauda.it/img/og/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ritratto di Matteo Macauda su sfondo arancio, con la scritta Catturo l&#x27;attenzione, trasformo i tuoi contenuti">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Teo Macauda · Videomaker e Content Marketing">
+<meta name="twitter:description" content="Videomaking e content marketing: catturo l'attenzione e trasformo i tuoi contenuti in clienti.">
+<meta name="twitter:image" content="https://teomacauda.it/img/og/og-home.jpg">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Bebas+Neue&display=swap">
+<script>
+(function () {
+  var d = document.documentElement;
+  try {
+    d.classList.add('js');
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { d.classList.add('sc', 'intro-wait'); }
+  } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="css/stile.css">
 </head>
-<body class="antialiased selection:bg-accent selection:text-white">
+<body>
+<a class="skip" href="#contenuto">Vai al contenuto</a>
 
-<div id="page-wrapper">
-    <div class="ambient-glow"></div>
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-bg" id="introBg"></div>
+  <svg class="intro-logo" id="introLogo" viewBox="0 0 1018 723">
+    <path pathLength="1" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/>
+    <path pathLength="1" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/>
+  </svg>
+</div>
+<div class="progresso" id="progresso" aria-hidden="true"></div>
+<div class="capitolo" id="capitolo" aria-hidden="true"><div class="fl-riga" id="capNum"></div><i></i><div class="fl-riga" id="capNome"></div></div>
 
-    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
-                <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
-                </svg>
-            </a>
-            
-            <nav class="hidden md:flex gap-1 items-center bg-white/5 p-1.5 rounded-full border border-white/5">
-                <a href="/" class="nav-link active">Home</a>
-                <a href="/lavori" class="nav-link">Lavori</a>
-                <a href="/#servizi" class="nav-link">Servizi</a>
-                <a href="/toolbox" class="nav-link">Toolbox</a>
-            </nav>
 
-            <button onclick="toggleMobileMenu()" class="md:hidden text-graytext hover:text-white transition-colors p-2 focus:outline-none relative z-[150]">
-                <i data-lucide="menu" id="icon-menu" class="w-7 h-7 block"></i>
-                <i data-lucide="x" id="icon-x" class="w-7 h-7 hidden"></i>
-            </button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 1018 723">
+    <path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/>
+    <path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/>
+  </symbol>
+</svg>
+
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Teo Macauda, torna in alto"><svg><use href="#logo"/></svg></a>
+    <nav class="nav" aria-label="Principale">
+      <a href="#top" class="nav-link attivo" aria-current="page">Home</a>
+      <a href="lavori/" class="nav-link">Lavori</a>
+      <a href="#servizi" class="nav-link">Servizi</a>
+      <a href="toolbox/" class="nav-link">Toolbox</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPannello" aria-label="Apri il menu"><span class="burger" aria-hidden="true"><i></i><i></i></span></button>
+    <div class="menu-pannello" id="menuPannello" role="dialog" aria-label="Menu">
+      <nav class="mp-nav" aria-label="Menu mobile">
+        <a href="#top" aria-current="page" class="mp-link attivo"><span>Home</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+        <a class="mp-link" href="lavori/"><span>Lavori</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+        <a class="mp-link" href="#servizi"><span>Servizi</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+        <a class="mp-link" href="toolbox/"><span>Toolbox</span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></a>
+      </nav>
+      <div class="mp-fondo">
+        <a class="btn btn-primario" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener">Parliamo del tuo progetto? <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+        <div class="mp-ic">
+          <a class="ic" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8a9.2 9.2 0 0 0-7.9 13.9L2.8 21.2l4.6-1.2A9.2 9.2 0 1 0 12 2.8z"/><path class="pieno" d="M9.1 7.4c.35-.45.95-.4 1.2.1l.85 1.75c.15.3.1.65-.1.9l-.55.65c.7 1.35 1.75 2.4 3.15 3.05l.65-.6c.25-.2.6-.25.9-.1l1.75.9c.5.25.55.85.15 1.2-.8.75-1.9 1-2.9.65-3.2-1.1-5.5-3.5-6.4-6.4-.25-.9 0-1.5.3-2.1z"/></svg></a>
+          <a class="ic" href="tel:+393784142773" aria-label="Chiama"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 3.6h3.3l1.8 4.5-2.2 1.4a11.6 11.6 0 0 0 5.4 5.4l1.4-2.2 4.5 1.8v3.3a2 2 0 0 1-2.1 2A16.4 16.4 0 0 1 3.2 5.7a2 2 0 0 1 2-2.1z"/></svg></a>
+          <a class="ic" href="mailto:info@teomacauda.it" aria-label="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3.2"/><path d="M2.5 8 12 13.6 21.5 8"/></svg></a>
+          <a class="ic" href="https://instagram.com/teo.macauda" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle class="pieno" cx="17.5" cy="6.6" r="1"/></svg></a>
         </div>
-    </header>
-
-    <div id="mobileMenu" class="fixed inset-0 z-[140] flex items-start justify-center px-5 pt-20 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" onclick="toggleMobileMenu()"></div>
-        <div id="mobileMenuContent" class="bg-[#0F0F0F] border border-white/10 w-full max-sm p-8 rounded-3xl relative transform -translate-y-10 transition-transform duration-500 shadow-[0_30px_60px_rgba(0,0,0,0.9)]">
-            <nav class="flex flex-col gap-6 text-left">
-                <a href="/" onclick="toggleMobileMenu()" class="flex items-center gap-4 text-xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="home" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Home</a>
-                <a href="/lavori" class="flex items-center gap-4 text-xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="folder-kanban" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Lavori</a>
-                <a href="/#servizi" onclick="toggleMobileMenu()" class="flex items-center gap-4 text-xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="layers" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Servizi</a>
-                <a href="/toolbox" class="flex items-center gap-4 text-xl font-bold text-white hover:text-accent transition-colors group"><i data-lucide="package" class="w-6 h-6 text-accent/50 group-hover:text-accent"></i> Toolbox</a>
-                
-                <div class="pt-6 border-t border-white/5 mt-2">
-                    <p class="text-[10px] text-graytext uppercase tracking-widest mb-4">Contatti Rapidi</p>
-                    <div class="flex gap-4">
-                        <a href="tel:+393784142773" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent"><i data-lucide="phone" class="w-5 h-5"></i></a>
-                        <a href="https://wa.me/message/KBRZEPY2IJFTA1" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent">
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.412.001 12.049c0 2.123.554 4.197 1.608 6.037L0 24l6.105-1.602a11.834 11.834 0 005.937 1.598h.005c6.637 0 12.046-5.414 12.049-12.05a11.802 11.802 0 00-3.48-8.513z"/></svg>
-                        </a>
-                        <a href="https://www.instagram.com/teo.macauda" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent">
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126s1.337 1.079 2.126 1.384c.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384s1.079-1.338 1.384-2.126c.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126s-1.338-1.079-2.126-1.384c-.765-.296-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.584.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36.105.413 1.227.057 1.266.07 1.646.07 4.85s-.015 3.584-.071 4.85c-.055 1.17-.249 1.805-.415 2.227-.217.562-.477.96-.896 1.382-.42.419-.819.679-1.381.896-.422.164-1.056.36-1.227.413-1.266.057-1.646.07-4.85.07s-3.584-.015-4.85-.071c-1.17-.055-1.805-.249-2.227-.415-.562-.217-.96-.477-1.382-.896-.419-.42-.679-.819-.896-1.381-.164-.422-.36-1.056-.413-1.227-.057-1.266-.07-1.646-.07-4.85s.016-3.584.071-4.85c.055-1.17.249-1.805.415-2.227.217-.562.477-.96.896-1.382.42-.419.819-.679 1.381-.896.422-.164 1.056-.36 1.227-.413 1.266-.057 1.646-.07 4.85-.07zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </div>
+      </div>
     </div>
+  </div>
+</header>
 
-    <main>
-        <!-- HERO SECTION -->
-        <section id="hero-section" class="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-20">
-            <div class="hero-noise"></div>
-            <div class="hero-grid"></div>
-            
-            <div class="hero-visual-container">
-                <div class="viewfinder-corner corner-tl"></div>
-                <div class="viewfinder-corner corner-tr"></div>
-                <div class="viewfinder-corner corner-bl"></div>
-                <div class="viewfinder-corner corner-br"></div>
-                
-                <div id="lens-main" class="lens-ring border-accent/20"></div>
-                <div id="lens-secondary" class="lens-ring scale-90 border-white/5"></div>
-                <div id="lens-glow-layer" class="lens-glow"></div>
-            </div>
-            
-            <div class="relative z-10 max-w-6xl mx-auto flex flex-col items-center text-center">
-                <div class="reveal mb-6 flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
-                    <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/90">Videomaking & Content Marketing</span>
-                </div>
-
-                <h1 id="hero-title" class="hero-title-responsive font-extrabold tracking-tighter mb-6 md:mb-8 reveal">
-                    Catturo <span class="text-accent italic">l'attenzione</span>,<br/>
-                    trasformo i tuoi <span class="relative">contenuti.<span class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-1 bg-accent/30 rounded-full"></span></span>
-                </h1>
-                
-                <p class="text-sm md:text-xl text-graytext mb-10 md:mb-12 max-w-2xl mx-auto reveal font-light leading-relaxed px-2 md:px-4">
-                    Non creo solo video. Sviluppo un sistema visivo progettato per massimizzare la tua visibilità e convertire ogni spettatore in un potenziale cliente.
-                </p>
-                
-                <div class="reveal flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto px-4 sm:px-0">
-                    <a href="/lavori" class="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white text-black px-8 md:px-10 py-4 md:py-5 rounded-full font-bold transition-all duration-300 hover:bg-accent hover:text-white overflow-hidden">
-                        <span class="relative z-10">Esplora Progetti</span>
-                        <i data-lucide="play" class="w-4 h-4 md:w-5 md:h-5 relative z-10 group-hover:fill-current"></i>
-                    </a>
-                    <a href="#servizi" class="inline-flex items-center gap-2 text-white/70 hover:text-accent transition-colors px-6 py-4 font-semibold text-sm">
-                        Cosa faccio <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="absolute bottom-6 md:bottom-8 left-0 w-full flex flex-col items-center gap-2 md:gap-3 reveal immediate-show z-20">
-                <span class="text-[9px] md:text-[10px] uppercase tracking-[0.3em] text-graytext font-semibold drop-shadow-md">Esplora</span>
-                <i data-lucide="chevron-down" class="w-5 h-5 md:w-6 md:h-6 text-accent scroll-arrow-anim drop-shadow-md"></i>
-            </div>
-        </section>
-
-        <!-- TRUST SECTION - Rimosso Listhen -->
-        <section class="py-16 md:py-24 border-y border-white/5 bg-white/[0.01] relative" id="trust">
-            <div class="max-w-7xl mx-auto px-6 relative">
-                <p class="text-center text-xs md:text-xl font-bold text-white/90 uppercase tracking-widest mb-10 md:mb-16 reveal">Brand e creator che hanno <span class="text-accent">scelto me</span></p>
-                
-                <div class="relative group reveal mb-8 md:mb-20 overflow-hidden md:overflow-visible">
-                    <div id="trust-scroll-left" class="absolute left-0 top-0 bottom-0 w-12 md:w-16 bg-gradient-to-r from-black via-black/80 to-transparent z-10 flex items-center justify-start pl-1 md:hidden pointer-events-none opacity-0 transition-opacity duration-300">
-                        <i data-lucide="chevron-left" class="w-6 h-6 text-white/50"></i>
-                    </div>
-                    <div id="trust-scroll-right" class="absolute right-0 top-0 bottom-0 w-12 md:w-16 bg-gradient-to-l from-black via-black/80 to-transparent z-10 flex items-center justify-end pr-1 md:hidden pointer-events-none opacity-100 transition-opacity duration-300">
-                        <i data-lucide="chevron-right" class="w-6 h-6 text-white/50 animate-pulse"></i>
-                    </div>
-
-                    <div id="trust-carousel" class="flex md:flex-wrap justify-start md:justify-center items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory pb-4 px-2">
-                        <div class="logo-item snap-center shrink-0 w-32 md:w-36 aspect-square"><a href="https://www.instagram.com/gl_personalcoaching" target="_blank" class="glass-card flex items-center justify-center p-2.5 w-full h-full rounded-2xl overflow-hidden shadow-sm"><img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/clienti/glpersonal.webp" alt="GL Coaching" class="w-full h-full object-cover rounded-xl"></a></div>
-                        <div class="logo-item snap-center shrink-0 w-32 md:w-36 aspect-square"><a href="https://www.instagram.com/myfield_ferrara" target="_blank" class="glass-card flex items-center justify-center p-2.5 w-full h-full rounded-2xl overflow-hidden shadow-sm"><img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/clienti/myfield.webp" alt="MyField" class="w-full h-full object-cover rounded-xl"></a></div>
-                        <div class="logo-item snap-center shrink-0 w-32 md:w-36 aspect-square"><a href="https://www.youtube.com/@AstroViktor97" target="_blank" class="glass-card flex items-center justify-center p-2.5 w-full h-full rounded-2xl overflow-hidden shadow-sm"><img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/clienti/astroviktor.webp" alt="AstroViktor" class="w-full h-full object-cover rounded-xl"></a></div>
-                        <div class="logo-item snap-center shrink-0 w-32 md:w-36 aspect-square"><a href="https://www.instagram.com/matte.e" target="_blank" class="glass-card flex items-center justify-center p-2.5 w-full h-full rounded-2xl overflow-hidden shadow-sm"><img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/clienti/marzolla.webp" alt="Matteo Marzolla" class="w-full h-full object-cover rounded-xl"></a></div>
-                        <div class="logo-item snap-center shrink-0 w-32 md:w-36 aspect-square"><a href="https://www.youtube.com/@microfonodelcestista" target="_blank" class="glass-card flex items-center justify-center p-2.5 w-full h-full rounded-2xl overflow-hidden shadow-sm"><img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/clienti/basket.webp" alt="Basket" class="w-full h-full object-cover rounded-xl"></a></div>
-                        <div class="logo-item snap-center shrink-0 w-32 md:w-36 aspect-square"><a href="https://www.instagram.com/allylabkids" target="_blank" class="glass-card flex items-center justify-center p-2.5 w-full h-full rounded-2xl overflow-hidden shadow-sm"><img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/clienti/ally.webp" alt="Ally Lab" class="w-full h-full object-cover rounded-xl"></a></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- METODO SECTION -->
-        <section class="py-20 md:py-32 px-6 relative" id="metodo">
-            <div class="max-w-6xl mx-auto flex flex-col items-center">
-                <h2 class="text-3xl md:text-5xl font-bold mb-10 md:mb-16 reveal text-center leading-tight">Dalla <span class="text-accent">Pratica</span> alla <br class="md:hidden"> <span class="text-accent">Strategia</span></h2>
-                <div class="glass-card p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] reveal mb-12 w-full">
-                    <div class="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
-                        <div class="relative group shrink-0 w-full md:w-auto flex justify-center">
-                            <div class="absolute inset-0 bg-accent/20 blur-[50px] md:blur-[60px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-700"></div>
-                            <div class="relative w-48 h-48 md:w-80 md:h-80 rounded-3xl overflow-hidden border border-white/10 shadow-2xl transform md:rotate-1 group-hover:rotate-0 transition-transform duration-500">
-                                <img src="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/immagineprofilo2.webp" alt="Teo Macauda" class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                            </div>
-                        </div>
-                        <div class="text-left flex-1">
-                            <p class="text-xl md:text-2xl text-white font-semibold mb-5 flex items-center gap-3">
-                                <span class="w-6 md:w-8 h-[2px] bg-accent"></span> Ciao, sono Teo.
-                            </p>
-                            <div class="space-y-5 text-sm md:text-xl text-gray-300 leading-relaxed font-light">
-                                <p>Videomaker specializzato in content marketing. Ho imparato questo mestiere nell'unico modo che conta davvero: <span class="text-white font-normal underline decoration-accent/40 decoration-2 underline-offset-4">facendolo</span>.</p>
-                                <p class="italic border-l-2 border-accent/30 pl-5 md:pl-6 text-gray-400">Ore passate a studiare format, dinamiche social e tecniche di montaggio per capire esattamente come si trasforma l'attenzione di un utente in un'azione concreta.</p>
-                                <p>Il mio lavoro è tradurre questa pratica in risultati per il tuo business. Sviluppo video e strategie progettate per far crescere la tua community e posizionare il tuo brand.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SERVIZI SECTION -->
-        <section class="py-20 md:py-32 px-6 bg-white/[0.01] relative" id="servizi">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-14 md:mb-20 reveal">
-                    <h2 class="text-3xl md:text-5xl font-bold mb-4">I <span class="text-accent">Miei</span> Servizi</h2>
-                    <p class="text-graytext text-sm md:text-lg max-w-2xl mx-auto font-light px-4">Ecosistemi visivi completi per dominare l'attenzione online.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="servizi-grid">
-                    <div class="glass-card p-8 rounded-3xl reveal service-card">
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 md:mb-8 border border-white/10 text-accent"><i data-lucide="video" class="w-6 h-6 md:w-7 md:h-7"></i></div>
-                        <h3 class="text-xl md:text-2xl font-bold mb-4 text-white">Videomaking</h3>
-                        <p class="text-graytext text-sm md:text-base leading-relaxed font-light">Dalla pianificazione sul set alla ripresa. Filmati cinematografici e dinamici, ottimizzati per catturare l'utente in pochi secondi.</p>
-                    </div>
-                    <div class="glass-card p-8 rounded-3xl reveal service-card">
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 md:mb-8 border border-white/10 text-accent"><i data-lucide="scissors" class="w-6 h-6 md:w-7 md:h-7"></i></div>
-                        <h3 class="text-xl md:text-2xl font-bold mb-4 text-white">Video Editing</h3>
-                        <p class="text-graytext text-sm md:text-base leading-relaxed font-light">Il montaggio è dove nasce la magia. Ritmo incalzante, sound design immersivo e storytelling studiato per la retention.</p>
-                    </div>
-                    <div class="glass-card p-8 rounded-3xl reveal service-card">
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 md:mb-8 border border-white/10 text-accent"><i data-lucide="lightbulb" class="w-6 h-6 md:w-7 md:h-7"></i></div>
-                        <h3 class="text-xl md:text-2xl font-bold mb-4 text-white">Strategia & Scripting</h3>
-                        <p class="text-graytext text-sm md:text-base leading-relaxed font-light">Format su misura e script testati. Trasformo la tua visione in una sceneggiatura che converte l'attenzione in risultati reali.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="py-12 text-center border-t border-white/5 relative z-10">
-        <p class="text-graytext text-sm mb-4">
-            &copy; <script>document.write(new Date().getFullYear())</script> 
-            Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-            <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
-        </p>
-        <div class="px-6">
-            <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                TUTTI I DIRITTI RISERVATI. OGNI CONTENUTO VISIVO, TESTUALE E IL CODICE SORGENTE DI QUESTO SITO SONO DI PROPRIETÀ ESCLUSIVA DELL'AUTORE. NE È VIETATA LA RIPRODUZIONE, LA DISTRIBUZIONE E L'UTILIZZO NON AUTORIZZATO, ANCHE PARZIALE, SENZA ESPLICITO CONSENSO SCRITTO.
-            </p>
+<main id="contenuto">
+  <section class="hero" id="top" data-cap="01|Attenzione">
+    <div class="wrap hero-griglia">
+      <div class="hero-testo">
+        <span class="eyebrow">Videomaking &amp; Content Marketing</span>
+        <h1 class="titolo">Catturo <span class="sottolineatura"><em>l'attenzione</em><svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 13 C 50 4, 110 17, 160 9 S 255 6, 297 12"/></svg></span>&#8288;, trasformo i tuoi contenuti.</h1>
+        <p class="lead">Non creo solo video: sviluppo un sistema visivo che aumenta la tua visibilità e trasforma gli spettatori in clienti.</p>
+        <div class="hero-azioni">
+          <a class="btn btn-primario" href="lavori/">Esplora progetti</a>
+          <a class="btn btn-vetro" href="#servizi">Cosa faccio</a>
         </div>
-    </footer>
-</div> 
+      </div>
 
-    <!-- CTA Pulsante Flottante -->
-    <button id="chat-pill" onclick="toggleContactModal()" class="chat-button">
-        <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.412.001 12.049c0 2.123.554 4.197 1.608 6.037L0 24l6.105-1.602a11.834 11.834 0 005.937 1.598h.005c6.637 0 12.046-5.414 12.049-12.05a11.802 11.802 0 00-3.48-8.513z"/></svg>
-        <span id="chat-text">Parliamo del tuo progetto?</span>
-    </button>
-
-    <!-- Modal Contatti -->
-    <div id="contactModal" class="fixed inset-0 z-[200] flex items-center justify-center px-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="toggleContactModal()"></div>
-        <div class="glass-modal w-full max-w-md p-7 md:p-8 rounded-3xl relative transform translate-y-10 transition-transform duration-500 shadow-2xl" id="contactModalContent">
-            <button onclick="toggleContactModal()" class="absolute top-6 right-6 text-graytext hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-2xl md:text-3xl font-bold mb-2 text-white">E adesso? <br/><span class="text-accent">Contattami!</span></h3>
-            <div class="space-y-3 mt-6">
-                <a href="https://wa.me/message/KBRZEPY2IJFTA1" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.412.001 12.049c0 2.123.554 4.197 1.608 6.037L0 24l6.105-1.602a11.834 11.834 0 005.937 1.598h.005c6.637 0 12.046-5.414 12.049-12.05a11.802 11.802 0 00-3.48-8.513z"/></svg>
-                    </div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-wider">WhatsApp</div><div class="text-sm md:text-base font-medium text-white">Scrivimi ora</div></div>
-                </a>
-                <a href="tel:+393784142773" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="phone" class="w-5 h-5"></i></div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-wider">Chiamata</div><div class="text-sm md:text-base font-medium text-white">+39 378 414 2773</div></div>
-                </a>
-                <a href="mailto:info@teomacauda.it" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent"><i data-lucide="mail" class="w-5 h-5"></i></div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-wider">Email</div><div class="text-xs font-medium text-white break-all">info@teomacauda.it</div></div>
-                </a>
-                <a href="https://www.instagram.com/teo.macauda" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126s1.337 1.079 2.126 1.384c.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384s1.079-1.338 1.384-2.126c.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126s-1.338-1.079-2.126-1.384c-.765-.296-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.584.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36.105.413 1.227.057 1.266.07 1.646.07 4.85s-.015 3.584-.071 4.85c-.055 1.17-.249 1.805-.415 2.227-.217.562-.477.96-.896 1.382-.42.419-.819.679-1.381.896-.422.164-1.056.36-1.227.413-1.266.057-1.646.07-4.85.07s-3.584-.015-4.85-.071c-1.17-.055-1.805-.249-2.227-.415-.562-.217-.96-.477-1.382-.896-.419-.42-.679-.819-.896-1.381-.164-.422-.36-1.056-.413-1.227-.057-1.266-.07-1.646-.07-4.85s.016-3.584.071-4.85c.055-1.17.249-1.805.415-2.227.217-.562.477-.96.896-1.382.42-.419.819-.679 1.381-.896.422-.164 1.056-.36 1.227-.413 1.266-.057 1.646-.07 4.85-.07zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                    </div>
-                    <div><div class="text-[10px] text-graytext font-bold uppercase tracking-wider">Instagram</div><div class="text-sm md:text-base font-medium text-white">@teo.macauda</div></div>
-                </a>
-            </div>
+      <figure class="figura" style="margin-block:0" id="figura">
+        <span class="crocino a"></span><span class="crocino b"></span><span class="crocino c"></span><span class="crocino d"></span>
+        <div class="anello" aria-hidden="true"></div>
+        <div class="cerchio">
+          <img src="img/profilo.webp" alt="Ritratto di Matteo Macauda su sfondo arancio" width="1080" height="1080" fetchpriority="high">
+          <div class="retino" aria-hidden="true"></div>
         </div>
+        <figcaption class="didascalia"><b>Matteo Macauda</b><span>Videomaker</span></figcaption>
+      </figure>
     </div>
+  </section>
 
-    <script>
-        lucide.createIcons();
+  <section class="metodo-scroll linea-top" id="metodo" data-cap="02|Metodo">
+    <div class="metodo-sticky">
+      <div class="metodo-luce" aria-hidden="true"></div>
+      <div class="wrap metodo">
+        <div class="metodo-t">
+          <span class="metodo-pallino" aria-hidden="true"></span>
+          <span class="eyebrow">Il metodo</span>
+          <h2 class="titolo">Dalla pratica alla <em>strategia</em></h2>
+        </div>
+        <div class="metodo-testi" id="metodoTesti">
+          <p>Ore passate a studiare format, dinamiche social e tecniche di montaggio per capire esattamente come si trasforma l'attenzione di un utente in un'azione concreta.</p>
+          <p>Il mio lavoro è tradurre questa pratica in risultati per il tuo business. Sviluppo video e strategie progettate per far crescere la tua community e posizionare il tuo brand.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const menuContent = document.getElementById('mobileMenuContent');
-            const iconMenu = document.getElementById('icon-menu');
-            const iconX = document.getElementById('icon-x');
-            const isOpen = menu.classList.contains('opacity-100');
-            if (!isOpen) {
-                menu.classList.remove('opacity-0', 'pointer-events-none');
-                menu.classList.add('opacity-100', 'pointer-events-auto');
-                menuContent.classList.remove('-translate-y-10');
-                menuContent.classList.add('translate-y-0');
-                document.body.style.overflow = 'hidden';
-                iconMenu.classList.add('hidden');
-                iconX.classList.remove('hidden');
-            } else {
-                menu.classList.add('opacity-0', 'pointer-events-none');
-                menu.classList.remove('opacity-100', 'pointer-events-auto');
-                menuContent.classList.remove('translate-y-0');
-                menuContent.classList.add('-translate-y-10');
-                document.body.style.overflow = '';
-                iconX.classList.add('hidden');
-                iconMenu.classList.remove('hidden');
-            }
-        }
+  <section class="sezione linea-top servizi" id="servizi" data-cap="03|Servizi">
+    <div class="wrap">
+      <div class="servizi-testa rv">
+        <span class="eyebrow">Cosa faccio</span>
+        <h2 class="titolo">I miei <em>servizi</em></h2>
+        <p>Ecosistemi visivi completi per dominare l'attenzione online.</p>
+      </div>
+      <div class="carte">
+        <article class="carta">
+          <span class="icona"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6.5" width="13" height="11" rx="3"/><path d="M15.5 10.5 21 7.5v9l-5.5-3"/></svg></span>
+          <h3>Videomaking</h3>
+          <p>Dalla pianificazione sul set alla ripresa. Filmati cinematografici e dinamici, ottimizzati per catturare l'utente in pochi secondi.</p>
+        </article>
+        <article class="carta">
+          <span class="icona"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8 8.5 20 18M8 15.5 20 6"/></svg></span>
+          <h3>Video Editing</h3>
+          <p>Il montaggio è dove nasce la magia. Ritmo incalzante, sound design immersivo e storytelling studiato per la retention.</p>
+        </article>
+        <article class="carta">
+          <span class="icona"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20 6 15 17 4a2.1 2.1 0 0 1 3 3L9 18z"/><path d="M14.5 6.5 17.5 9.5"/></svg></span>
+          <h3>Strategia &amp; Scripting</h3>
+          <p>Format su misura e script testati. Trasformo la tua visione in una sceneggiatura che converte l'attenzione in risultati reali.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-        function toggleContactModal() {
-            const modal = document.getElementById('contactModal');
-            const content = document.getElementById('contactModalContent');
-            const isOpen = modal.classList.contains('opacity-100');
-            if(!isOpen) {
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.classList.add('opacity-100', 'pointer-events-auto');
-                content.classList.replace('translate-y-10', 'translate-y-0');
-                document.body.style.overflow = 'hidden';
-            } else {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-                modal.classList.remove('opacity-100', 'pointer-events-auto');
-                content.classList.replace('translate-y-0', 'translate-y-10');
-                document.body.style.overflow = '';
-            }
-        }
+  <section class="sezione linea-top clienti" id="clienti" data-cap="04|Clienti">
+    <div class="wrap">
+      <div class="clienti-testa rv">
+        <span class="eyebrow">Con chi lavoro</span>
+        <h2 class="titolo">Chi mi ha <em>scelto</em></h2>
+        <p>Creator, atleti e professionisti che pubblicano ogni settimana e si affidano a me per farlo bene.</p>
+      </div>
+      <div class="cf-wrap rv" role="region" aria-label="I miei clienti">
+        <div class="cf" id="cf">
+        <a class="c" href="https://www.youtube.com/@astroviktor97" target="_blank" rel="noopener" aria-label="Astro Viktor: apri il profilo YouTube"><img src="img/cliente-astroviktor.jpg" alt="Astro Viktor" width="320" height="428" loading="lazy" draggable="false"><span class="tg"><span class="tx"><b>Astro Viktor</b><small>YouTube</small></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></span></a>
+        <a class="c" href="https://www.instagram.com/matte.e/" target="_blank" rel="noopener" aria-label="Matteo Marzolla: apri il profilo Instagram"><img src="img/cliente-marzolla.jpg" alt="Matteo Marzolla" width="320" height="428" loading="lazy" draggable="false"><span class="tg"><span class="tx"><b>Matteo Marzolla</b><small>Instagram</small></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></span></a>
+        <a class="c" href="https://www.youtube.com/@microfonodelcestista" target="_blank" rel="noopener" aria-label="Microfono del Cestista: apri il profilo YouTube"><img src="img/cliente-basket.jpg" alt="Microfono del Cestista" width="320" height="428" loading="lazy" draggable="false"><span class="tg"><span class="tx"><b>Microfono del Cestista</b><small>YouTube</small></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></span></a>
+        <a class="c" href="https://www.instagram.com/gl_personalcoaching/" target="_blank" rel="noopener" aria-label="GL Coaching: apri il profilo Instagram"><img src="img/cliente-glpersonal.jpg" alt="GL Coaching" width="320" height="428" loading="lazy" draggable="false"><span class="tg"><span class="tx"><b>GL Coaching</b><small>Instagram</small></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></span></a>
+        <a class="c" href="https://www.instagram.com/myfield_ferrara/" target="_blank" rel="noopener" aria-label="MyField: apri il profilo Instagram"><img src="img/cliente-myfield.jpg" alt="MyField" width="320" height="428" loading="lazy" draggable="false"><span class="tg"><span class="tx"><b>MyField</b><small>Instagram</small></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></span></a>
+        <a class="c" href="https://www.instagram.com/allylabkids/" target="_blank" rel="noopener" aria-label="Ally Lab: apri il profilo Instagram"><img src="img/cliente-ally.jpg" alt="Ally Lab" width="320" height="428" loading="lazy" draggable="false"><span class="tg"><span class="tx"><b>Ally Lab</b><small>Instagram</small></span><i class="go"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></i></span></a>
+        </div>
+        <div class="cf-ctrl">
+          <button class="rnd cf-p" type="button" aria-label="Cliente precedente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="cf-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <button class="rnd cf-n" type="button" aria-label="Cliente successivo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function initScrollAnimations() {
-            gsap.registerPlugin(ScrollTrigger);
-            const reveals = document.querySelectorAll('.reveal:not(.logo-item):not(.service-card)');
-            reveals.forEach((el) => {
-                gsap.to(el, {
-                    scrollTrigger: {
-                        trigger: el,
-                        start: "top 92%",
-                        toggleActions: "play none none none"
-                    },
-                    opacity: 1,
-                    y: 0,
-                    duration: 1.2,
-                    ease: "power2.out"
-                });
-            });
-            gsap.to(".logo-item", {
-                scrollTrigger: {
-                    trigger: "#trust-carousel",
-                    start: "top 85%"
-                },
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                stagger: 0.1,
-                ease: "power2.out"
-            });
-            gsap.to(".service-card", {
-                scrollTrigger: {
-                    trigger: "#servizi-grid",
-                    start: "top 80%"
-                },
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                stagger: 0.2,
-                ease: "power3.out"
-            });
-        }
+  <section class="sezione" id="contatti" data-cap="05|Contatto">
+    <div class="wrap">
+      <div class="cta rv-cta" id="cta">
+        <div class="cta-griglia">
+          <div class="cta-testa">
+            <span class="eyebrow">Contattami</span>
+            <h2 class="titolo">Hai un progetto <em>in mente?</em></h2>
+            <a class="btn btn-primario" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener">Parliamo del tuo progetto? <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+          </div>
+          <div class="contatti" id="contatti-lista">
+            <a class="contatto" href="https://wa.me/message/KBRZEPY2IJFTA1" rel="noopener" aria-label="WhatsApp: scrivimi ora"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8a9.2 9.2 0 0 0-7.9 13.9L2.8 21.2l4.6-1.2A9.2 9.2 0 1 0 12 2.8z"/><path class="pieno" d="M9.1 7.4c.35-.45.95-.4 1.2.1l.85 1.75c.15.3.1.65-.1.9l-.55.65c.7 1.35 1.75 2.4 3.15 3.05l.65-.6c.25-.2.6-.25.9-.1l1.75.9c.5.25.55.85.15 1.2-.8.75-1.9 1-2.9.65-3.2-1.1-5.5-3.5-6.4-6.4-.25-.9 0-1.5.3-2.1z"/></svg></span><span class="val">Scrivimi ora</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+            <a class="contatto" href="tel:+393784142773" aria-label="Chiama il +39 378 414 2773"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 3.6h3.3l1.8 4.5-2.2 1.4a11.6 11.6 0 0 0 5.4 5.4l1.4-2.2 4.5 1.8v3.3a2 2 0 0 1-2.1 2A16.4 16.4 0 0 1 3.2 5.7a2 2 0 0 1 2-2.1z"/></svg></span><span class="val">+39 378 414 2773</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+            <a class="contatto" href="mailto:info@teomacauda.it" aria-label="Scrivi un'email a info@teomacauda.it"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3.2"/><path d="M2.5 8 12 13.6 21.5 8"/></svg></span><span class="val">info@teomacauda.it</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+            <a class="contatto" href="https://instagram.com/teo.macauda" rel="noopener" aria-label="Instagram: @teo.macauda"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle class="pieno" cx="17.5" cy="6.6" r="1"/></svg></span><span class="val">@teo.macauda</span><span class="fr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-        function initHeroAnimation() {
-            if (typeof gsap === 'undefined' || !document.getElementById("hero-section")) return;
-            if (window.innerWidth > 1024) {
-                window.addEventListener('mousemove', (e) => {
-                    const x = (e.clientX / window.innerWidth - 0.5) * 40;
-                    const y = (e.clientY / window.innerHeight - 0.5) * 40;
-                    gsap.to("#lens-main", { x: x, y: y, duration: 1.5, ease: "power2.out" });
-                    gsap.to("#lens-secondary", { x: x * -0.5, y: y * -0.5, duration: 2, ease: "power2.out" });
-                    gsap.to("#lens-glow-layer", { x: x * 1.5, y: y * 1.5, duration: 2.5, ease: "power2.out" });
-                });
-            }
-            const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-            tl.from("#lens-main, #lens-secondary", { scale: 1.3, opacity: 0, duration: 2.5 }, 0.2)
-              .from(".viewfinder-corner", { 
-                  x: (i) => i % 2 === 0 ? -40 : 40, 
-                  y: (i) => i < 2 ? -40 : 40, 
-                  opacity: 0, 
-                  duration: 1.5 
-              }, 0.5);
-        }
+<footer class="footer">
+  <div class="wrap">
+    <div class="riga"><span>© Matteo Maria Macauda · P.IVA 02153520891 · Via Teofane, 2 – 96100 Siracusa (SR)</span><nav class="legale-link" aria-label="Note legali"><a href="privacy/">Privacy Policy</a><a href="diritti-riservati/">Diritti riservati</a></nav></div>
+  </div>
+</footer>
 
-        function initDesktopPinAnimation() {
-            if (typeof gsap === 'undefined') return;
-            let mm = gsap.matchMedia();
-            mm.add("(min-width: 1024px)", () => {
-                const trustSection = document.getElementById('trust');
-                const trustText = trustSection.querySelector('p');
-                const trustLogos = trustSection.querySelectorAll('.logo-item');
-                if(!trustSection || !trustText || trustLogos.length === 0) return;
-                
-                gsap.set("#metodo", { zIndex: 10, position: "relative" });
-                gsap.set(trustSection, { zIndex: 5 });
-                
-                let tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: trustSection,
-                        start: "top 25%", 
-                        end: () => "+=" + (trustSection.offsetHeight + 150), 
-                        pin: true,
-                        pinSpacing: false, 
-                        scrub: 1.2, 
-                    }
-                });
-                tl.to(trustText, { opacity: 0, scale: 0.95, y: -30, duration: 0.3 }, 0);
-                tl.to(trustSection, {
-                    borderTopColor: "rgba(255, 255, 255, 0)",
-                    borderBottomColor: "rgba(255, 255, 255, 0)",
-                    backgroundColor: "rgba(255, 255, 255, 0)",
-                    duration: 0.3
-                }, 0);
-                const mid = trustLogos.length / 2;
-                trustLogos.forEach((logo, i) => {
-                    let isLeft = i < mid;
-                    let distanceFromCenter = isLeft ? (mid - i) : (i - mid + 1);
-                    let dir = isLeft ? -1 : 1;
-                    tl.to(logo, {
-                        x: () => dir * (window.innerWidth * 0.4 + (distanceFromCenter * 80)),
-                        y: () => (Math.random() - 0.5) * 100, 
-                        rotation: dir * (10 + distanceFromCenter * 15), 
-                        scale: 0.6, 
-                        opacity: 0,
-                        duration: 1,
-                        ease: "power2.inOut"
-                    }, 0);
-                });
-            });
-        }
-
-        function initMobileCarouselIndicators() {
-            const trustCarousel = document.getElementById('trust-carousel');
-            const scrollLeftIndicator = document.getElementById('trust-scroll-left');
-            const scrollRightIndicator = document.getElementById('trust-scroll-right');
-            if (trustCarousel && scrollLeftIndicator && scrollRightIndicator) {
-                const updateIndicators = () => {
-                    if (trustCarousel.scrollLeft > 10) {
-                        scrollLeftIndicator.classList.replace('opacity-0', 'opacity-100');
-                    } else {
-                        scrollLeftIndicator.classList.replace('opacity-100', 'opacity-0');
-                    }
-                    if (trustCarousel.scrollLeft >= (trustCarousel.scrollWidth - trustCarousel.clientWidth - 20)) {
-                        scrollRightIndicator.classList.replace('opacity-100', 'opacity-0');
-                    } else {
-                        scrollRightIndicator.classList.replace('opacity-0', 'opacity-100');
-                    }
-                };
-                trustCarousel.addEventListener('scroll', updateIndicators);
-                window.addEventListener('resize', updateIndicators);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initScrollAnimations();
-            initHeroAnimation(); 
-            initDesktopPinAnimation(); 
-            initMobileCarouselIndicators(); 
-            
-            const pill = document.getElementById('chat-pill');
-            if(pill) {
-                // Espande il pill solo su desktop (larghezza > 768px)
-                const isDesktop = window.innerWidth > 768;
-                
-                if (isDesktop) {
-                    setTimeout(() => { pill.classList.add('expanded'); }, 2500);
-                    window.addEventListener('scroll', () => {
-                        if (window.scrollY > 100) pill.classList.remove('expanded');
-                        else pill.classList.add('expanded');
-                    });
-                }
-            }
-        });
-
-        // NAVBAR SEAMLESS: Rimosso lo sfondo che scuriva allo scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if(nav) {
-                // Manteniamo trasparente o un leggerissimo velo per il blur, ma rimosso rgba(0,0,0,0.92)
-                nav.style.background = window.scrollY > 50 ? 'rgba(0, 0, 0, 0.1)' : 'transparent';
-            }
-        });
-    </script>
-
-    <script>
-    function handleNavigationFix() {
-        const path = window.location.pathname;
-        const hash = window.location.hash;
-        const origin = window.location.origin;
-        if (path.includes('.html')) {
-            const newPath = path.replace('/index.html', '/').replace('.html', '');
-            window.history.replaceState(null, '', origin + newPath + hash);
-        }
-        if (hash === '#servizi') {
-            const target = document.getElementById('servizi');
-            const nav = document.getElementById('navbar');
-            if (target) {
-                setTimeout(() => {
-                    const navHeight = nav ? nav.offsetHeight : 80;
-                    const targetPos = target.getBoundingClientRect().top + window.pageYOffset - (navHeight + 20);
-                    window.scrollTo({ top: targetPos, behavior: "smooth" });
-                }, 400);
-            }
-        }
-    }
-    window.addEventListener('load', handleNavigationFix);
-    window.addEventListener('hashchange', handleNavigationFix);
-    </script>
-    
+<script src="js/main.js"></script>
 </body>
 </html>

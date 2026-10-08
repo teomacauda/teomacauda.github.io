@@ -1,474 +1,208 @@
-<!DOCTYPE html>
-<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
-
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- Evita che Google indicizzi questa pagina privata -->
-    <meta name="robots" content="noindex, nofollow">
-    <title>Video Audit Personalizzato | Teo Macauda</title>
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'><path d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z' fill='rgb(255,122,0)'/><path d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z' fill='rgb(255,122,0)'/></svg>">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        html,
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden !important;
-            position: relative;
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        #page-wrapper {
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #000000;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1a1a1a;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #FF7A00;
-        }
-
-        .ambient-glow {
-            position: absolute;
-            width: 100%;
-            height: 1000px;
-            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.02) 45%, rgba(0, 0, 0, 0) 85%);
-            top: 0;
-            left: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .hero-noise {
-            position: absolute;
-            inset: 0;
-            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .glass-nav {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            margin-top: env(safe-area-inset-top);
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .glass-card:hover {
-            border-color: rgba(255, 122, 0, 0.25);
-            box-shadow: 0 20px 40px -10px rgba(255, 122, 0, 0.08);
-        }
-
-        .loader {
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top: 2px solid #FF7A00;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Cookie Modal Styling - Black style */
-        #cookie-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 300;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            padding: 20px;
-        }
-
-        #cookie-modal.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            max-width: 400px;
-            text-align: center;
-            background: #0a0a0a;
-            padding: 40px 30px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Video Placeholder */
-        .video-placeholder {
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .video-placeholder:hover .play-btn {
-            transform: scale(1.1);
-            background: #FF7A00;
-        }
-
-        .play-btn {
-            background: rgba(255, 122, 0, 0.8);
-            backdrop-filter: blur(5px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Video audit · Teo Macauda</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Audit">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>try { if (localStorage.getItem('ped_admin') === '1') document.documentElement.classList.add('adm-pre'); } catch (e) {}</script>
+<link rel="stylesheet" href="../raw/raw.css">
+<link rel="stylesheet" href="../raw/tool.css">
+<link rel="stylesheet" href="audit.css">
 </head>
+<body>
+<div class="sfondo" aria-hidden="true"><i></i><i></i><i></i></div>
 
-<body class="antialiased">
+<!-- barra: solo per te; chi riceve l'audit lo vede a schermo pieno -->
+<header class="os-bar" id="bar" hidden>
+  <a class="os-marchio" id="marchio" href="../raw/" aria-label="RAW OS"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg><span>Video <b>audit</b></span></a>
+  <span class="os-admin" id="admin-indicator" hidden>Admin</span>
+  <a class="pill" id="btnRaw" href="../raw/" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5h12V10"/></svg>Raw OS</a>
+  <button class="pill os-strumenti" type="button" id="btnStrumenti" data-raw-strumenti hidden aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Strumenti <kbd>⌘K</kbd></button>
+</header>
 
-    <div id="page-wrapper">
-        <div class="ambient-glow"></div>
-        <div class="hero-noise"></div>
+<main class="tool" id="contenuto">
 
-        <!-- Header -->
-        <header id="navbar"
-            class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
-            <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-                <a href="/" class="flex items-center hover:opacity-80 transition-all duration-300">
-                    <svg class="h-9 md:h-10 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"
-                            style="fill:white;fill-rule:nonzero;" />
-                        <path
-                            d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"
-                            style="fill:white;fill-rule:nonzero;" />
-                    </svg>
-                </a>
-                <div class="flex items-center gap-3">
-                    <div id="nav-action-zone"></div>
-                </div>
-            </div>
-        </header>
+  <div class="caricamento" id="main-loader"><span class="spin"></span></div>
 
-        <main class="flex-1 max-w-7xl w-full mx-auto px-6 pt-32 pb-16 relative z-10 flex flex-col justify-center">
-
-            <!-- Loader Principale -->
-            <div id="main-loader" class="flex justify-center items-center py-32">
-                <div class="loader !w-10 !h-10"></div>
-            </div>
-
-            <!-- Login Amministratore -->
-            <div id="section-admin-login" class="hidden w-full max-w-md mx-auto my-auto">
-                <div class="glass-card p-8 rounded-3xl border border-white/10 relative">
-                    <div
-                        class="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-accent to-transparent">
-                    </div>
-                    <h3 class="text-xl font-bold mb-1 text-white flex items-center gap-2">
-                        <i data-lucide="lock" class="w-5 h-5 text-accent"></i> Area Autenticazione
-                    </h3>
-                    <p class="text-xs text-graytext mb-6">Verifica credenziali per sbloccare la dashboard video audit.</p>
-
-                    <form id="form-admin-login" class="space-y-4">
-                        <div>
-                            <label
-                                class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Email
-                                Manager</label>
-                            <input type="email" id="admin-email" required
-                                class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent transition-colors">
-                        </div>
-                        <div>
-                            <label
-                                class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1.5">Password</label>
-                            <input type="password" id="admin-pass" required
-                                class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-base text-white focus:outline-none focus:border-accent transition-colors">
-                        </div>
-                        <div id="admin-auth-error"
-                            class="text-xs text-red-500 hidden font-medium bg-red-500/10 border border-red-500/20 p-3 rounded-lg">
-                        </div>
-                        <button type="submit"
-                            class="w-full h-12 bg-white text-black hover:bg-accent hover:text-white rounded-xl font-bold text-sm transition-all active:scale-95 flex justify-center items-center gap-2 mt-2">
-                            <span>Accedi al Pannello</span>
-                            <div id="admin-login-loader" class="loader hidden !border-black/20 !border-t-black"></div>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Dashboard Amministratore -->
-            <div id="section-admin-dashboard" class="hidden w-full max-w-7xl mx-auto">
-                <div class="mb-10 border-b border-white/5 pb-6">
-                    <h1 class="text-2xl md:text-4xl font-extrabold tracking-tighter text-white">Management <span
-                            class="text-accent">Video Audit</span></h1>
-                    <p class="text-graytext text-sm font-light mt-0.5">Gestisci gli audit personalizzati dei clienti e configura i dettagli dei video.</p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    <div class="lg:col-span-6">
-                        <form id="form-create-audit"
-                            class="glass-card p-6 rounded-2xl border border-white/10 space-y-6">
-                            <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                                <h2 id="form-action-title" class="text-lg font-bold text-white flex items-center gap-2">
-                                    <i data-lucide="plus-circle" class="text-accent w-5 h-5"></i> Configura Nuovo Audit
-                                </h2>
-                                <button type="button" id="btn-cancel-edit"
-                                    class="hidden text-xs text-red-400 hover:underline flex items-center gap-1">Annulla
-                                    Modifica</button>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Nome
-                                        Azienda</label>
-                                    <input type="text" id="input-company-name" required placeholder="Es. Rossi & Co."
-                                        class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">Nome
-                                        Cliente</label>
-                                    <input type="text" id="input-client-name" required placeholder="Es. Mario"
-                                        class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-[10px] font-bold text-graytext uppercase tracking-wider mb-1">YouTube Shorts ID</label>
-                                    <input type="text" id="input-youtube-id" required placeholder="Es. dQw4w9WgXcQ"
-                                        class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                                </div>
-                            </div>
-
-                            <button type="submit" id="btn-submit-audit"
-                                class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 shadow-lg shadow-accent/10">
-                                <i data-lucide="send" class="w-4 h-4"></i> Salva Video Audit
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="lg:col-span-6">
-                        <div class="glass-card p-6 rounded-2xl border border-white/10">
-                            <h2
-                                class="text-lg font-bold mb-4 text-white flex items-center gap-2 border-b border-white/5 pb-3">
-                                <i data-lucide="database" class="w-5 h-5 text-accent"></i> Registro Audit Attivi
-                            </h2>
-                            <div id="audit-list" class="space-y-4 max-h-[680px] overflow-y-auto pr-1 no-scrollbar">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vista Cliente Finale -->
-            <div id="section-client" class="hidden w-full max-w-5xl mx-auto">
-                <!-- Intestazione -->
-                <div class="mb-12 text-center md:text-left">
-                    <span class="text-accent text-sm font-bold uppercase tracking-widest mb-2 block">Analisi Tecnica Gratuita</span>
-                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">Audit per <span id="client-company-title" class="italic text-accent">[Nome Azienda]</span></h1>
-                    <p class="text-graytext text-lg md:text-xl font-light max-w-2xl">
-                        Ciao <span id="client-greeting-name">[Nome]</span>, come promesso ho analizzato i tuoi contenuti. Ecco i 3 punti tecnici su cui possiamo intervenire subito per scalare i tuoi risultati.
-                    </p>
-                </div>
-
-                <!-- Griglia Video + Punti Chiave -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                    <!-- Video Audit (Shorts Format 9:16) -->
-                    <div class="lg:col-span-5">
-                        <div id="video-container"
-                            class="shorts-container mx-auto w-full max-w-[350px] aspect-[9/16] rounded-[2.5rem] overflow-hidden bg-[#0A0A0A] relative border-[6px] border-white/10 shadow-2xl">
-
-                            <!-- Placeholder visibile prima del consenso -->
-                            <div id="video-placeholder"
-                                class="video-placeholder absolute inset-0 flex items-center justify-center bg-zinc-900 group">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
-
-                                <!-- Icona Play Centrale -->
-                                <div class="play-btn w-20 h-20 rounded-full flex items-center justify-center z-10 shadow-2xl">
-                                    <i data-lucide="play" class="w-8 h-8 text-white fill-white ml-1"></i>
-                                </div>
-
-                                <div class="absolute bottom-10 left-0 w-full text-center px-6 z-10">
-                                    <p class="text-white font-bold text-lg leading-tight uppercase tracking-tighter">Guarda il tuo Video Audit</p>
-                                    <p class="text-accent text-xs mt-1 font-semibold uppercase tracking-widest">Analisi 1-to-1</p>
-                                </div>
-                            </div>
-
-                            <!-- Iframe -->
-                            <div id="video-iframe-wrapper" class="hidden absolute inset-0"></div>
-                        </div>
-                    </div>
-
-                    <!-- Analisi e CTA -->
-                    <div class="lg:col-span-7 space-y-8">
-                        <div class="glass-card rounded-3xl p-8 space-y-6">
-                            <h3 class="text-2xl font-bold flex items-center gap-3">
-                                <i data-lucide="zap" class="text-accent"></i> Cosa ho trovato:
-                            </h3>
-
-                            <div class="space-y-6">
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 font-bold text-accent">1</div>
-                                    <div>
-                                        <h4 class="font-bold text-white uppercase text-sm tracking-wider">Hook Iniziale</h4>
-                                        <p class="text-graytext text-sm">Nei primi 3 secondi mancano elementi visivi o parlati dinamici per fermare lo scroll.</p>
-                                    </div>
-                                </div>
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 font-bold text-accent">2</div>
-                                    <div>
-                                        <h4 class="font-bold text-white uppercase text-sm tracking-wider">Ritmo dell'editing</h4>
-                                        <p class="text-graytext text-sm">Ci sono tempi morti che abbassano la "Retention Rate" del video.</p>
-                                    </div>
-                                </div>
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 font-bold text-accent">3</div>
-                                    <div>
-                                        <h4 class="font-bold text-white uppercase text-sm tracking-wider">Call to Action</h4>
-                                        <p class="text-graytext text-sm">La chiusura è troppo brusca e non indirizza l'utente verso il lead magnet.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Call to Action -->
-                        <div class="space-y-4">
-                            <h3 class="text-xl font-bold text-center md:text-left">Ti interessa capire come implementare questo sistema?</h3>
-                            <a href="https://wa.me/393784142773?text=Ciao%20Matteo.%20Ho%20visto%20il%20video%20che%20hai%20realizzato%20per%20la%20mia/nostra%20attivit%C3%A0%20e%20vorrei%20saperne%20di%20pi%C3%B9!"
-                                target="_blank"
-                                class="w-full bg-accent hover:bg-accentHover text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] shadow-xl">
-                                <i data-lucide="message-circle" class="w-6 h-6"></i> Parliamone su WhatsApp
-                            </a>
-                            <p class="text-center md:text-left text-xs text-graytext italic">Consulenza gratuita di 15 minuti per definire la strategia.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto bg-black">
-            <p class="text-graytext text-xs px-6">
-                ©
-                <script>document.write(new Date().getFullYear())</script>
-                Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) |
-                <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
-            </p>
-        </footer>
+  <section id="section-lock" hidden>
+    <div class="blocco-lock">
+      <span class="lucchetto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+      <h1>Area <em>riservata</em></h1>
+      <p>Se sei un cliente, apri il link dell'audit che ti ho mandato.</p>
+      <button class="btn v" type="button" id="btn-open-login">Accesso admin</button>
     </div>
+  </section>
 
-    <!-- Cookie Modal -->
-    <div id="cookie-modal">
-        <div class="modal-content relative">
-            <button id="btn-close-cookie-modal" class="absolute top-6 right-6 text-graytext hover:text-white">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
+  <!-- admin: elenco degli audit -->
+  <section id="section-home" hidden>
+    <div class="intest">
+      <div>
+        <span class="eyebrow">Video audit</span>
+        <h1>Audit per i <em>potenziali clienti</em></h1>
+        <p class="sotto">Una pagina personale per ogni azienda che contatti: 3 motivi, 3 micro-soluzioni e il passo per lavorare con te.</p>
+      </div>
+      <button class="btn" type="button" id="btn-new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nuovo audit</button>
+    </div>
+    <div class="filtri" id="filtri" role="tablist" aria-label="Filtra per stato"></div>
+    <div class="au-griglia" id="au-griglia"></div>
+    <div class="piano-vuoto vetro" id="au-vuoti" hidden><h3>Nessun audit <em>qui</em></h3><p id="au-vuoti-testo">Crea il primo audit per un'azienda che vuoi contattare.</p></div>
+  </section>
 
-            <div class="flex justify-center mb-8">
-                <div class="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center">
-                    <i data-lucide="eye-off" class="w-8 h-8 text-accent"></i>
-                </div>
-            </div>
-
-            <h3 class="text-2xl font-bold text-white mb-4 leading-tight">Cookie di terze parti</h3>
-
-            <p class="text-graytext text-sm leading-relaxed mb-8">
-                Per vedere questo contenuto devi accettare i cookie di Instagram e YouTube. Leggi i dettagli nella nostra <a href="/privacy.html" class="underline hover:text-white">Privacy Policy</a>.
-            </p>
-
-            <button id="btn-accept-cookie"
-                class="w-full bg-accent hover:bg-accentHover text-white py-4 rounded-full font-bold text-base mb-6 transition-all shadow-[0_10px_30px_rgba(255,122,0,0.3)] uppercase tracking-wider">
-                Accetta e guarda
-            </button>
-
-            <button id="btn-reject-cookie"
-                class="text-graytext hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
-                No, grazie
-            </button>
+  <!-- admin: modifica di un audit -->
+  <section id="section-editor" hidden>
+    <nav class="crumb"><a class="btn-back" href="./"><span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>Torna agli audit</a></nav>
+    <div class="intest">
+      <div style="min-width:0;flex:1">
+        <span class="eyebrow" id="ed-eyebrow">Audit</span>
+        <div class="titolo-riga">
+          <span class="avatar xl" id="ed-avatar" aria-hidden="true"></span>
+          <h1 class="titolo-cs" id="ed-titolo">Azienda</h1>
         </div>
+        <p class="sotto" id="ed-info"></p>
+      </div>
+      <div class="az-intest">
+        <button class="btn v" type="button" id="btn-copia-link"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5v-1a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h1"/></svg><span>Copia link</span></button>
+        <a class="btn v" id="btn-anteprima" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>Anteprima</a>
+      </div>
     </div>
 
-    <script type="module" src="./main.js"></script>
+    <div class="ed-box vetro">
+      <h3 class="ed-t">A chi lo mandi</h3>
+      <div class="ed-griglia">
+        <div><label class="etich" for="f-azienda">Nome dell'azienda</label><input class="campo" type="text" id="f-azienda" placeholder="Es. Rossi &amp; Co."></div>
+        <div><label class="etich" for="f-nome">Nome della persona</label><input class="campo" type="text" id="f-nome" placeholder="Es. Mario"></div>
+        <div><label class="etich" for="f-stato">A che punto sei</label><select class="campo" id="f-stato"></select></div>
+      </div>
+    </div>
 
+    <div class="ed-box vetro">
+      <h3 class="ed-t">I video</h3>
+      <p class="ed-s">Il video audit lo registri tu, dopo che ti rispondono. Finché non c'è, la pagina mostra solo i 3 motivi.</p>
+      <div class="ed-griglia due">
+        <div><label class="etich" for="f-yt">Il tuo video audit (link di YouTube o ID)</label><input class="campo" type="text" id="f-yt" placeholder="https://youtube.com/shorts/…" autocapitalize="off" spellcheck="false"></div>
+        <div><label class="etich" for="f-loro">Il loro video che hai analizzato (facoltativo)</label><input class="campo" type="text" id="f-loro" placeholder="Link al video, lo mostro come riferimento" autocapitalize="off" spellcheck="false"></div>
+      </div>
+    </div>
+
+    <div class="ed-box vetro">
+      <div class="ed-testa"><div><h3 class="ed-t">I 3 motivi</h3><p class="ed-s">Per ognuno: cosa non funziona e una micro-soluzione che possono applicare subito. La soluzione completa resta lavorare con te.</p></div>
+        <button class="btn v s" type="button" id="btn-modello">Rimetti il testo di partenza</button></div>
+      <div class="mo-lista" id="mo-lista"></div>
+    </div>
+
+    <div class="ed-box vetro">
+      <h3 class="ed-t">Il messaggio finale</h3>
+      <p class="ed-s">Quello che legge dopo i 3 motivi, accanto al pulsante WhatsApp. Lascia vuoto per usare il testo di partenza.</p>
+      <textarea class="campo area" id="f-chiusura" rows="3" placeholder=""></textarea>
+    </div>
+
+    <div class="tab-salva">
+      <button class="btn" type="button" id="btn-salva">Salva l'audit</button>
+      <span class="ed-nota" id="stato">&nbsp;</span>
+      <span class="sp"></span>
+      <button class="btn v s" type="button" id="btn-cliente"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.6"/><path d="M2.8 20c.4-3.5 3-5.6 6.2-5.6s5.8 2.1 6.2 5.6M19 8v6M16 11h6"/></svg><span>Crea come cliente</span></button>
+      <button class="btn p s" type="button" id="btn-elimina"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>Elimina l'audit</button>
+    </div>
+  </section>
+
+  <!-- pagina per chi riceve l'audit (pubblica) -->
+  <section id="section-client" hidden>
+    <a class="logo-alto" href="../" aria-label="Teo Macauda"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg></a>
+    <div class="ac-vista">
+      <header class="ac-testa rv-e">
+        <span class="ac-riservato">Documento riservato · Audit gratuito</span>
+        <h1>Audit per <em id="ac-azienda">Azienda</em></h1>
+        <p id="ac-saluto"></p>
+      </header>
+      <div class="ac-corpo">
+        <div class="ac-video rv-e" id="ac-video-col">
+          <div class="ac-telefono" id="ac-telefono">
+            <button class="ac-poster" type="button" id="ac-poster" aria-label="Guarda il tuo video audit">
+              <span class="ac-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+              <span class="ac-poster-t"><b>Guarda il tuo video audit</b><small>Analisi 1 a 1 · pochi minuti</small></span>
+            </button>
+            <div class="ac-iframe" id="ac-iframe" hidden></div>
+          </div>
+          <a class="ac-loro" id="ac-loro" href="#" target="_blank" rel="noopener" hidden>Il video che ho analizzato <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        </div>
+        <div class="ac-testo">
+          <div class="ac-motivi vetro rv-e">
+            <h2 class="ac-t">Cosa ho <em>trovato</em></h2>
+            <div id="ac-motivi"></div>
+          </div>
+          <div class="ac-cta vetro rv-e">
+            <h2 class="ac-t" id="ac-cta-t">Vuoi che me ne occupi io?</h2>
+            <p id="ac-chiusura"></p>
+            <a class="ac-wa" id="ac-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.1-4.4A8.5 8.5 0 1 1 20.5 12z"/></svg>Parliamone su WhatsApp</a>
+            <small>Consulenza gratuita di 15 minuti per capire da dove partire.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="anteprima-admin" id="anteprima-admin" hidden><span>Anteprima</span><a class="pill" id="anteprima-torna" href="./"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Torna alla modifica</a></div>
+
+<div class="mod" id="auth-modal" aria-hidden="true">
+  <div class="mod-panel" role="dialog" aria-modal="true" id="modal-panel">
+
+    <div id="modal-step-auth" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+        <div><h3>Accesso <em>admin</em></h3><p>Solo per te: il cliente non ha bisogno di entrare.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-login">
+        <div><label class="etich" for="login-email">Email</label><input class="campo" type="email" id="login-email" required autocomplete="username"></div>
+        <div><label class="etich" for="login-pass">Password</label><input class="campo" type="password" id="login-pass" required autocomplete="current-password"></div>
+        <div class="errore" id="auth-error" hidden></div>
+        <button class="btn blocco" type="submit"><span>Accedi</span></button>
+      </form>
+    </div>
+
+    <div id="modal-step-new" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg></span>
+        <div><h3>Nuovo <em>audit</em></h3><p>Per un'azienda che vuoi contattare.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-new">
+        <div><label class="etich" for="n-azienda">Nome dell'azienda</label><input class="campo" type="text" id="n-azienda" required placeholder="Es. Rossi &amp; Co."></div>
+        <div><label class="etich" for="n-nome">Nome della persona</label><input class="campo" type="text" id="n-nome" required placeholder="Es. Mario"></div>
+        <button class="btn blocco" type="submit">Crea audit</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<div class="mod conf" id="conf-modal" aria-hidden="true">
+  <div class="mod-panel" role="alertdialog" aria-modal="true" aria-labelledby="conf-titolo">
+    <div class="mod-testa">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg></span>
+      <div><h3 id="conf-titolo">Sei sicuro?</h3><p id="conf-testo"></p></div>
+    </div>
+    <div class="det-az">
+      <button class="btn v" type="button" id="conf-no">Annulla</button>
+      <button class="btn p" type="button" id="conf-ok">Elimina</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="../raw/tool.js"></script>
+<script type="module" src="main.js"></script>
 </body>
-
 </html>

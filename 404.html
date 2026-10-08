@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pagina non trovata · Teo Macauda</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1018 723'%3E%3Cpath fill='%23DA5512' d='M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z'/%3E%3Cpath fill='%23DA5512' d='M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Bebas+Neue&display=swap">
+<style>
+/* Pagina 404: autonoma (non dipende dagli altri file), perché viene mostrata a qualsiasi indirizzo sbagliato.
+   Stile del sito: nero, arancio #DA5512, vetro, pillole, tabellone a lamelle. */
+:root { --arancio: #DA5512; --arancio-chiaro: #F2874F; --vetro: rgba(255,255,255,.07); --bordo: rgba(255,255,255,.16); }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: #000; color: #fff; font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.pagina { position: relative; min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 96px 20px 56px; text-align: center; isolation: isolate; overflow: hidden; }
+.pagina::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 42%; width: min(900px, 120vw); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(218,85,18,.45), rgba(218,85,18,.08) 45%, rgba(218,85,18,0) 70%); }
+.logo { position: absolute; left: clamp(18px, 4vw, 48px); top: 22px; width: 52px; display: block; color: var(--arancio); }
+.logo svg { display: block; width: 100%; height: auto; }
+.eyebrow { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+.tabellone { display: flex; gap: clamp(8px, 2vw, 16px); perspective: 900px; }
+.cella { position: relative; width: clamp(78px, 22vw, 168px); height: clamp(112px, 31vw, 240px); font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif; font-size: clamp(110px, 31vw, 240px); line-height: clamp(112px, 31vw, 240px); }
+.cella .m { position: absolute; left: 0; right: 0; height: 50%; overflow: hidden; background: #151515; border: 1px solid rgba(255,255,255,.1); }
+.cella .m b { position: absolute; left: 0; right: 0; height: 200%; text-align: center; font-weight: 400; }
+.cella .su { top: 0; border-radius: 14px 14px 0 0; border-bottom: 1px solid #000; }
+.cella .su b { top: 0; }
+.cella .giu { bottom: 0; border-radius: 0 0 14px 14px; }
+.cella .giu b { bottom: 0; }
+.cella.ar .m { color: var(--arancio-chiaro); }
+.cella .lam1 { top: 0; transform-origin: 50% 100%; border-radius: 14px 14px 0 0; border-bottom: 1px solid #000; z-index: 3; -webkit-backface-visibility: hidden; backface-visibility: hidden; animation: cade .5s cubic-bezier(.5,0,.8,.4) forwards; animation-delay: var(--d, 0s); }
+.cella .lam1 b { top: 0; }
+.cella .lam2 { bottom: 0; transform-origin: 50% 0; border-radius: 0 0 14px 14px; z-index: 3; -webkit-backface-visibility: hidden; backface-visibility: hidden; transform: rotateX(90deg); animation: arriva .5s cubic-bezier(.2,1.4,.5,1) forwards; animation-delay: calc(var(--d, 0s) + .5s); }
+.cella .lam2 b { bottom: 0; }
+.cella .vecchio { color: transparent; }
+/* le cifre in basso restano invisibili finché la lamella non è caduta: prima non si deve leggere nulla */
+.cella .giu:not(.lam2) b { opacity: 0; }
+@keyframes cade { to { transform: rotateX(-90deg); } }
+@keyframes arriva { to { transform: rotateX(0deg); } }
+.cella .lam1 { background: #151515; }
+.titolo { margin: 0; font-size: clamp(1.9rem, 5.4vw, 3.6rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; text-transform: uppercase; text-wrap: balance; }
+.titolo em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; text-transform: none; color: var(--arancio); font-size: 1.12em; letter-spacing: -.01em; }
+.testo { margin: 0; max-width: 44ch; color: rgba(255,255,255,.75); font-size: clamp(1rem, 1.6vw, 1.15rem); text-wrap: pretty; }
+.azioni { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px; }
+.btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: .6em; padding: 1rem 1.9rem; border-radius: 999px; border: 1px solid transparent; font: 600 1rem "Instrument Sans", Arial, sans-serif; line-height: 1; transition: transform .4s cubic-bezier(.23,1,.32,1), background-color .3s, border-color .3s; }
+.btn::after { content: ""; position: absolute; inset: 0; right: auto; width: 100%; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent); transition: left .5s; pointer-events: none; }
+.btn:hover { transform: translateY(-1px); }
+.btn:hover::after, .btn:focus-visible::after { left: 100%; }
+.btn:active { transform: scale(.97); }
+.btn-primario { background: var(--arancio); color: #000; }
+.btn-primario::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); }
+.btn-primario:hover { background: #F0651D; }
+.btn-vetro { background: var(--vetro); border-color: var(--bordo); color: #fff; -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+.btn-vetro:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); }
+.btn svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.piede { position: absolute; left: 0; right: 0; bottom: 18px; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+@media (prefers-reduced-motion: reduce) { .cella .giu:not(.lam2) b { opacity: 1; } .cella .lam1, .cella .lam2 { animation: none; display: none; } .btn, .btn::after { transition: none; } }
+</style>
+</head>
+<body>
+<main class="pagina">
+  <a class="logo" href="/" aria-label="Teo Macauda, vai alla home"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg></a>
+
+  <span class="eyebrow">Errore 404</span>
+
+  <div class="tabellone" role="img" aria-label="404">
+    <div class="cella" style="--d:.15s"><span class="m su"><b>4</b></span><span class="m giu"><b>4</b></span><span class="m su lam1 vecchio"><b>&nbsp;</b></span><span class="m giu lam2"><b>4</b></span></div>
+    <div class="cella ar" style="--d:.45s"><span class="m su"><b>0</b></span><span class="m giu"><b>0</b></span><span class="m su lam1 vecchio"><b>&nbsp;</b></span><span class="m giu lam2"><b>0</b></span></div>
+    <div class="cella" style="--d:.75s"><span class="m su"><b>4</b></span><span class="m giu"><b>4</b></span><span class="m su lam1 vecchio"><b>&nbsp;</b></span><span class="m giu lam2"><b>4</b></span></div>
+  </div>
+
+  <h1 class="titolo">Pagina <em>non trovata</em></h1>
+  <p class="testo">La pagina che cerchi non esiste, oppure è stata spostata. Riparti dalla home o guarda i miei lavori.</p>
+
+  <div class="azioni">
+    <a class="btn btn-primario" href="/">Torna alla home <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></a>
+    <a class="btn btn-vetro" href="/lavori/">Guarda i lavori</a>
+  </div>
+
+  <p class="piede">Teo Macauda · Videomaker</p>
+</main>
+</body>
+</html>

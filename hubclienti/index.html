@@ -1,465 +1,210 @@
-<!DOCTYPE html>
-<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Hub | Teo Macauda</title>
-    
-    <!-- PWA & Mobile Optimization -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Hub">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/teomacauda/cdn-assets/main/Favicon.png">
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Scripts & Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
-                }
-            }
-        }
-    </script>
-
-    <!-- Custom CSS (Site branding & Animation system) -->
-    <style>
-        html, body { 
-            background-color: #000000; 
-            color: #ffffff; 
-            width: 100%; 
-            max-width: 100vw; 
-            overflow-x: hidden; 
-            position: relative; 
-            height: 100%; 
-            margin: 0;
-            padding: 0;
-        }
-        
-        #page-wrapper { 
-            overflow-x: hidden; 
-            width: 100%; 
-            position: relative; 
-            min-height: 100vh; 
-            padding-top: env(safe-area-inset-top); 
-            padding-bottom: env(safe-area-inset-bottom); 
-        }
-
-        /* Glassmorphism Styles */
-        .glass-nav { 
-            background: rgba(0, 0, 0, 0.5); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            transition: all 0.4s ease; 
-        }
-        
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-        }
-        
-        .glass-card:hover { 
-            border-color: rgba(255, 122, 0, 0.3); 
-            background: rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 0 25px rgba(255, 122, 0, 0.05);
-        }
-        
-        .plus-card { 
-            border: 1px dashed rgba(255, 255, 255, 0.2); 
-            background: rgba(255, 255, 255, 0.01); 
-        }
-        
-        .plus-card:hover { 
-            border-color: rgba(255, 122, 0, 0.5); 
-            background: rgba(255, 122, 0, 0.02); 
-        }
-        
-        .glass-modal { 
-            background: rgba(10, 10, 10, 0.94); 
-            backdrop-filter: blur(30px); 
-            -webkit-backdrop-filter: blur(30px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-        }
-        
-        .ambient-glow { 
-            position: absolute; 
-            width: 100%; 
-            height: 800px; 
-            background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.15) 0%, rgba(255, 122, 0, 0.03) 45%, rgba(0, 0, 0, 0) 85%); 
-            top: 0; 
-            left: 0; 
-            z-index: 0; 
-            pointer-events: none; 
-        }
-        
-        .hero-grid { 
-            position: absolute; 
-            inset: 0; 
-            background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); 
-            background-size: 40px 40px; 
-            opacity: 0.5; 
-            z-index: 1; 
-            pointer-events: none; 
-        }
-        
-        .loader { 
-            border: 2px solid rgba(255,255,255,0.1); 
-            border-top: 2px solid #FF7A00; 
-            border-radius: 50%; 
-            width: 20px; 
-            height: 20px; 
-            animation: spin 1s linear infinite; 
-        }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        /* --- Client View Custom Layout & Animations --- */
-
-        /* Splash Screen (Teo's Logo Fade In/Out) */
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.9); }
-            25%, 75% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0; transform: scale(1); }
-        }
-        .animate-logo-splash {
-            animation: fadeInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        /* 3D Premium Button Glow effects */
-        .premium-btn {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .premium-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 122, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        .premium-btn:hover::before {
-            opacity: 1;
-        }
-        .premium-btn:hover {
-            transform: translateY(-2px);
-            border-color: #FF7A00;
-            box-shadow: 0 10px 30px -10px rgba(255, 122, 0, 0.3), inset 0 0 15px rgba(255, 122, 0, 0.1);
-        }
-        .premium-btn:active {
-            transform: translateY(1px);
-        }
-
-        /* Sequential blinking dots for calendar icon */
-        @keyframes dot-blink {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; filter: drop-shadow(0 0 3px #FF7A00); }
-        }
-        .animate-dot-1 { animation: dot-blink 1.5s infinite ease-in-out; }
-        .animate-dot-2 { animation: dot-blink 1.5s infinite ease-in-out 0.25s; }
-        .animate-dot-3 { animation: dot-blink 1.5s infinite ease-in-out 0.5s; }
-        .animate-dot-4 { animation: dot-blink 1.5s infinite ease-in-out 0.75s; }
-        .animate-dot-5 { animation: dot-blink 1.5s infinite ease-in-out 1s; }
-        .animate-dot-6 { animation: dot-blink 1.5s infinite ease-in-out 1.25s; }
-
-        /* Swinging Calendar Animation */
-        @keyframes swing-subtle {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
-        }
-        .animate-swing {
-            animation: swing-subtle 3s infinite ease-in-out;
-        }
-
-        /* Growing bar chart animation */
-        @keyframes bar-grow {
-            0%, 100% { transform: scaleY(0.5); }
-            50% { transform: scaleY(1); }
-        }
-        .animate-bar-1 { animation: bar-grow 1.6s infinite ease-in-out; }
-        .animate-bar-2 { animation: bar-grow 1.6s infinite ease-in-out 0.3s; }
-        .animate-bar-3 { animation: bar-grow 1.6s infinite ease-in-out 0.6s; }
-
-        /* Bouncing Arrow for Chart Icon */
-        @keyframes arrow-move {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(2px, -2px); }
-        }
-        .animate-arrow { animation: arrow-move 1.6s infinite ease-in-out; }
-
-        /* Positioning states for client info header */
-        .client-header-transition {
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease;
-        }
-        
-        .client-buttons-transition {
-            transition: opacity 0.8s ease, max-height 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        
-        /* Oscillazione diagonale per l'icona report */
-        @keyframes trend-bounce {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(3px, -3px); }
-        }
-
-        .animate-trend {
-            animation: trend-bounce 2s infinite ease-in-out;
-        }
-
-        /* Pulse glow overlay on client avatar */
-        @keyframes avatar-pulse {
-            0% { box-shadow: 0 0 0 0px rgba(255, 122, 0, 0.4); }
-            100% { box-shadow: 0 0 0 15px rgba(255, 122, 0, 0); }
-        }
-        .avatar-glow {
-            animation: avatar-pulse 2s infinite cubic-bezier(0.25, 0, 0, 1);
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hub · Teo Macauda</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hub">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>try { if (localStorage.getItem('ped_admin') === '1') document.documentElement.classList.add('adm-pre'); } catch (e) {}</script>
+<link rel="stylesheet" href="../raw/raw.css">
+<link rel="stylesheet" href="../raw/tool.css">
+<link rel="stylesheet" href="hub.css">
 </head>
-<body class="antialiased">
+<body>
+<div class="sfondo" aria-hidden="true"><i></i><i></i><i></i></div>
 
-<div id="page-wrapper" class="flex flex-col">
-    <div class="ambient-glow"></div>
-    <div class="hero-grid"></div>
+<!-- barra: solo per te (il cliente vede l'hub a schermo pieno, senza barra) -->
+<header class="os-bar" id="bar" hidden>
+  <a class="os-marchio" id="marchio" href="../raw/" aria-label="RAW OS"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg><span>Hub <b>clienti</b></span></a>
+  <span class="os-admin" id="admin-indicator" hidden>Admin</span>
+  <a class="pill" id="btnRaw" href="../raw/" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5h12V10"/></svg>Raw OS</a>
+  <button class="pill os-strumenti" type="button" id="btnStrumenti" data-raw-strumenti hidden aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Strumenti <kbd>⌘K</kbd></button>
+</header>
 
-    <!-- NAVBAR (Admin / Home default, hidden on client view) -->
-    <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
-        <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-            <a href="./" class="flex items-center hover:opacity-80 transition-all">
-                <svg class="h-9 w-auto text-white" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="currentColor"/>
-                    <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="currentColor"/>
-                </svg>
-            </a>
-            <div class="flex items-center gap-3">
-                <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Admin Mode
-                </div>
-                <button id="btn-logout" class="hidden text-xs text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-1.5 rounded-full transition-all">
-                    Esci
-                </button>
-            </div>
-        </div>
-    </header>
+<main class="tool" id="contenuto">
 
-    <!-- MAIN ROUTING AREA -->
-    <main class="flex-1 w-full max-w-7xl mx-auto px-6 pt-32 pb-16 relative z-10">
-        
-        <!-- MAIN LOADER (Shown during DB check) -->
-        <div id="main-loader" class="flex justify-center items-center py-32">
-            <div class="loader !w-9 !h-9"></div>
-        </div>
+  <div class="caricamento" id="main-loader"><span class="spin"></span></div>
 
-        <!-- 1. LOCK SECTION (Requires login to access Admin Panel) -->
-        <div id="section-lock" class="hidden max-w-md mx-auto text-center py-20 flex flex-col items-center">
-            <div class="w-16 h-16 bg-accent border border-accentHover rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-accent/20">
-                <i data-lucide="lock" class="w-7 h-7 text-white"></i>
-            </div>
-            <h1 class="text-2xl font-extrabold tracking-tight text-white mb-2">Area Riservata Client Hub</h1>
-            <p class="text-graytext text-sm font-light mb-8">Questa sezione è accessibile solo tramite link diretto del cliente o credenziali amministratore.</p>
-            <button onclick="openAuthModal()" class="w-full h-12 px-6 bg-accent text-white hover:bg-accentHover rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/10">
-                <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
-            </button>
-        </div>
-
-        <!-- 2. ADMIN VIEW (Clients Catalog and CRUD) -->
-        <div id="section-admin-catalog" class="hidden">
-            <div class="mb-10 text-left">
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">Gestione <span class="text-accent">Hub Clienti</span></h1>
-                <p class="text-graytext text-sm font-light mt-1">Configura l'hub per i tuoi clienti inserendo le loro risorse.</p>
-            </div>
-            
-            <div id="client-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                <!-- Javascript will inject cards here + a "+" card at the end -->
-            </div>
-        </div>
-
-        <!-- 3. CLIENT VIEW (Highly Animated Landing Screen) -->
-        <div id="section-client-view" class="hidden fixed inset-0 z-30 bg-black overflow-y-auto">
-            <div class="absolute inset-0 bg-radial-gradient"></div>
-            <div class="hero-grid opacity-30"></div>
-            
-            <!-- Phase 1: Teo's Logo Splash Overlay -->
-            <div id="teo-logo-overlay" class="absolute inset-0 z-50 flex items-center justify-center bg-black">
-                <div id="splash-logo-container" class="w-36 h-36 flex items-center justify-center opacity-0">
-                    <svg class="w-full h-full text-accent" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="currentColor"/>
-                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="currentColor"/>
-                    </svg>
-                </div>
-            </div>
-
-           <!-- Centered Wrapper for client content -->
-            <div id="client-view-wrapper" class="flex flex-col justify-center items-center min-h-screen w-full relative z-10 px-6 py-12">
-                
-                <!-- Client Info Header -->
-                <div id="client-header-container" class="client-header-transition transform scale-[1.3] opacity-0 text-center select-none">
-                    <div class="relative inline-block mb-4">
-                        <img id="client-avatar" src="" alt="Cliente" class="w-24 h-24 rounded-full border-2 border-accent/40 bg-white/5 object-cover avatar-glow">
-                    </div>
-                    <h2 id="client-greeting" class="text-3xl font-extrabold tracking-tight text-white mb-1.5 leading-tight">Ciao!</h2>
-                    <p id="client-subtitle" class="text-[10px] font-bold text-graytext uppercase tracking-widest">IL TUO SPAZIO RISERVATO</p>
-                </div>
-                
-                <!-- Buttons Section -->
-                <div id="client-buttons-container" class="client-buttons-transition w-full max-w-[420px] flex flex-col gap-4 opacity-0 max-h-0 mt-0 overflow-hidden pointer-events-none p-2">
-                    
-                    <!-- Piano Editoriale Button -->
-                    <a id="btn-ped" href="#" target="_self" class="premium-btn glass-card flex items-center p-5 rounded-2xl gap-5 group w-full cursor-pointer select-none">
-                        <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent relative">
-                            <!-- Swinging Calendar Custom SVG Icon -->
-                           <svg class="w-6 h-6 overflow-visible animate-swing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                <!-- Interactive dots pulsing sequentially -->
-                                <circle cx="7" cy="14" r="1.2" fill="#FF7A00" class="animate-dot-1"></circle>
-                                <circle cx="12" cy="14" r="1.2" fill="#FF7A00" class="animate-dot-2"></circle>
-                                <circle cx="17" cy="14" r="1.2" fill="#FF7A00" class="animate-dot-3"></circle>
-                                <circle cx="7" cy="18" r="1.2" fill="#FF7A00" class="animate-dot-4"></circle>
-                                <circle cx="12" cy="18" r="1.2" fill="#FF7A00" class="animate-dot-5"></circle>
-                                <circle cx="17" cy="18" r="1.2" fill="#FF7A00" class="animate-dot-6"></circle>
-                            </svg>
-                        </div>
-                        <div class="text-left flex-1">
-                            <span class="block text-[10px] font-bold uppercase tracking-widest text-accent mb-0.5">Calendario Pubblicazioni</span>
-                            <h4 class="text-lg font-bold text-white leading-tight">Piano Editoriale</h4>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-graytext/40 group-hover:text-accent group-hover:translate-x-1 transition-all"></i>
-                    </a>
-                    <!-- Report Button -->
-                    <a id="btn-report" href="#" target="_self" class="premium-btn glass-card flex items-center p-5 rounded-2xl gap-5 group w-full cursor-pointer select-none">
-                        <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent relative">
-                            <!-- Simplified trending-up arrow SVG with diagonal bounce group -->
-                           <svg class="w-6 h-6 overflow-visible" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <g class="animate-trend" style="transform-origin: 12px 12px;">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                    <polyline points="17 6 23 6 23 12"></polyline>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="text-left flex-1">
-                            <span class="block text-[10px] font-bold uppercase tracking-widest text-accent mb-0.5">Analisi Performance</span>
-                            <h4 class="text-lg font-bold text-white leading-tight">Report Mensile</h4>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-graytext/40 group-hover:text-accent group-hover:translate-x-1 transition-all"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Teo's Logo top left (appears in Phase 3) -->
-            <!-- Safe position to avoid overlaps: top: calc(env(safe-area-inset-top) + 24px) -->
-            <div id="client-logo-topleft" class="fixed left-6 z-40 opacity-0 transition-opacity duration-1000 ease-out" style="top: calc(env(safe-area-inset-top, 0px) + 24px);">
-                <a href="./" class="block hover:opacity-80 transition-all">
-                    <svg class="h-8 w-auto text-white" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" fill="currentColor"/>
-                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" fill="currentColor"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- FOOTER (Admin / Home default, hidden on client view) -->
-    <footer id="footer" class="border-t border-white/5 py-8 text-center text-xs text-graytext/50 font-mono">
-        &copy; 2026 TEO MACAUDA. ALL RIGHTS RESERVED.
-    </footer>
-</div>
-
-<!-- ================= AUTH & ACTION MODAL ================= -->
-<div id="auth-modal" class="fixed inset-0 z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAuthModal()"></div>
-    
-    <!-- Content Modal -->
-    <div class="glass-modal max-w-lg w-full rounded-3xl p-8 relative mx-4 transition-all duration-300 transform translate-y-10">
-        <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-graytext hover:text-white transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-
-        <!-- STEP A: Login Form (If not logged in) -->
-        <div id="modal-step-auth" class="hidden">
-            <div class="text-center mb-6">
-                <h3 class="text-2xl font-extrabold tracking-tight text-white">Accesso Admin</h3>
-                <p class="text-graytext text-xs mt-1">Esegui l'accesso per gestire l'hub dei clienti</p>
-            </div>
-            
-            <form id="form-login" class="space-y-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Indirizzo Email</label>
-                    <input type="email" id="login-email" required placeholder="admin@email.com" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Password</label>
-                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                
-                <div id="auth-error" class="hidden text-xs text-red-500 bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-center"></div>
-                
-                <button type="submit" class="w-full h-11 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
-                    <div id="login-loader" class="loader hidden"></div>
-                    <span>Accedi</span>
-                </button>
-            </form>
-        </div>
-
-        <!-- STEP B: Create/Edit Client Form (If logged in) -->
-        <div id="modal-step-create" class="hidden">
-            <div class="text-center mb-6">
-                <h3 id="modal-create-title" class="text-2xl font-extrabold tracking-tight text-white">Nuovo <span class="text-accent">Cliente</span></h3>
-                <p class="text-graytext text-xs mt-1">Configura l'hub compilando le risorse per il cliente.</p>
-            </div>
-
-            <form id="form-create-client" class="space-y-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Nome Cliente</label>
-                    <input type="text" id="client-name" required placeholder="es. Mario Rossi" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">URL Immagine Profilo Cliente (Favicon o Avatar)</label>
-                    <input type="url" id="client-avatar-input" required placeholder="https://raw.githubusercontent.com/.../avatar.png" class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Link Piano Editoriale (Opzionale)</label>
-                    <input type="url" id="client-ped-input" placeholder="https://teomacauda.it/pianieditoriali/?v=..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-graytext mb-2">Link Report Mensile (Opzionale)</label>
-                    <input type="url" id="client-report-input" placeholder="https://teomacauda.it/report/?v=..." class="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-
-                <button type="submit" id="btn-submit-client" class="w-full h-11 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="send" class="w-4 h-4"></i> Salva Cliente
-                </button>
-            </form>
-        </div>
-
+  <section id="section-lock" hidden>
+    <div class="blocco-lock">
+      <span class="lucchetto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+      <h1>Area <em>riservata</em></h1>
+      <p>Se sei un cliente, apri il link del tuo hub che ti ho mandato.</p>
+      <button class="btn v" type="button" id="btn-open-login">Accesso admin</button>
     </div>
+  </section>
+
+  <!-- admin: i clienti con un hub -->
+  <section id="section-home" hidden>
+    <div class="intest">
+      <div>
+        <span class="eyebrow">Hub clienti</span>
+        <h1>Lo spazio dei <em>clienti</em></h1>
+        <p class="sotto">Ogni cliente ha il suo hub: una pagina con le sue risorse, che apre dal suo link o dalla Home del telefono.</p>
+      </div>
+      <button class="btn" type="button" id="btn-new-hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nuovo hub</button>
+    </div>
+    <div class="banner-assegna vetro" id="banner-collega" hidden>
+      <div><b id="banner-titolo"></b><p id="banner-testo"></p></div>
+      <button class="btn v s" type="button" id="btn-collega-auto">Collega in automatico</button>
+    </div>
+    <div class="cat-griglia" id="hub-grid"></div>
+  </section>
+
+  <!-- admin: modifica dell'hub di un cliente -->
+  <section id="section-editor" hidden>
+    <nav class="crumb"><a class="btn-back" href="./"><span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>Torna agli hub</a></nav>
+    <div class="intest">
+      <div>
+        <span class="eyebrow">Hub del cliente</span>
+        <div class="titolo-riga">
+          <span class="avatar xl" id="ed-avatar" aria-hidden="true"></span>
+          <h1 id="ed-nome">Cliente</h1>
+        </div>
+        <p class="sotto" id="ed-sotto"></p>
+      </div>
+      <div class="az-intest">
+        <button class="btn v" type="button" id="btn-copia-hub"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5v-1a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h1"/></svg><span>Copia link hub</span></button>
+        <a class="btn v" id="btn-anteprima" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>Anteprima</a>
+      </div>
+    </div>
+
+    <div class="ed-box vetro">
+      <h3 class="ed-t">Come ti saluta l'hub</h3>
+      <p class="ed-s">Il nome che il cliente legge in "Ciao …!".</p>
+      <input class="campo" type="text" id="ed-nome-input" aria-label="Nome nel saluto" style="max-width:420px">
+    </div>
+    <div class="ed-box vetro">
+      <h3 class="ed-t">Risorse mostrate al cliente</h3>
+      <p class="ed-s">Ogni risorsa è un pulsante nell'hub. Per ognuna scegli un elemento già presente negli altri tool (piano, report, consegna, revisione, preventivo, audit) oppure incolli un link a mano.</p>
+      <div class="risorse-lista" id="risorse-lista"></div>
+      <div class="ed-az">
+        <button class="btn v s" type="button" id="btn-add-risorsa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Aggiungi una risorsa</button>
+      </div>
+    </div>
+    <div class="ed-salva">
+      <span class="ed-nota" id="ed-stato">Le modifiche si salvano da sole.</span>
+      <span class="sp"></span>
+      <button class="btn p s" type="button" id="btn-elimina-hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>Elimina questo hub</button>
+    </div>
+  </section>
+
+  <!-- vista del cliente (pubblica) -->
+  <section id="section-client" hidden>
+    <div class="splash" id="splash" aria-hidden="true">
+      <svg viewBox="0 0 1018 723"><path pathLength="1" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path pathLength="1" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg>
+    </div>
+    <a class="logo-alto" href="../" id="logo-alto" aria-label="Teo Macauda"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg></a>
+    <div class="cl-vista" id="cl-vista">
+      <div class="cl-testa" id="cl-testa">
+        <span class="avatar xxl" id="cl-avatar" aria-hidden="true"></span>
+        <h2 id="cl-saluto">Ciao!</h2>
+        <p>Il tuo spazio riservato</p>
+      </div>
+      <div class="cl-risorse" id="cl-risorse"></div>
+    </div>
+  </section>
+</main>
+
+<!-- finestre -->
+<div class="mod" id="auth-modal" aria-hidden="true">
+  <div class="mod-panel" role="dialog" aria-modal="true" id="modal-panel">
+
+    <div id="modal-step-auth" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+        <div><h3>Accesso <em>admin</em></h3><p>Solo per te: il cliente non ha bisogno di entrare.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-login">
+        <div><label class="etich" for="login-email">Email</label><input class="campo" type="email" id="login-email" required autocomplete="username"></div>
+        <div><label class="etich" for="login-pass">Password</label><input class="campo" type="password" id="login-pass" required autocomplete="current-password"></div>
+        <div class="errore" id="auth-error" hidden></div>
+        <button class="btn blocco" type="submit"><span>Accedi</span></button>
+      </form>
+    </div>
+
+    <div id="modal-step-pick" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.6"/><path d="M2.8 20c.4-3.5 3-5.6 6.2-5.6s5.8 2.1 6.2 5.6M19 8v6M16 11h6"/></svg></span>
+        <div><h3>Nuovo <em>hub</em></h3><p>Scegli un cliente che hai già.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="pk-lista" id="pick-lista"></div>
+      <button class="btn v blocco" type="button" id="btn-cliente-nuovo" style="margin-top:12px"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Il cliente è nuovo</button>
+    </div>
+
+    <div id="modal-step-new" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.6"/><path d="M2.8 20c.4-3.5 3-5.6 6.2-5.6s5.8 2.1 6.2 5.6M19 8v6M16 11h6"/></svg></span>
+        <div><h3>Cliente <em>nuovo</em></h3><p>Lo trovi poi anche nei Piani editoriali e negli Script.</p></div>
+        <button class="rnd" type="button" id="new-indietro" aria-label="Indietro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      </div>
+      <form class="form" id="form-new-client">
+        <div><label class="etich" for="nc-nome">Nome del cliente</label><input class="campo" type="text" id="nc-nome" required placeholder="Es. Rossi Luxury Brand"></div>
+        <div><label class="etich" for="nc-ig">Profilo Instagram (facoltativo)</label><input class="campo" type="text" id="nc-ig" placeholder="https://instagram.com/nomeprofilo" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+        <p class="nota-foto">Dal link prendo da solo la foto profilo.</p>
+        <button class="btn blocco" type="submit">Crea cliente e hub</button>
+      </form>
+    </div>
+
+    <div id="modal-step-risorsa" hidden>
+      <div class="mod-testa">
+        <span class="ic" id="ris-icon"></span>
+        <div><h3 id="ris-heading">Nuova <em>risorsa</em></h3><p>Un pulsante nell'hub del cliente.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-risorsa">
+        <div><label class="etich" for="ris-tipo">Tipo</label><select class="campo" id="ris-tipo"></select></div>
+        <div><label class="etich" for="ris-titolo">Nome del pulsante</label><input class="campo" type="text" id="ris-titolo" required placeholder="Es. Piano editoriale"></div>
+        <div><label class="etich" for="ris-url">Link</label><input class="campo" type="url" id="ris-url" required placeholder="https://teomacauda.it/…"></div>
+        <button type="button" class="btn v s" id="ris-scegli" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".8"/><circle cx="4" cy="12" r=".8"/><circle cx="4" cy="18" r=".8"/></svg>Scegli tra quelli esistenti</button>
+        <button class="btn blocco" type="submit" id="ris-submit">Aggiungi</button>
+      </form>
+    </div>
+
+    <div id="modal-step-rispick" hidden>
+      <div class="mod-testa">
+        <span class="ic" id="rp-icon"></span>
+        <div><h3 id="rp-titolo">Scegli</h3><p id="rp-sotto">Seleziona quello da mostrare al cliente.</p></div>
+        <button class="rnd" type="button" id="rp-indietro" aria-label="Indietro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      </div>
+      <label class="cerca-pk"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="rp-cerca" placeholder="Cerca…" autocomplete="off" spellcheck="false" aria-label="Cerca"></label>
+      <div class="pk-lista" id="rp-lista"></div>
+    </div>
+
+  </div>
 </div>
 
-<script src="main.js" type="module"></script>
+<div class="mod conf" id="conf-modal" aria-hidden="true">
+  <div class="mod-panel" role="alertdialog" aria-modal="true" aria-labelledby="conf-titolo">
+    <div class="mod-testa">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg></span>
+      <div><h3 id="conf-titolo">Sei sicuro?</h3><p id="conf-testo"></p></div>
+    </div>
+    <div class="det-az">
+      <button class="btn v" type="button" id="conf-no">Annulla</button>
+      <button class="btn p" type="button" id="conf-ok">Elimina</button>
+    </div>
+  </div>
+</div>
+<!-- anteprima: solo per te, discreta, in basso -->
+<div class="anteprima-admin" id="anteprima-admin" hidden><span>Anteprima</span><a class="pill" id="anteprima-torna" href="./"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Torna alla modifica</a></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="../raw/tool.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>

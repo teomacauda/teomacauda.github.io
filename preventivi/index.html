@@ -1,255 +1,182 @@
-<!DOCTYPE html>
-<html lang="it" class="scroll-smooth h-full selection:bg-accent selection:text-white">
+<!doctype html>
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Generatore Preventivi Accordi | Teo Macauda</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="https://cdn.statically.io/gh/teomacauda/cdn-assets/main/Favicon.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
-                    colors: { dark: '#000000', accent: '#FF7A00', accentHover: '#E56D00', graytext: '#AAAAAA', }
-                }
-            }
-        } 
-    </script>
-    <style>
-        html, body { background-color: #000000; color: #ffffff; width: 100%; max-width: 100vw; overflow-x: hidden; position: relative; height: 100%; }
-        #page-wrapper { overflow-x: hidden; width: 100%; position: relative; min-height: 100vh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-        .glass-nav { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.4s ease; margin-top: env(safe-area-inset-top); }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .glass-card:hover { border-color: rgba(255, 122, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
-        .glass-modal { background: rgba(10, 10, 10, 0.94); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .ambient-glow { position: absolute; width: 100%; height: 800px; background: radial-gradient(ellipse at 50% 0%, rgba(255, 122, 0, 0.2) 0%, rgba(255, 122, 0, 0.04) 45%, rgba(0, 0, 0, 0) 85%); top: 0; left: 0; z-index: 0; pointer-events: none; }
-        .hero-grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,122,0,0.02) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; z-index: 1; pointer-events: none; }
-        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #FF7A00; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preventivi · Teo Macauda</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Preventivi">
+<link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>try { if (localStorage.getItem('ped_admin') === '1') document.documentElement.classList.add('adm-pre'); } catch (e) {}</script>
+<link rel="stylesheet" href="../raw/raw.css">
+<link rel="stylesheet" href="../raw/tool.css">
+<link rel="stylesheet" href="preventivi.css">
 </head>
-<body class="antialiased flex flex-col min-h-screen">
-    <div id="page-wrapper" class="flex flex-col flex-1">
-        <div class="ambient-glow"></div>
-        <div class="hero-grid"></div>
+<body>
+<div class="sfondo" aria-hidden="true"><i></i><i></i><i></i></div>
 
-        <header id="navbar" class="fixed top-0 left-0 w-full z-[100] glass-nav h-20 flex items-center border-b border-white/5">
-            <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-                <a ="/" class="flex items-center hover:opacity-80 transition-all">
-                    <svg class="h-9 w-auto" viewBox="0 0 1018 723" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z" style="fill:white;fill-rule:nonzero;"/>
-                        <path d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z" style="fill:white;fill-rule:nonzero;"/>
-                    </svg>
-                </a>
-                <div class="flex items-center gap-3">
-                    
-                    <div id="admin-indicator" class="hidden text-xs font-semibold bg-white/5 text-white border border-white/10 px-3 py-1 rounded-full flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Admin Mode
-                    </div>
-                </div>
-            </div>
-        </header>
+<!-- barra: solo per te; il cliente vede il preventivo a schermo pieno -->
+<header class="os-bar" id="bar" hidden>
+  <a class="os-marchio" id="marchio" href="../raw/" aria-label="RAW OS"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg><span>Preven<b>tivi</b></span></a>
+  <span class="os-admin" id="admin-indicator" hidden>Admin</span>
+  <a class="pill" id="btnRaw" href="../raw/" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5h12V10"/></svg>Raw OS</a>
+  <button class="pill os-strumenti" type="button" id="btnStrumenti" data-raw-strumenti hidden aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Strumenti <kbd>⌘K</kbd></button>
+</header>
 
-        <div id="main-loader" class="fixed inset-0 bg-black z-50 flex items-center justify-center transition-opacity duration-300">
-            <div class="loader"></div>
-        </div>
+<main class="tool" id="contenuto">
 
-        <section id="section-gate" class="hidden fixed inset-0 bg-black z-40 flex items-center justify-center px-4">
-            <div class="w-full max-w-md glass-modal p-8 rounded-2xl shadow-2xl text-center space-y-6">
-                <div class="inline-flex p-4 bg-accent/10 rounded-2xl border border-accent/20">
-                    <i data-lucide="lock" class="w-8 h-8 text-accent"></i>
-                </div>
-                <div class="space-y-2">
-                    <h2 class="text-xl font-bold tracking-tight text-white uppercase">Area Riservata Preventivi</h2>
-                    <p class="text-graytext text-xs sm:text-sm max-w-xs mx-auto leading-relaxed">
-                        Questa sezione è accessibile solo tramite link diretto cliente o credenziali amministratore.
-                    </p>
-                </div>
-                <button id="btn-go-to-login" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all shadow-lg uppercase tracking-wide flex items-center justify-center gap-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Accedi come Admin
-                </button>
-            </div>
-        </section>
+  <div class="caricamento" id="main-loader"><span class="spin"></span></div>
 
-        <section id="section-auth" class="hidden fixed inset-0 bg-black z-40 flex items-center justify-center px-4">
-            <div class="w-full max-w-md glass-modal p-8 rounded-2xl shadow-2xl">
-                <h2 class="text-2xl font-bold mb-6 text-center tracking-tight text-white uppercase">Accedi come Admin</h2>
-                <form id="auth-form" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Email</label>
-                        <input type="email" id="auth-email" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Password</label>
-                        <input type="password" id="auth-password" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                    </div>
-                    <button type="submit" class="w-full h-12 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-sm transition-all shadow-lg mt-2 uppercase tracking-wide">
-                        Entra nel Pannello
-                    </button>
-                </form>
-            </div>
-        </section>
+  <section id="section-lock" hidden>
+    <div class="blocco-lock">
+      <span class="lucchetto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+      <h1>Area <em>riservata</em></h1>
+      <p>Se sei un cliente, apri il link del preventivo che ti ho mandato.</p>
+      <button class="btn v" type="button" id="btn-open-login">Accesso admin</button>
+    </div>
+  </section>
 
-        <main id="section-admin" class="hidden flex-grow container mx-auto max-w-4xl px-6 pt-32 pb-16 relative z-10">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h1 class="text-3xl font-black tracking-tight text-white uppercase">Generazione Accordo</h1>
-                    <p class="text-graytext text-sm mt-1">Compila le metriche d'investimento variabili da sovrapporre al PDF.</p>
-                </div>
-                <button id="btn-logout" class="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">
-                    <i data-lucide="log-out" class="w-5 h-5 text-graytext"></i>
-                </button>
-            </div>
+  <!-- admin: elenco dei preventivi -->
+  <section id="section-home" hidden>
+    <div class="intest">
+      <div>
+        <span class="eyebrow">Preventivi</span>
+        <h1>Accordi e <em>preventivi</em></h1>
+        <p class="sotto">Ogni preventivo ha un link per il cliente e il PDF ufficiale, compilato da solo.</p>
+      </div>
+      <div class="az-intest">
+        <button class="btn v" type="button" id="btn-seleziona"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.2 12.3l2.6 2.6 5-5.4"/></svg><span>Seleziona</span></button>
+        <a class="btn" href="?nuovo=1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nuovo preventivo</a>
+      </div>
+    </div>
+    <div class="pv-barra" id="pv-barra" hidden>
+      <button class="btn v s" type="button" id="btn-sel-tutti">Seleziona tutti</button>
+      <button class="btn v s" type="button" id="btn-sel-scaduti">Seleziona gli scaduti</button>
+    </div>
+    <div class="au-griglia" id="pv-griglia"></div>
+    <div class="piano-vuoto vetro" id="pv-vuoti" hidden><h3>Nessun preventivo <em>qui</em></h3><p>Crea il primo preventivo: il cliente riceve un link con il PDF da scaricare.</p></div>
+  </section>
 
-            <form id="preventivo-form" class="space-y-6">
-                <div class="glass-card p-4 sm:p-6 rounded-2xl space-y-4">
-                    <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="user" class="w-5 h-5 text-accent"></i> Profilo Cliente
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Ragione Sociale / Nominativo Cliente</label>
-                            <input type="text" id="client-name" required placeholder="Es: Nome Azienda S.r.l." class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Scadenza Validità (Auto-Distruzione Link)</label>
-                            <input type="date" id="expiry-date" required class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Codice Fiscale Cliente</label>
-                            <input type="text" id="client-cf" required placeholder="Es: RSSMRA80A01H501U" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Partita IVA (Opzionale)</label>
-                            <input type="text" id="client-vat" placeholder="Es: 02153520891" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Via e Numero Civico</label>
-                            <input type="text" id="client-street" required placeholder="Es: Via Leonello Poletti 58" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">CAP, Città e Provincia</label>
-                            <input type="text" id="client-city-zip" required placeholder="Es: 44124 Ferrara (FE)" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-4 sm:p-6 rounded-2xl space-y-4">
-                    <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="sliders" class="w-5 h-5 text-accent"></i> Quadro Economico & Scadenze
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Tipologia Offerta</label>
-                            <select id="package-type" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent cursor-pointer">
-                                <option value="custom" class="bg-black text-white">Configurazione Su Misura</option>
-                                <option value="start" class="bg-black text-white">PACCHETTO START (DIGITAL CORE)</option>
-                                <option value="pro" class="bg-black text-white">PACCHETTO PRO (CONVERSION STRATEGY)</option>
-                                <option value="elite" class="bg-black text-white">PACCHETTO ELITE (ALL-IN AUTHORITY)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Quantità di Mesi</label>
-                            <input type="text" id="agreement-months" required placeholder="Es: 6 Mesi" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Mesi Attivi</label>
-                            <input type="text" id="agreement-period" required placeholder="Es: da Settembre a Novembre 2026" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-graytext mb-2">Prezzo Mensile (IVA Incl.)</label>
-                            <input type="text" id="monthly-price" required placeholder="Es: 500" class="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="custom-services-section" class="glass-card p-4 sm:p-6 rounded-2xl space-y-4">
-                    <h3 class="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3 text-white uppercase tracking-wide">
-                        <i data-lucide="layers" class="w-5 h-5 text-accent"></i> Attività incluse nella fornitura
-                    </h3>
-                    <div id="services-container" class="space-y-3">
-                        <div class="service-row grid grid-cols-12 gap-3 items-center">
-                            <div class="col-span-7 sm:col-span-9">
-                                <input type="text" placeholder="Attività..." required class="service-desc w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                            </div>
-                            <div class="col-span-4 sm:col-span-2">
-                                <input type="number" step="0.01" placeholder="Prezzo" class="service-price w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-accent">
-                            </div>
-                            <div class="col-span-1 flex justify-center">
-                                <button type="button" class="btn-remove-row text-red-500 hover:text-red-400 transition-colors">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" id="btn-add-service" class="flex items-center gap-2 text-sm font-medium text-accent hover:text-accentHover transition-colors pt-2">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Aggiungi voce di costo
-                    </button>
-                </div>
-
-                <button type="submit" class="w-full h-14 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider">
-                    <i data-lucide="link" class="w-5 h-5"></i> Archivia Proposta e Sincronizza Link
-                </button>
-            </form>
-
-            <div id="output-link-box" class="hidden mt-6 bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl space-y-3">
-                <p class="text-emerald-400 text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> Accordo registrato sul database cloud!
-                </p>
-                <div class="flex gap-2">
-                    <input type="text" id="generated-url" readonly class="flex-grow h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none">
-                    <button id="btn-copy-link" class="h-12 px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-medium text-sm transition-all flex items-center gap-2">
-                        <i data-lucide="copy" class="w-4 h-4"></i> Copia Link
-                    </button>
-                </div>
-            </div>
-        </main>
-
-        <main id="section-client" class="hidden flex-grow container mx-auto max-w-3xl px-6 pt-32 pb-16 flex flex-col justify-center relative z-10">
-            <div id="client-view-container" class="glass-card p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
-                <div class="text-center space-y-3">
-                    <div class="inline-flex p-3 bg-white/5 rounded-2xl border border-white/10 mb-1">
-                        <i data-lucide="file-text" class="w-8 h-8 text-accent"></i>
-                    </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase" id="client-view-title">Accordo Commerciale</h1>
-                    <p class="text-graytext text-sm font-light" id="client-view-date">Scadenza termini di accettazione: --/--/----</p>
-                </div>
-
-                <div id="client-content-area"></div>
-
-                <button id="btn-download-pdf" class="w-full h-14 bg-accent hover:bg-accentHover text-white rounded-xl font-bold text-base transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider">
-                    <i data-lucide="download" class="w-5 h-5"></i> Scarica il Preventivo Ufficiale
-                </button>
-            </div>
-        </main>
-
-        <footer class="py-12 text-center border-t border-white/5 relative z-10 mt-auto">
-            <p class="text-graytext text-sm mb-4">
-                © <script>document.write(new Date().getFullYear())</script> 
-                Matteo Maria Macauda | P.IVA 02153520891 | Sede Legale: Via Teofane, 2 – 96100 Siracusa (SR) | 
-                <a href="/privacy.html" class="underline hover:text-white transition-colors">Privacy Policy</a>
-            </p>
-            <div class="px-6">
-                <p class="text-[9px] md:text-[10px] text-white/20 max-w-3xl mx-auto leading-relaxed uppercase tracking-widest">
-                    TUTTI I DIRITTI RISERVATI. IL CODICE SORGENTE E I PRESET DI GENERAZIONE SONO PROPRIETÀ INTELLETTUALE DI MATTEO MARIA MACAUDA.
-                </p>
-            </div>
-        </footer>
+  <!-- admin: crea o modifica un preventivo -->
+  <section id="section-editor" hidden>
+    <nav class="crumb"><a class="btn-back" href="./"><span class="fr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>Torna ai preventivi</a></nav>
+    <div class="intest">
+      <div style="min-width:0;flex:1">
+        <span class="eyebrow" id="ed-eyebrow">Nuovo preventivo</span>
+        <h1 class="titolo-cs" id="ed-titolo">Nuovo preventivo</h1>
+        <p class="sotto" id="ed-info"></p>
+      </div>
+      <div class="az-intest" id="ed-azioni" hidden>
+        <button class="btn v" type="button" id="btn-copia-link"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5v-1a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h1"/></svg><span>Copia link cliente</span></button>
+        <a class="btn v" id="btn-anteprima" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>Anteprima e PDF</a>
+      </div>
     </div>
 
-    <script>lucide.createIcons();</script>
-    <script type="module" src="main.js"></script>
+    <form id="preventivo-form" autocomplete="off">
+      <div class="ed-box vetro">
+        <h3 class="ed-t">Profilo del cliente</h3>
+        <div class="ed-griglia due">
+          <div><label class="etich" for="client-name">Ragione sociale o nominativo</label><input class="campo" type="text" id="client-name" required placeholder="Es. Nome Azienda S.r.l."></div>
+          <div><label class="etich" for="expiry-date">Il link vale fino al</label><input class="campo" type="date" id="expiry-date" required></div>
+          <div><label class="etich" for="client-cf">Codice fiscale</label><input class="campo" type="text" id="client-cf" required placeholder="Es. RSSMRA80A01H501U"></div>
+          <div><label class="etich" for="client-vat">Partita IVA (facoltativa)</label><input class="campo" type="text" id="client-vat" placeholder="Es. 02153520891"></div>
+          <div><label class="etich" for="client-street">Via e numero civico</label><input class="campo" type="text" id="client-street" required placeholder="Es. Via Leonello Poletti 58"></div>
+          <div><label class="etich" for="client-city-zip">CAP, città e provincia</label><input class="campo" type="text" id="client-city-zip" required placeholder="Es. 44124 Ferrara (FE)"></div>
+        </div>
+        <p class="ed-s avviso-link">Dopo la data di scadenza il link smette di funzionare: chi lo apre vede che è scaduto e il preventivo viene rimosso.</p>
+      </div>
+
+      <div class="ed-box vetro">
+        <h3 class="ed-t">Quadro economico</h3>
+        <div class="ed-griglia quattro">
+          <div><label class="etich" for="package-type">Tipo di offerta</label><select class="campo" id="package-type"><option value="custom">Su misura</option><option value="start">Pacchetto START</option><option value="pro">Pacchetto PRO</option><option value="elite">Pacchetto ELITE</option></select></div>
+          <div><label class="etich" for="agreement-months">Quantità di mesi</label><input class="campo" type="text" id="agreement-months" required placeholder="Es. 6 mesi"></div>
+          <div><label class="etich" for="agreement-period">Mesi attivi</label><input class="campo" type="text" id="agreement-period" required placeholder="Es. da settembre a novembre 2026"></div>
+          <div><label class="etich" for="monthly-price">Prezzo mensile (IVA incl.)</label><input class="campo" type="text" id="monthly-price" required placeholder="Es. 500"></div>
+        </div>
+        <div class="pk-anteprima" id="pk-anteprima" hidden></div>
+      </div>
+
+      <div class="ed-box vetro" id="custom-services-section">
+        <div class="ed-testa"><div><h3 class="ed-t">Attività incluse</h3><p class="ed-s">Una riga per ogni attività. Il prezzo di riga è facoltativo.</p></div>
+          <button class="btn v s" type="button" id="btn-add-service"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Aggiungi una voce</button></div>
+        <div class="sv-lista" id="services-container"></div>
+      </div>
+
+      <div class="tab-salva">
+        <button class="btn" type="submit" id="btn-salva">Salva il preventivo</button>
+        <span class="ed-nota" id="stato">&nbsp;</span>
+        <span class="sp"></span>
+        <button class="btn v s" type="button" id="btn-duplica" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="11" height="11" rx="3"/><rect x="9.5" y="9.5" width="11" height="11" rx="3"/></svg>Duplica</button>
+        <button class="btn p s" type="button" id="btn-elimina" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>Elimina</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- vista del cliente (pubblica) -->
+  <section id="section-client" hidden>
+    <a class="logo-alto" href="../" aria-label="Teo Macauda"><svg viewBox="0 0 1018 723" aria-hidden="true"><path fill="currentColor" d="M1017.46,153.167L1017.42,569.5L865.335,496.583L865.335,722.792L539.502,722.667L575.919,653.667L796.127,653.667L796.127,69.25L616.835,69.25L432.669,425.125L248.502,69.25L69.21,69.25L69.21,653.667L289.502,653.667L325.96,722.792L0.002,722.792L0.002,-0L289.502,-0L432.669,275.375L575.835,-0L865.335,-0L865.335,226.083L1017.46,153.167Z"/><path fill="currentColor" d="M657.833,584.167L657.833,287.083L432.667,722.792L207.5,287.042L207.5,584.167L138.417,584.167L138.417,138.458L207.5,138.458L432.667,574.708L657.833,138.458L726.917,138.458L726.917,584.167L657.833,584.167Z"/></svg></a>
+    <div class="pv-vista">
+      <header class="pv-testa rv-e">
+        <span class="pv-eti">Proposta commerciale</span>
+        <h1 id="client-view-title">Proposta</h1>
+        <p id="client-view-date"></p>
+      </header>
+      <div class="pv-card vetro rv-e">
+        <div id="client-content-area"></div>
+        <button class="pv-scarica" type="button" id="btn-download-pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 11 12 15.5 16.5 11"/><path d="M5 19.5h14"/></svg>Scarica il preventivo</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="anteprima-admin" id="anteprima-admin" hidden><span>Anteprima</span><a class="pill" id="anteprima-torna" href="./"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Torna alla modifica</a></div>
+<div class="pv-fisso" id="pv-fisso" hidden><b id="pv-conta">0 selezionati</b><button class="btn p s" type="button" id="btn-elimina-sel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>Elimina</button><button class="btn v s" type="button" id="btn-fine-sel">Fine</button></div>
+<div class="pdf-attesa" id="pdf-attesa" hidden><span class="spin"></span><b>Preparo il PDF…</b></div>
+
+<div class="mod" id="auth-modal" aria-hidden="true">
+  <div class="mod-panel" role="dialog" aria-modal="true" id="modal-panel">
+
+    <div id="modal-step-auth" hidden>
+      <div class="mod-testa">
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
+        <div><h3>Accesso <em>admin</em></h3><p>Solo per te: il cliente non ha bisogno di entrare.</p></div>
+        <button class="rnd" type="button" data-chiudi-mod aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <form class="form" id="form-login">
+        <div><label class="etich" for="login-email">Email</label><input class="campo" type="email" id="login-email" required autocomplete="username"></div>
+        <div><label class="etich" for="login-pass">Password</label><input class="campo" type="password" id="login-pass" required autocomplete="current-password"></div>
+        <div class="errore" id="auth-error" hidden></div>
+        <button class="btn blocco" type="submit"><span>Accedi</span></button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<div class="mod conf" id="conf-modal" aria-hidden="true">
+  <div class="mod-panel" role="alertdialog" aria-modal="true" aria-labelledby="conf-titolo">
+    <div class="mod-testa">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg></span>
+      <div><h3 id="conf-titolo">Sei sicuro?</h3><p id="conf-testo"></p></div>
+    </div>
+    <div class="det-az">
+      <button class="btn v" type="button" id="conf-no">Annulla</button>
+      <button class="btn p" type="button" id="conf-ok">Elimina</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="../raw/tool.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>

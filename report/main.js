@@ -15,697 +15,404 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// ===== Report · logica =====
+// Sopra (import e collegamento a Firebase) è copiato identico dalla versione precedente.
+// Dati: collezione "reportMensili" { title, slug, clientAvatarUrl, followersIg/Tt/Yt, kpiReachedCount, kpiViewsCount, kpiViewsPct,
+//   items[{ title, type, link, views, likes, comments, shares, reposts, saves }], + clienteId, avatar, createdAt (nuovi, facoltativi) }.
+// Alcuni report vecchi non hanno createdAt: si legge tutta la collezione e si ordina qui. L'indirizzo (slug) di un report non cambia mai.
+
+const { $, esc, avviso, conferma, erroreTesto, copiaTesto, avatarHtml, createSlug, utenteInstagram, fotoDaInstagram } = window.RawUI;
+
 const urlParams = new URLSearchParams(window.location.search);
-const reportSlug = urlParams.get('v');
+const reportSlug = urlParams.get('v');            // report: l'admin lo modifica, il cliente lo guarda
+const clienteSlugUrl = urlParams.get('c');        // report di un cliente (solo admin)
+const anteprima = urlParams.get('anteprima') === '1';
+const SENZA = '_senza';
+const TIPI = ['Reel', 'Post', 'Storia', 'Video YT', 'YT Shorts', 'TikTok'];
 
-const loaderEl = document.getElementById('main-loader');
-const lockSection = document.getElementById('section-lock');
-const adminCatalogSection = document.getElementById('section-admin-catalog');
-const adminDetailSection = document.getElementById('section-admin-report-detail');
-const clientViewSection = document.getElementById('section-client-report-view');
-const adminIndicator = document.getElementById('admin-indicator');
-
-let currentReportDocId = null;
-let editingItemIndex = null;
-let activeAdminSort = 'global'; 
-
-// Codice Vettoriale SVG Nativo Strutturato Premium (Inclusi i vettori up/down richiesti)
-const inlineVectors = {
-    instagram: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
-    tiktok: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>`,
-    youtube: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17z"/><polygon points="10 15 15 12 10 9"/></svg>`,
-    image: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
-    clock: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-    video: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>`,
-    pencil: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
-    trash: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
-    eye: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
-    heart: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
-    arrowUp: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>`,
-    arrowDown: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 4.5l-15 15m0 0h11.25m-11.25 0V8.25"/></svg>`
+const IC = {
+    instagram: '<path fill-rule="evenodd" d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.2-3.4a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/>',
+    tiktok: '<path d="M16.5 3c.3 2.4 1.8 4 4 4.2v3a7.2 7.2 0 0 1-4-1.3v6.4a6 6 0 1 1-6-6c.3 0 .6 0 .9.1v3.2a2.9 2.9 0 1 0 2 2.7V3h3.1z"/>',
+    youtube: '<path fill-rule="evenodd" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z"/>',
+    image: '<path fill-rule="evenodd" d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 4.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM5 18h14l-4.5-6-3.5 4.5-2-2.5z"/>',
+    clock: '<path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm-1 5v6l4.5 2.5.8-1.4-3.8-2.1V7z"/>',
+    video: '<path d="M4 6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v2.3l5-2.8v13l-5-2.8V18a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>',
+    su: '<path d="M12 19V5M5 12l7-7 7 7"/>', giu: '<path d="M12 5v14M5 12l7 7 7-7"/>',
+    piu: '<path d="M12 5v14M5 12h14"/>'
 };
+const ICONA_TIPO = { 'Reel': 'instagram', 'Post': 'image', 'Storia': 'clock', 'Video YT': 'youtube', 'YT Shorts': 'video', 'TikTok': 'tiktok' };
+const svgFill = (n) => `<svg viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ''}</svg>`;
+const svgLinea = (n) => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const FRECCIA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 
-function generateSlug(text) {
-    return text.toString().toLowerCase().trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\--+/g, '-');
+let reports = [], clienti = [];
+let reportCorrente = null, righe = [], sporco = false, clienteAperto = null;
+let rawCaricato = false;
+function caricaRaw() { if (rawCaricato) return; rawCaricato = true; const s = document.createElement('script'); s.src = '../raw/raw.js'; document.head.appendChild(s); }
+
+// ---------- utilità ----------
+const num = (v) => parseInt(v, 10) || 0;
+const fmt = (n) => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');   // sempre con il punto delle migliaia, anche da 4 cifre
+const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+// "Ally - Luglio 26" -> { m: 6, y: 2026, chiave: 202607, nome: "Luglio 26" }
+function periodo(titolo) {
+    const m = String(titolo || '').match(new RegExp(`(${MESI.join('|')})\\s+(\\d{2,4})`, 'i'));
+    if (!m) return null;
+    const mi = MESI.indexOf(m[1].toLowerCase()); let y = parseInt(m[2], 10); if (y < 100) y += 2000;
+    return { m: mi, y, chiave: y * 100 + mi + 1, nome: `${m[1].charAt(0).toUpperCase()}${m[1].slice(1).toLowerCase()} ${String(y).slice(2)}` };
+}
+const negativo = (s) => /^\s*[-−–]/.test(String(s || ''));
+const sommaFollower = (r) => num(r.followersIg) + num(r.followersTt) + num(r.followersYt);
+const clienteDi = (r) => clienti.find(c => c.id === r.clienteId) || null;
+function ordina(lista) {
+    return lista.slice().sort((a, b) => {
+        const pa = periodo(a.title), pb = periodo(b.title);
+        if (pa && pb && pa.chiave !== pb.chiave) return pb.chiave - pa.chiave;
+        if (pa && !pb) return -1; if (!pa && pb) return 1;
+        return String(b.title || '').localeCompare(String(a.title || ''), 'it');
+    });
+}
+const PED_TIPI_OK = new Set(TIPI);
+function getPiani(data) {
+    const d = data || {}, out = [];
+    if ((d.videos && d.videos.length) || d.pianoNome) out.push({ id: 'main', nome: d.pianoNome || 'Piano principale', videos: d.videos || [] });
+    (d.piani || []).forEach(p => out.push({ id: p.id, nome: p.nome || 'Piano', videos: p.videos || [] }));
+    return out;
 }
 
-function getPlatformTagHtml(type) {
-    let customStyle = "bg-white/5 border-white/10 text-white";
-    if (type === "Reel") customStyle = "bg-pink-500/10 border-pink-500/20 text-pink-400";
-    if (type === "Post") customStyle = "bg-indigo-500/10 border-indigo-500/20 text-indigo-400";
-    if (type === "Storia") customStyle = "bg-amber-500/10 border-amber-500/20 text-amber-400";
-    if (type === "Video YT" || type === "YT Shorts") customStyle = "bg-red-500/10 border-red-500/20 text-red-400";
-    if (type === "TikTok") customStyle = "bg-cyan-500/10 border-cyan-500/20 text-cyan-400";
-
-    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${customStyle}">${type}</span>`;
+// ---------- caricamento (admin) ----------
+async function caricaAdmin() {
+    const [rs, cs] = await Promise.all([getDocs(collection(db, "reportMensili")), getDocs(collection(db, "pianiEditoriali"))]);
+    reports = []; rs.forEach(d => reports.push({ id: d.id, ...d.data() }));
+    clienti = []; cs.forEach(d => { const x = d.data(); if (x.isHub === true) return; clienti.push({ id: d.id, slug: x.slug, clientName: x.clientName || 'Cliente', avatar: x.avatar || '', data: x }); });
 }
 
-// Analizzatore di negatività universale (per stringhe come "-5%" e numeri < 0)
-function checkIsNegative(value) {
-    if (typeof value === 'number') return value < 0;
-    if (typeof value === 'string') return value.trim().startsWith('-');
-    return false;
-}
-
-// Router Manager Context
-async function initReportRouter(user) {
-    loaderEl.classList.remove('hidden');
-    lockSection.classList.add('hidden');
-    adminCatalogSection.classList.add('hidden');
-    adminDetailSection.classList.add('hidden');
-    clientViewSection.classList.add('hidden');
-    
-    if (user) adminIndicator.classList.remove('hidden');
-    else adminIndicator.classList.add('hidden');
-
-    // Gestione pulsante di ritorno all'HUB (con persistenza locale)
-    const hubParam = urlParams.get('hub');
-    if (hubParam) {
-        localStorage.setItem('activeHub', hubParam);
-    }
-    const activeHub = hubParam || localStorage.getItem('activeHub');
-    
-    const backToHubBtn = document.getElementById('back-to-hub');
-    if (backToHubBtn) {
-        if (activeHub) {
-            if (window.location.origin.includes('localhost') || window.location.protocol === 'file:') {
-                backToHubBtn.href = `../Hub%20clienti/?v=${activeHub}`;
-            } else {
-                backToHubBtn.href = `https://teomacauda.it/hubclienti/?v=${activeHub}`;
-            }
-            backToHubBtn.style.display = 'inline-flex';
-        } else {
-            backToHubBtn.style.display = 'none';
-        }
-    }
-
-    if (reportSlug) {
-        try {
-            const q = query(collection(db, "reportMensili"), where("slug", "==", reportSlug));
-            const querySnapshot = await getDocs(q);
-
-            if (!querySnapshot.empty) {
-                const docSnapshot = querySnapshot.docs[0];
-                const reportData = docSnapshot.data();
-                currentReportDocId = docSnapshot.id;
-
-                if (user) {
-                    document.getElementById('report-title-display').innerText = reportData.title;
-                    document.getElementById('client-avatar-url').value = reportData.clientAvatarUrl || '';
-                    document.getElementById('followers-instagram').value = reportData.followersIg || 0;
-                    document.getElementById('followers-tiktok').value = reportData.followersTt || 0;
-                    document.getElementById('followers-youtube').value = reportData.followersYt || 0;
-                    
-                    document.getElementById('kpi-reached-count').value = reportData.kpiReachedCount || 0;
-                    document.getElementById('kpi-views-count').value = reportData.kpiViewsCount || 0;
-                    document.getElementById('kpi-views-pct').value = reportData.kpiViewsPct || '';
-                    
-                    renderAdminContentsLayout(reportData.items || []);
-                    loaderEl.classList.add('hidden');
-                    adminDetailSection.classList.remove('hidden');
-                } else {
-                    document.getElementById('main-footer').classList.add('hidden');
-                    document.getElementById('navbar').classList.add('hidden');
-                    
-                    renderClientReportView(reportData);
-                    loaderEl.classList.add('hidden');
-                    clientViewSection.classList.remove('hidden');
-                    initIntersectionCounters();
-                }
-            } else {
-                window.location.href = './';
-            }
-        } catch (err) {
-            console.error("Firestore Loading Error:", err);
-            window.location.href = './';
-        }
-    } else {
-        if (user) {
-            loadAdminCatalogGrid();
-        } else {
-            loaderEl.classList.add('hidden');
-            lockSection.classList.remove('hidden');
-        }
-    }
-}
-
-// Catalogo Iniziale dei Report Creati
-async function loadAdminCatalogGrid() {
-    const grid = document.getElementById('report-grid');
-    grid.innerHTML = '';
+// ---------- router ----------
+function mostra(sez) { ['section-lock', 'section-home', 'section-cliente', 'section-editor', 'section-client'].forEach(id => { $(id).hidden = id !== sez; }); $('main-loader').hidden = true; }
+async function initRouter(user) {
+    $('main-loader').hidden = false;
+    ['section-lock', 'section-home', 'section-cliente', 'section-editor', 'section-client'].forEach(id => { $(id).hidden = true; });
+    try { localStorage.setItem('ped_admin', user ? '1' : '0'); } catch (e) {}
+    document.documentElement.classList.remove('adm-pre');
+    const vistaCliente = !!reportSlug && (!user || anteprima);
+    $('admin-indicator').hidden = !user; $('btnStrumenti').hidden = !user; $('btnRaw').hidden = !user;
+    $('bar').hidden = !user || vistaCliente;
+    $('anteprima-admin').hidden = !(user && vistaCliente);
+    if (user) caricaRaw();
     try {
-        const querySnapshot = await getDocs(collection(db, "reportMensili"));
-        if (querySnapshot.empty) {
-            grid.innerHTML = `<div class="col-span-full text-center text-graytext italic font-light py-12">Nessun report mensile registrato. Creane uno nuovo.</div>`;
-        } else {
-            querySnapshot.forEach(docSnap => {
-                const data = docSnap.data();
-                const card = document.createElement('div');
-                card.className = "glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between h-40";
-                card.innerHTML = `
-                    <div>
-                        <h3 class="text-lg font-bold text-white tracking-tight">${data.title}</h3>
-                        <p class="text-xs text-graytext mt-1 font-light">Elementi: ${(data.items || []).length}</p>
-                    </div>
-                    <div class="flex items-center justify-between mt-4">
-                        <button onclick="window.location.search = '?v=${data.slug}'" class="h-8 px-3 bg-accent hover:bg-accentHover text-white text-xs font-bold rounded-lg transition-all">Apri Report</button>
-                        <button data-id="${docSnap.id}" class="btn-delete-report h-8 w-8 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg flex items-center justify-center transition-all">${inlineVectors.trash}</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-            
-            document.querySelectorAll('.btn-delete-report').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const docId = btn.getAttribute('data-id');
-                    if(confirm("Sei sicuro di voler eliminare definitivamente questo report?")) {
-                        await deleteDoc(doc(db, "reportMensili", docId));
-                        loadAdminCatalogGrid();
-                    }
-                });
-            });
-        }
-    } catch(err) {
-        console.error("Catalog Loader Error:", err);
-    }
-    loaderEl.classList.add('hidden');
-    adminCatalogSection.classList.remove('hidden');
-}
-
-function renderAdminContentsLayout(items) {
-    const container = document.getElementById('admin-report-contents-layout');
-    container.innerHTML = '';
-
-    if (items.length === 0) {
-        container.innerHTML = `<div class="text-center text-graytext font-light italic p-8 glass-card rounded-xl">Nessun contenuto video o post aggiunto a questo report.</div>`;
-        return;
-    }
-
-    const itemsWithIndex = items.map((item, index) => ({ ...item, originalIndex: index }));
-
-    if (activeAdminSort === 'global') {
-        const sortedItems = [...itemsWithIndex].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
-        container.appendChild(buildAdminTableBlock("Classifica Globale Performance", sortedItems));
-    } else {
-        const platforms = ["Reel", "Post", "Storia", "Video YT", "YT Shorts", "TikTok"];
-        platforms.forEach(platform => {
-            const filtered = itemsWithIndex.filter(i => i.type === platform)
-                                  .sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
-            if (filtered.length > 0) {
-                container.appendChild(buildAdminTableBlock(`Canale: ${platform}`, filtered));
-            }
-        });
+        if (reportSlug) {
+            const snap = await getDocs(query(collection(db, "reportMensili"), where("slug", "==", reportSlug)));
+            if (snap.empty) { window.location.href = './'; return; }
+            const r = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            if (user && !anteprima) { await caricaAdmin(); reportCorrente = reports.find(x => x.id === r.id) || r; renderEditor(); mostra('section-editor'); }
+            else { document.body.classList.add('vista-cliente'); renderCliente(r); mostra('section-client'); avviaRivelazioni(); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(reportSlug)}`; }
+        } else if (user) {
+            await caricaAdmin();
+            if (clienteSlugUrl) {
+                const c = clienteSlugUrl === SENZA ? { id: SENZA, slug: SENZA, clientName: 'Senza cliente', avatar: '' } : clienti.find(x => x.slug === clienteSlugUrl);
+                if (!c) { window.location.href = './'; return; }
+                clienteAperto = c; renderClienteAdmin(); mostra('section-cliente');
+            } else { renderHome(); mostra('section-home'); }
+        } else mostra('section-lock');
+    } catch (error) {
+        console.error(error);
+        if (reportSlug) window.location.href = './'; else { $('main-loader').hidden = true; avviso('Non riesco a caricare i dati. ' + erroreTesto(error)); }
     }
 }
 
-function buildAdminTableBlock(title, sortedItems) {
-    const block = document.createElement('div');
-    block.className = "glass-card p-5 rounded-2xl border border-white/5 overflow-hidden";
-    
-    let rowsHtml = sortedItems.map(item => {
-        const originalIndex = item.originalIndex;
-        return `
-            <tr class="border-b border-white/5 hover:bg-white/[0.01] transition-all">
-                <td class="p-4 font-bold text-white text-sm">${item.title}</td>
-                <td class="p-4 text-xs">${getPlatformTagHtml(item.type)}</td>
-                <td class="p-4 text-sm text-white font-medium">${parseInt(item.views).toLocaleString('it-IT')}</td>
-                <td class="p-4 text-sm text-graytext">${parseInt(item.likes).toLocaleString('it-IT')}</td>
-                <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
-                    <button data-index="${originalIndex}" class="btn-item-edit inline-flex items-center justify-center h-8 w-8 bg-white/5 hover:bg-accent/20 hover:text-accent text-graytext rounded-lg border border-white/5 transition-all">${inlineVectors.pencil}</button>
-                    <button data-index="${originalIndex}" class="btn-item-delete inline-flex items-center justify-center h-8 w-8 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg border border-red-500/10 transition-all">${inlineVectors.trash}</button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-
-    block.innerHTML = `
-        <h3 class="text-sm font-bold text-graytext uppercase tracking-wider mb-4 border-b border-white/5 pb-2">${title}</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="text-graytext text-[10px] uppercase font-bold tracking-wider border-b border-white/5">
-                        <th class="p-4">Contenuto</th>
-                        <th class="p-4">Formato</th>
-                        <th class="p-4">Views</th>
-                        <th class="p-4">Like</th>
-                        <th class="p-4 text-right">Azioni</th>
-                    </tr>
-                </thead>
-                <tbody>${rowsHtml}</tbody>
-            </table>
-        </div>
-    `;
-
-    block.querySelectorAll('.btn-item-edit').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const idx = btn.getAttribute('data-index');
-            openAddItemModal(parseInt(idx));
-        });
+// ---------- home: i clienti ----------
+const reportDelCliente = (c) => c.id === SENZA ? reports.filter(r => !r.clienteId || !clienti.some(x => x.id === r.clienteId)) : reports.filter(r => r.clienteId === c.id);
+function assegnabili() {
+    const out = [];
+    reportDelCliente({ id: SENZA }).forEach(r => {
+        const t = String(r.title || '').trim().toLowerCase();
+        const c = clienti.find(c => { const n = c.clientName.trim().toLowerCase(); return n && (t === n || t.startsWith(n + ' ') || t.startsWith(n + '-')); });
+        if (c) out.push({ r, c });
     });
+    return out;
+}
+function renderHome() {
+    document.title = 'Report · Teo Macauda';
+    const grid = $('cat-clienti'); grid.innerHTML = '';
+    const card = (href, av, nome, sub) => { const a = document.createElement('a'); a.className = 'contatto vetro'; a.href = href; a.innerHTML = `<span class="avatar l" aria-hidden="true">${av}</span><span class="c-nome"><b>${esc(nome)}</b><small>${esc(sub)}</small></span><span class="freccia">${FRECCIA}</span>`; return a; };
+    clienti.forEach(c => { const n = reportDelCliente(c).length; grid.appendChild(card(`?c=${encodeURIComponent(c.slug)}`, avatarHtml({ avatar: c.avatar, clientName: c.clientName }), c.clientName, `${n} ${n === 1 ? 'report' : 'report'}`)); });
+    const sc = reportDelCliente({ id: SENZA });
+    if (sc.length) grid.appendChild(card(`?c=${SENZA}`, '<b>—</b>', 'Senza cliente', `${sc.length} report`));
+    const piu = document.createElement('button'); piu.type = 'button'; piu.className = 'piu';
+    piu.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Crea nuovo cliente</span>`; piu.onclick = () => openCustomStep('client');
+    grid.appendChild(piu);
+    $('btn-new-client-top').onclick = () => openCustomStep('client');
+    const ass = assegnabili(), b = $('banner-assegna');
+    b.hidden = !sc.length;
+    if (sc.length) {
+        $('banner-titolo').textContent = sc.length === 1 ? '1 report senza cliente' : `${sc.length} report senza cliente`;
+        $('banner-testo').textContent = ass.length ? `Dal titolo riconosco ${ass.length === 1 ? 'a quale cliente appartiene 1 report: posso assegnarlo io' : `a quale cliente appartengono ${ass.length} report: posso assegnarli io`}, e prendono la foto del cliente. ${sc.length > ass.length ? 'Gli altri li assegni tu, aprendoli.' : ''}` : 'Non riconosco il cliente dal titolo: aprili e assegnali tu.';
+        $('btn-assegna').hidden = !ass.length;
+        $('btn-assegna').onclick = async () => {
+            if (!(await conferma(`Assegno ${ass.length === 1 ? '1 report' : ass.length + ' report'} al cliente indicato dal titolo. Non cambia altro.`, 'Assegna', 'Assegnare i report?'))) return;
+            let fatti = 0;
+            try { for (const x of ass) { const p = { clienteId: x.c.id }; if (x.c.avatar) p.avatar = x.c.avatar; await updateDoc(doc(db, "reportMensili", x.r.id), p); fatti++; } avviso(fatti === 1 ? '1 report assegnato.' : `${fatti} report assegnati.`); }
+            catch (e) { avviso(`Assegnati ${fatti}, poi si è fermato. ` + erroreTesto(e)); }
+            initRouter(auth.currentUser);
+        };
+    }
+}
 
-    block.querySelectorAll('.btn-item-delete').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const idx = parseInt(btn.getAttribute('data-index'));
-            if(confirm("Rimuovere questo contenuto dal report?")) {
-                const reportSnap = await getDoc(doc(db, "reportMensili", currentReportDocId));
-                let currentItems = reportSnap.data().items || [];
-                currentItems.splice(idx, 1);
-                await updateDoc(doc(db, "reportMensili", currentReportDocId), { items: currentItems });
-                initReportRouter(auth.currentUser);
-            }
-        });
+// ---------- i report di un cliente ----------
+function renderClienteAdmin() {
+    const c = clienteAperto; document.title = `${c.clientName} · Report`;
+    $('cl-nome').textContent = c.clientName;
+    $('cl-avatar').innerHTML = c.id === SENZA ? '<b>—</b>' : avatarHtml({ avatar: c.avatar, clientName: c.clientName });
+    const lista = ordina(reportDelCliente(c));
+    $('cl-sotto').textContent = `${lista.length} report`;
+    $('btn-new-report').onclick = () => apriNuovoReport();
+    const grid = $('cat-report'); grid.innerHTML = '';
+    lista.forEach(r => {
+        const p = periodo(r.title), a = document.createElement('a'); a.className = 'rp-card vetro'; a.href = `?v=${encodeURIComponent(r.slug)}`;
+        const cifre = [`<span><b>${(r.items || []).length}</b> contenuti</span>`];
+        if (num(r.kpiViewsCount)) cifre.push(`<span><b>${fmt(r.kpiViewsCount)}</b> views</span>`);
+        if (sommaFollower(r)) cifre.push(`<span><b>${sommaFollower(r) > 0 ? '+' : ''}${fmt(sommaFollower(r))}</b> follower</span>`);
+        a.innerHTML = `<span class="per">${esc(p ? p.nome : 'Report')}</span><h3>${esc(r.title)}</h3><div class="cifre">${cifre.join('')}</div>`;
+        grid.appendChild(a);
     });
-
-    return block;
+    $('report-vuoto').hidden = lista.length > 0;
 }
+function apriNuovoReport() {
+    const c = clienteAperto, d = new Date(), mese = MESI[d.getMonth()];
+    $('nr-titolo').value = c && c.id !== SENZA ? `${c.clientName} - ${mese.charAt(0).toUpperCase() + mese.slice(1)} ${String(d.getFullYear()).slice(2)}` : '';
+    $('new-sotto').textContent = c && c.id !== SENZA ? `Il report mensile di ${c.clientName}.` : 'Il report mensile di un cliente.';
+    openCustomStep('new');
+}
+$('form-new-report').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const titolo = $('nr-titolo').value.trim(), c = clienteAperto, bottone = e.target.querySelector('button[type="submit"]'); bottone.disabled = true;
+    try {
+        const slug = createSlug(titolo) + '-' + Math.floor(1000 + Math.random() * 9000);
+        const nuovo = { title: titolo, slug, items: [], followersIg: 0, followersTt: 0, followersYt: 0, clientAvatarUrl: '', kpiReachedCount: 0, kpiViewsCount: 0, kpiViewsPct: '', createdAt: new Date() };
+        if (c && c.id !== SENZA) { nuovo.clienteId = c.id; if (c.avatar) nuovo.avatar = c.avatar; }
+        await addDoc(collection(db, "reportMensili"), nuovo);
+        closeAuthModal(); window.location.href = `?v=${encodeURIComponent(slug)}`;
+    } catch (err) { console.error(err); avviso('Report non creato. ' + erroreTesto(err)); bottone.disabled = false; }
+});
 
-// ================= RENDER LOGICA CLIENT SCROLLYTELLING COMPLETA =================
-function renderClientReportView(data) {
-    const items = data.items || [];
+// ---------- editor di un report ----------
+function renderEditor() {
+    const r = reportCorrente, c = clienteDi(r);
+    document.title = `${r.title} · Report`;
+    $('ed-titolo').textContent = r.title;
+    $('ed-eyebrow').textContent = c ? `Report mensile · ${c.clientName}` : 'Report mensile';
+    const av = (c && c.avatar) || r.avatar || '';
+    $('ed-avatar').innerHTML = av ? `<img src="${esc(av)}" alt="">` : (r.clientAvatarUrl ? `<img src="${esc(r.clientAvatarUrl)}" alt="">` : `<b>${esc(window.RawUI.iniziali(c ? c.clientName : r.title))}</b>`);
+    $('back-cliente').href = c ? `?c=${encodeURIComponent(c.slug)}` : './';
+    $('back-testo').textContent = c ? `Torna a ${c.clientName}` : 'Torna ai clienti';
+    $('btn-anteprima').href = `?v=${encodeURIComponent(r.slug)}&anteprima=1`;
+    $('btn-copia-link').onclick = () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(r.slug)}`, $('btn-copia-link').querySelector('span'));
+    $('f-ig').value = num(r.followersIg); $('f-tt').value = num(r.followersTt); $('f-yt').value = num(r.followersYt);
+    $('k-reached').value = num(r.kpiReachedCount); $('k-views').value = num(r.kpiViewsCount); $('k-pct').value = r.kpiViewsPct || '';
+    aggiornaSuggerimento();
+    righe = (r.items || []).map(i => ({ ...i })); sporco = false; renderTabella();
+}
+// variazione delle views rispetto al report precedente dello stesso cliente (solo un suggerimento: il valore lo decidi tu)
+function precedente() {
+    const r = reportCorrente, p = periodo(r.title); if (!r.clienteId || !p) return null;
+    return reports.filter(x => x.id !== r.id && x.clienteId === r.clienteId && periodo(x.title) && periodo(x.title).chiave < p.chiave && num(x.kpiViewsCount) > 0).sort((a, b) => periodo(b.title).chiave - periodo(a.title).chiave)[0] || null;
+}
+function aggiornaSuggerimento() {
+    const box = $('sugg-pct'), prev = precedente(), v = num($('k-views').value);
+    if (!prev || !v) { box.hidden = true; return; }
+    const pct = ((v - num(prev.kpiViewsCount)) / num(prev.kpiViewsCount)) * 100;
+    const testo = `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toLocaleString('it-IT', { maximumFractionDigits: 1 })}%`;
+    box.hidden = false;
+    box.innerHTML = `Rispetto a ${esc(periodo(prev.title).nome)} (${fmt(prev.kpiViewsCount)} views) sarebbe <b>${testo}</b>. <button type="button" id="usa-sugg">Usa questo valore</button>`;
+    $('usa-sugg').onclick = () => { $('k-pct').value = testo.replace('−', '-'); };
+}
+$('k-views').addEventListener('input', aggiornaSuggerimento);
+$('form-numeri').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const patch = { followersIg: num($('f-ig').value), followersTt: num($('f-tt').value), followersYt: num($('f-yt').value), kpiReachedCount: num($('k-reached').value), kpiViewsCount: num($('k-views').value), kpiViewsPct: $('k-pct').value.trim() };
+    try { await updateDoc(doc(db, "reportMensili", reportCorrente.id), patch); Object.assign(reportCorrente, patch); avviso('Numeri salvati.'); aggiornaSuggerimento(); }
+    catch (err) { console.error(err); avviso('Salvataggio non riuscito. ' + erroreTesto(err)); }
+});
+// titolo (l'indirizzo non cambia)
+$('btn-edit-titolo').addEventListener('click', () => { $('ed-titolo-input').value = reportCorrente.title; $('ed-titolo-box').hidden = false; $('ed-titolo-input').focus(); });
+$('btn-annulla-titolo').addEventListener('click', () => { $('ed-titolo-box').hidden = true; });
+$('btn-salva-titolo').addEventListener('click', async () => {
+    const t = $('ed-titolo-input').value.trim(); if (!t) { avviso('Il titolo non può essere vuoto.'); return; }
+    try { await updateDoc(doc(db, "reportMensili", reportCorrente.id), { title: t }); reportCorrente.title = t; $('ed-titolo').textContent = t; $('ed-titolo-box').hidden = true; aggiornaSuggerimento(); avviso('Titolo salvato.'); }
+    catch (err) { avviso('Titolo non salvato. ' + erroreTesto(err)); }
+});
 
-    document.title = `Report ${data.title} - Teo Macauda Videomaker`;
-    
-    document.getElementById('client-hero-title').innerText = data.title;
+// ---------- tabella dei contenuti ----------
+function segnaSporco(v) { sporco = v; $('stato-contenuti').textContent = v ? 'Modifiche non salvate.' : ''; }
+window.addEventListener('beforeunload', (e) => { if (sporco) { e.preventDefault(); e.returnValue = ''; } });
+const CAMPI_NUM = [['views', 'Views'], ['likes', 'Like'], ['comments', 'Commenti'], ['shares', 'Condiv.'], ['reposts', 'Repost'], ['saves', 'Salvati']];
+function renderTabella() {
+    const box = $('tab-c');
+    if (!righe.length) { box.innerHTML = '<div class="tab-vuoto">Nessun contenuto. Importali dal Piano editoriale oppure aggiungi una riga.</div>'; return; }
+    box.innerHTML = `<div class="tab-testa"><span>Titolo</span><span>Formato</span>${CAMPI_NUM.map(c => `<span style="text-align:right">${c[1]}</span>`).join('')}<span>Link</span><span></span></div>` + righe.map((r, i) => `
+        <div class="tab-r ${r._nuova ? 'nuova' : ''}" data-i="${i}">
+            <div class="c-tit"><span class="eti">Titolo</span><input type="text" data-k="title" value="${esc(r.title || '')}" placeholder="Titolo del contenuto"></div>
+            <div class="c-tipo"><span class="eti">Formato</span><select data-k="type">${TIPI.map(t => `<option ${r.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+            ${CAMPI_NUM.map(c => `<div><span class="eti">${c[1]}</span><input type="number" min="0" inputmode="numeric" data-k="${c[0]}" value="${num(r[c[0]])}"></div>`).join('')}
+            <div class="c-link"><span class="eti">Link</span><input type="url" data-k="link" value="${esc(r.link || '')}" placeholder="https://…"></div>
+            <div class="c-del"><button type="button" class="rnd p del" data-del="${i}" aria-label="Elimina la riga"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg></button></div>
+        </div>`).join('');
+}
+$('tab-c').addEventListener('input', (e) => {
+    const row = e.target.closest('.tab-r'); if (!row) return;
+    const r = righe[parseInt(row.dataset.i, 10)], k = e.target.dataset.k; if (!r || !k) return;
+    r[k] = ['views', 'likes', 'comments', 'shares', 'reposts', 'saves'].includes(k) ? num(e.target.value) : e.target.value;
+    segnaSporco(true);
+});
+$('tab-c').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-del]'); if (!b) return;
+    const i = parseInt(b.dataset.del, 10), r = righe[i];
+    if (r && (r.title || num(r.views)) && !(await conferma(`La riga "${r.title || 'senza titolo'}" verrà tolta dal report (si salva quando premi "Salva i contenuti").`, 'Togli', 'Togliere la riga?'))) return;
+    righe.splice(i, 1); segnaSporco(true); renderTabella();
+});
+$('btn-add-riga').addEventListener('click', () => { righe.push({ title: '', type: 'Reel', link: '', views: 0, likes: 0, comments: 0, shares: 0, reposts: 0, saves: 0, _nuova: true }); segnaSporco(true); renderTabella(); const ins = $('tab-c').querySelectorAll('.tab-r:last-child input[data-k="title"]'); if (ins[0]) ins[0].focus(); });
+$('btn-salva-contenuti').addEventListener('click', async () => {
+    const pulite = righe.filter(r => (r.title && r.title.trim()) || num(r.views) || num(r.likes)).map(r => { const { _nuova, ...x } = r; return { ...x, title: (x.title || '').trim() || '(senza titolo)', views: num(x.views), likes: num(x.likes), comments: num(x.comments), shares: num(x.shares), reposts: num(x.reposts), saves: num(x.saves) }; });
+    try { await updateDoc(doc(db, "reportMensili", reportCorrente.id), { items: pulite }); reportCorrente.items = pulite; righe = pulite.map(i => ({ ...i })); segnaSporco(false); renderTabella(); avviso(`${pulite.length} ${pulite.length === 1 ? 'contenuto salvato' : 'contenuti salvati'}.`); }
+    catch (err) { console.error(err); avviso('Salvataggio non riuscito. ' + erroreTesto(err)); }
+});
+$('btn-svuota').addEventListener('click', async () => {
+    if (!(await conferma('Tutti i contenuti inseriti in questo report verranno tolti. I numeri del mese restano.', 'Svuota', 'Svuotare i contenuti?'))) return;
+    try { await updateDoc(doc(db, "reportMensili", reportCorrente.id), { items: [] }); reportCorrente.items = []; righe = []; segnaSporco(false); renderTabella(); avviso('Contenuti svuotati.'); }
+    catch (err) { avviso('Non riuscito. ' + erroreTesto(err)); }
+});
+$('btn-elimina-report').addEventListener('click', async () => {
+    if (!(await conferma(`Il report "${reportCorrente.title}" verrà eliminato e il suo link smetterà di funzionare. L'azione non si può annullare.`, 'Elimina il report', 'Eliminare il report?'))) return;
+    try { sporco = false; const c = clienteDi(reportCorrente); await deleteDoc(doc(db, "reportMensili", reportCorrente.id)); window.location.href = c ? `?c=${encodeURIComponent(c.slug)}` : './'; }
+    catch (err) { console.error(err); avviso('Report non eliminato. ' + erroreTesto(err)); }
+});
 
-    // Foto Profilo Cliente Asset
-    const wrapperAvatar = document.getElementById('client-avatar-wrapper');
-    const imgAvatar = document.getElementById('client-avatar-img');
-    if (data.clientAvatarUrl && data.clientAvatarUrl.trim() !== '') {
-        imgAvatar.src = data.clientAvatarUrl.trim();
-        wrapperAvatar.classList.remove('hidden');
-    } else {
-        wrapperAvatar.classList.add('hidden');
+// ---------- importa dal Piano editoriale ----------
+let impPiani = [];
+$('btn-importa').addEventListener('click', () => {
+    const c = clienteDi(reportCorrente);
+    const sorgenti = c ? [c] : clienti;
+    impPiani = [];
+    sorgenti.forEach(cl => getPiani(cl.data).forEach(p => impPiani.push({ etichetta: sorgenti.length > 1 ? `${cl.clientName} · ${p.nome}` : p.nome, videos: p.videos })));
+    if (!impPiani.length) { avviso('Questo cliente non ha ancora piani editoriali.'); return; }
+    // preseleziono il piano che ha lo stesso periodo del report (es. "Agosto 26")
+    const per = periodo(reportCorrente.title); let sel = 0;
+    if (per) { const k = impPiani.findIndex(p => (periodo(p.etichetta) || {}).chiave === per.chiave); if (k >= 0) sel = k; }
+    $('imp-piano').innerHTML = impPiani.map((p, i) => `<option value="${i}">${esc(p.etichetta)} (${p.videos.length})</option>`).join(''); $('imp-piano').value = String(sel);
+    renderImporta(); openCustomStep('importa');
+});
+function renderImporta() {
+    const p = impPiani[parseInt($('imp-piano').value, 10)]; const box = $('imp-lista');
+    const presenti = new Set(righe.map(r => String(r.title || '').trim().toLowerCase()));
+    if (!p || !p.videos.length) { box.innerHTML = '<p class="imp-vuoto">Questo piano non ha ancora contenuti.</p>'; return; }
+    box.innerHTML = p.videos.map((v, i) => { const gia = presenti.has(String(v.title || '').trim().toLowerCase()); return `<label class="imp-riga ${gia ? 'gia' : ''}"><input type="checkbox" data-i="${i}" ${gia ? 'disabled' : 'checked'}><span class="t"><b>${esc(v.title || '(senza titolo)')}</b><small>${esc(v.type || 'Reel')} · ${esc(v.date || 'senza data')}${gia ? ' · già nel report' : ''}</small></span></label>`; }).join('');
+}
+$('imp-piano').addEventListener('change', renderImporta);
+$('imp-tutti').addEventListener('click', () => $('imp-lista').querySelectorAll('input:not(:disabled)').forEach(i => { i.checked = true; }));
+$('imp-nessuno').addEventListener('click', () => $('imp-lista').querySelectorAll('input').forEach(i => { i.checked = false; }));
+$('imp-conferma').addEventListener('click', () => {
+    const p = impPiani[parseInt($('imp-piano').value, 10)]; if (!p) return;
+    const scelti = [...$('imp-lista').querySelectorAll('input:checked')].map(i => p.videos[parseInt(i.dataset.i, 10)]);
+    if (!scelti.length) { avviso('Non hai scelto nessun contenuto.'); return; }
+    scelti.forEach(v => righe.push({ title: v.title || '', type: PED_TIPI_OK.has(v.type) ? v.type : 'Reel', link: '', views: 0, likes: 0, comments: 0, shares: 0, reposts: 0, saves: 0, _nuova: true }));
+    segnaSporco(true); renderTabella(); closeAuthModal();
+    avviso(`${scelti.length} ${scelti.length === 1 ? 'contenuto aggiunto' : 'contenuti aggiunti'}: scrivi i numeri e salva.`);
+});
+
+// ---------- vista del cliente ----------
+function contatore(n, opzioni) { return `<span class="cnt" data-target="${Math.abs(n)}">0</span>`; }
+function renderCliente(r) {
+    const items = r.items || [], c = null;
+    document.title = `Report ${r.title}`;
+    const avatar = r.avatar || r.clientAvatarUrl || '';
+    const parti = String(r.title || '').split(' - ');
+    const titolo = parti.length > 1 ? `${esc(parti[0])} <em>${esc(parti.slice(1).join(' - '))}</em>` : esc(r.title);
+    const sezioni = [];
+    sezioni.push(`<section class="rc-sez rc-hero"><span class="avatar">${avatar ? `<img src="${esc(avatar)}" alt="">` : `<b>${esc(window.RawUI.iniziali(parti[0]))}</b>`}</span><span class="eti">Performance review</span><h1>${titolo}</h1><p>L'analisi dei risultati dei contenuti pubblicati nel mese.</p><div class="rc-scorri"><span>Scorri</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></section>`);
+
+    const ig = num(r.followersIg), tt = num(r.followersTt), yt = num(r.followersYt), tot = ig + tt + yt;
+    if (ig || tt || yt) {
+        const neg = tot < 0;
+        const canali = [['instagram', 'Instagram', ig], ['tiktok', 'TikTok', tt], ['youtube', 'YouTube', yt]].filter(x => x[2] !== 0).map(x => `<div class="canale rv-e"><span class="ic">${svgFill(x[0])}</span><span class="n">${x[1]}</span><span class="v ${x[2] < 0 ? 'neg' : ''}">${x[2] < 0 ? '−' : '+'}${contatore(x[2])}</span></div>`).join('');
+        sezioni.push(`<section class="rc-sez"><span class="eti rv-e">Crescita dei canali</span><h2 class="rv-e">Nuovo pubblico <em>acquisito</em></h2><div class="numero rv-e ${neg ? 'neg' : ''}"><small>${neg ? '−' : '+'}</small>${contatore(tot)}</div><span class="badge-v rv-e ${neg ? 'neg' : ''}">${svgLinea(neg ? 'giu' : 'su')}${neg ? 'Decrescita' : 'Crescita'}</span><div class="canali">${canali}</div></section>`);
     }
-
-    document.querySelector('.id-svg-ig').innerHTML = inlineVectors.instagram;
-    document.querySelector('.id-svg-tt').innerHTML = inlineVectors.tiktok;
-    document.querySelector('.id-svg-yt').innerHTML = inlineVectors.youtube;
-
-    // Calcolo e colorazione dinamica della slide Follower Acquisiti
-    const igF = parseInt(data.followersIg) || 0;
-    const ttF = parseInt(data.followersTt) || 0;
-    const ytF = parseInt(data.followersYt) || 0;
-    const totalF = igF + ttF + ytF;
-
-    const slideFollowers = document.getElementById('slide-client-followers');
-    if (igF !== 0 || ttF !== 0 || ytF !== 0) {
-        slideFollowers.classList.remove('hidden');
-        
-        // Gestione Macro Card Aggregata (Rosso vs Verde)
-        const totalSignEl = document.getElementById('client-stat-total-sign');
-        const macroCard = document.getElementById('client-followers-macro-card');
-        const macroBadge = document.getElementById('client-followers-macro-badge');
-        const macroArrowBox = document.getElementById('client-followers-macro-arrow-box');
-        const macroTextStatus = document.getElementById('client-followers-macro-text-status');
-        
-        // Impostiamo l'obiettivo assoluto per il counter numerico
-        document.getElementById('client-stat-total-followers').setAttribute('data-target', Math.abs(totalF));
-
-        if (totalF < 0) {
-            totalSignEl.innerText = "-";
-            macroCard.className = "glass-card p-6 rounded-3xl text-center mb-5 relative overflow-hidden transition-all border-red-500/20 bg-red-500/[0.01]";
-            macroBadge.className = "mt-3 inline-flex items-center justify-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500/10 border border-red-500/20 text-red-400";
-            macroArrowBox.innerHTML = inlineVectors.arrowDown;
-            macroTextStatus.innerText = "DECRESCITA";
-        } else {
-            totalSignEl.innerText = "+";
-            macroCard.className = "glass-card p-6 rounded-3xl text-center mb-5 relative overflow-hidden transition-all border-emerald-500/20 bg-emerald-500/[0.01]";
-            macroBadge.className = "mt-3 inline-flex items-center justify-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
-            macroArrowBox.innerHTML = inlineVectors.arrowUp;
-            macroTextStatus.innerText = "CRESCITA";
+    if (num(r.kpiReachedCount) > 0) sezioni.push(`<section class="rc-sez"><span class="eti rv-e">Diffusione del brand</span><h2 class="rv-e">Account <em>raggiunti</em></h2><div class="numero rv-e">${contatore(num(r.kpiReachedCount))}</div></section>`);
+    if (num(r.kpiViewsCount) > 0) {
+        const pct = (r.kpiViewsPct || '').trim(), neg = negativo(pct);
+        sezioni.push(`<section class="rc-sez"><span class="eti rv-e">Visibilità</span><h2 class="rv-e">Visualizzazioni <em>totali</em></h2><div class="numero rv-e">${contatore(num(r.kpiViewsCount))}</div>${pct ? `<span class="badge-v rv-e ${neg ? 'neg' : ''}">${svgLinea(neg ? 'giu' : 'su')}${esc(pct)} rispetto al mese precedente</span>` : ''}</section>`);
+    }
+    if (items.length) {
+        const re = (it, etichetta, valore, extra) => { const t = it.type || 'Reel', inner = `<span class="piat">${svgFill(ICONA_TIPO[t] || 'video')}${esc(t)}</span><h3>${esc(it.title)}</h3><div class="numero">${contatore(valore)}</div><span class="et">${etichetta}</span>${extra || ''}`; return it.link ? `<a class="re-card rv-e" href="${esc(it.link)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="re-card rv-e">${inner}</div>`; };
+        const maxPer = (k) => items.slice().sort((a, b) => num(b[k]) - num(a[k]))[0];
+        const kv = maxPer('views');
+        if (kv && num(kv.views) > 0) sezioni.push(`<section class="rc-sez"><span class="eti rv-e">Il più visto</span><h2 class="rv-e">Contenuto con più <em>views</em></h2>${re(kv, 'visualizzazioni', num(kv.views))}</section>`);
+        const kl = maxPer('likes');
+        if (kl && num(kl.likes) > 0) sezioni.push(`<section class="rc-sez"><span class="eti rv-e">Il più amato</span><h2 class="rv-e">Contenuto con più <em>like</em></h2>${re(kl, 'like', num(kl.likes))}</section>`);
+        const ki = items.map(it => ({ ...it, tot: num(it.likes) + num(it.comments) + num(it.shares) + num(it.reposts) + num(it.saves) })).sort((a, b) => b.tot - a.tot)[0];
+        if (ki && ki.tot > 0) {
+            const det = [['likes', 'like'], ['comments', 'commenti'], ['shares', 'condivisioni'], ['reposts', 'repost'], ['saves', 'salvataggi']].filter(d => num(ki[d[0]]) > 0).map(d => `<span><b>${fmt(ki[d[0]])}</b> ${d[1]}</span>`).join('');
+            sezioni.push(`<section class="rc-sez"><span class="eti rv-e">Il più coinvolgente</span><h2 class="rv-e">Maggiori <em>interazioni</em></h2>${re(ki, 'interazioni totali', ki.tot, `<div class="re-righe">${det}</div>`)}</section>`);
         }
-        
-        // Breakdown Singoli Canali (Niente zeri)
-        if(igF !== 0) {
-            document.getElementById('row-client-ig-followers').classList.remove('hidden');
-            const sign = igF < 0 ? '-' : '+';
-            const colorClass = igF < 0 ? 'text-red-400' : 'text-white';
-            document.querySelector('.id-text-color-ig').innerHTML = `<span class="${colorClass}">${sign}<span class="counter-anim" id="client-stat-ig-followers" data-target="${Math.abs(igF)}">0</span></span>`;
-        } else { document.getElementById('row-client-ig-followers').classList.add('hidden'); }
-        
-        if(ttF !== 0) {
-            document.getElementById('row-client-tt-followers').classList.remove('hidden');
-            const sign = ttF < 0 ? '-' : '+';
-            const colorClass = ttF < 0 ? 'text-red-400' : 'text-white';
-            document.querySelector('.id-text-color-tt').innerHTML = `<span class="${colorClass}">${sign}<span class="counter-anim" id="client-stat-tt-followers" data-target="${Math.abs(ttF)}">0</span></span>`;
-        } else { document.getElementById('row-client-tt-followers').classList.add('hidden'); }
-        
-        if(ytF !== 0) {
-            document.getElementById('row-client-yt-followers').classList.remove('hidden');
-            const sign = ytF < 0 ? '-' : '+';
-            const colorClass = ytF < 0 ? 'text-red-400' : 'text-white';
-            document.querySelector('.id-text-color-yt').innerHTML = `<span class="${colorClass}">${sign}<span class="counter-anim" id="client-stat-yt-followers" data-target="${Math.abs(ytF)}">0</span></span>`;
-        } else { document.getElementById('row-client-yt-followers').classList.add('hidden'); }
-    } else {
-        slideFollowers.classList.add('hidden');
+        const gruppi = TIPI.map(t => ({ t, lista: items.filter(i => i.type === t).sort((a, b) => num(b.views) - num(a.views)) })).filter(g => g.lista.length);
+        sezioni.push(`<section class="rc-sez compatta"><span class="eti rv-e">Il dettaglio</span><h2 class="rv-e">Riepilogo <em>del mese</em></h2><div class="rc-elenco">${gruppi.map(g => `<div class="rc-gruppo rv-e"><h3>${svgFill(ICONA_TIPO[g.t] || 'video')}${esc(g.t)}</h3>${g.lista.map(it => {
+            const m = [`<span><b>${fmt(it.views)}</b> views</span>`, `<span><b>${fmt(it.likes)}</b> like</span>`];
+            [['comments', 'commenti'], ['shares', 'condivisioni'], ['reposts', 'repost'], ['saves', 'salvataggi']].forEach(d => { if (num(it[d[0]]) > 0) m.push(`<span><b>${fmt(it[d[0]])}</b> ${d[1]}</span>`); });
+            const inner = `<b class="t">${esc(it.title)}</b><div class="m">${m.join('')}</div>`;
+            return it.link ? `<a class="rc-voce" href="${esc(it.link)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="rc-voce">${inner}</div>`;
+        }).join('')}</div>`).join('')}</div></section>`);
     }
-
-    // ================= RENDERING CONDIZIONALE + COLORE SULLE NUOVE SLIDE (ACCOUNT & VIEWS) =================
-    const reachedCount = parseInt(data.kpiReachedCount) || 0;
-    const slideReached = document.getElementById('slide-client-reached');
-
-    if (reachedCount > 0) {
-        slideReached.classList.remove('hidden');
-        document.getElementById('client-stat-reached-count').setAttribute('data-target', reachedCount);
-    } else {
-        slideReached.classList.add('hidden');
-    }
-
-    const viewsCount = parseInt(data.kpiViewsCount) || 0;
-    const viewsPct = data.kpiViewsPct ? data.kpiViewsPct.trim() : '';
-    const slideViews = document.getElementById('slide-client-views');
-
-    if (viewsCount > 0 && viewsPct !== '') {
-        slideViews.classList.remove('hidden');
-        document.getElementById('client-stat-views-count').setAttribute('data-target', viewsCount);
-        document.getElementById('client-stat-views-pct').innerText = viewsPct;
-        
-        const viewsBadge = document.getElementById('client-stat-views-badge');
-        const viewsArrowBox = document.getElementById('client-stat-views-arrow-box');
-        if (checkIsNegative(viewsPct)) {
-            viewsBadge.className = "inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
-            viewsArrowBox.innerHTML = inlineVectors.arrowDown;
-        } else {
-            viewsBadge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold mx-auto";
-            viewsArrowBox.innerHTML = inlineVectors.arrowUp;
-        }
-    } else {
-        slideViews.classList.add('hidden');
-    }
-
-    if(items.length === 0) return;
-
-    const iconMap = {
-        'Reel': inlineVectors.instagram, 'Post': inlineVectors.image, 'Storia': inlineVectors.clock,
-        'Video YT': inlineVectors.youtube, 'YT Shorts': inlineVectors.video, 'TikTok': inlineVectors.tiktok
-    };
-
-    // Video con più VIEWS
-    const kingViews = [...items].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0))[0];
-    document.getElementById('client-king-views-title').innerText = kingViews.title;
-    document.getElementById('client-king-views-platform').innerText = kingViews.type;
-    document.getElementById('client-stat-king-views-count').setAttribute('data-target', kingViews.views);
-    document.getElementById('client-king-views-icon').innerHTML = iconMap[kingViews.type] || '';
-    document.getElementById('client-views-king-link').href = kingViews.link || '#';
-
-    // Video con più LIKE (Ora con link attivo cliccabile)
-    const kingLikes = [...items].sort((a, b) => (parseInt(b.likes) || 0) - (parseInt(a.likes) || 0))[0];
-    document.getElementById('client-king-likes-title').innerText = kingLikes.title;
-    document.getElementById('client-king-likes-platform').innerText = kingLikes.type;
-    document.getElementById('client-stat-king-likes-count').setAttribute('data-target', kingLikes.likes);
-    document.getElementById('client-king-likes-icon').innerHTML = iconMap[kingLikes.type] || '';
-    document.getElementById('client-likes-king-link').href = kingLikes.link || '#';
-
-    // Video con più INTERATIONS
-    const kingInteractions = [...items].map(item => {
-        const l = parseInt(item.likes) || 0;
-        const c = parseInt(item.comments) || 0;
-        const s = parseInt(item.shares) || 0;
-        const r = parseInt(item.reposts) || 0;
-        const sv = parseInt(item.saves) || 0;
-        return { ...item, totalInteractions: l + c + s + r + sv, l, c, s, r, sv };
-    }).sort((a, b) => b.totalInteractions - a.totalInteractions)[0];
-
-    if (kingInteractions) {
-        document.getElementById('client-king-interactions-title').innerText = kingInteractions.title;
-        document.getElementById('client-king-interactions-platform').innerText = kingInteractions.type;
-        document.getElementById('client-stat-king-interactions-count').setAttribute('data-target', kingInteractions.totalInteractions);
-        document.getElementById('client-king-interactions-icon').innerHTML = iconMap[kingInteractions.type] || '';
-        document.getElementById('client-interactions-king-link').href = kingInteractions.link || '#';
-        
-        document.getElementById('king-int-likes').innerText = kingInteractions.l.toLocaleString('it-IT');
-        document.getElementById('king-int-comments').innerText = kingInteractions.c.toLocaleString('it-IT');
-        document.getElementById('king-int-shares').innerText = kingInteractions.s.toLocaleString('it-IT');
-        document.getElementById('king-int-reposts').innerText = kingInteractions.r.toLocaleString('it-IT');
-        document.getElementById('king-int-saves').innerText = kingInteractions.sv.toLocaleString('it-IT');
-        
-        document.getElementById('king-int-likes-row').style.display = kingInteractions.l > 0 ? 'flex' : 'none';
-        document.getElementById('king-int-comments-row').style.display = kingInteractions.c > 0 ? 'flex' : 'none';
-        document.getElementById('king-int-shares-row').style.display = kingInteractions.s > 0 ? 'flex' : 'none';
-        document.getElementById('king-int-reposts-row').style.display = kingInteractions.r > 0 ? 'flex' : 'none';
-        document.getElementById('king-int-saves-row').style.display = kingInteractions.sv > 0 ? 'flex' : 'none';
-    }
-
-    // Slide Finale Breakdown Analitico
-    const breakdownLayout = document.getElementById('client-full-breakdown-layout');
-    breakdownLayout.innerHTML = '';
-
-    const activePlatforms = ["Reel", "Post", "Storia", "Video YT", "YT Shorts", "TikTok"];
-    activePlatforms.forEach(pform => {
-        const platformItems = items.filter(i => i.type === pform).sort((a,b) => b.views - a.views);
-        if(platformItems.length > 0) {
-            const cardWrap = document.createElement('div');
-            cardWrap.className = "space-y-3 w-full";
-            cardWrap.innerHTML = `
-                <h3 class="text-xs font-bold text-graytext uppercase tracking-widest flex items-center gap-2 px-1">
-                    ${iconMap[pform] || ''} Riepilogo ${pform}
-                </h3>
-            `;
-            
-            platformItems.forEach(item => {
-                const rowItem = document.createElement('div');
-                rowItem.className = "glass-card p-4 rounded-xl border border-white/5 flex flex-col gap-1";
-                
-                let details = `
-                    <span class="flex items-center gap-1">${inlineVectors.eye} <b>${parseInt(item.views || 0).toLocaleString('it-IT')}</b> views</span>
-                    <span class="flex items-center gap-1">${inlineVectors.heart} <b>${parseInt(item.likes || 0).toLocaleString('it-IT')}</b> like</span>
-                `;
-                
-                const comm = parseInt(item.comments) || 0;
-                const sh = parseInt(item.shares) || 0;
-                const rep = parseInt(item.reposts) || 0;
-                const sav = parseInt(item.saves) || 0;
-                
-                if (comm > 0) details += `<span class="flex items-center gap-1">💬 <b>${comm.toLocaleString('it-IT')}</b> commenti</span>`;
-                if (sh > 0) details += `<span class="flex items-center gap-1">🔗 <b>${sh.toLocaleString('it-IT')}</b> condivisioni</span>`;
-                if (rep > 0) details += `<span class="flex items-center gap-1">🔁 <b>${rep.toLocaleString('it-IT')}</b> repost</span>`;
-                if (sav > 0) details += `<span class="flex items-center gap-1">💾 <b>${sav.toLocaleString('it-IT')}</b> salvataggi</span>`;
-                
-                rowItem.innerHTML = `
-                    <div class="text-sm font-bold text-white tracking-tight">${item.title}</div>
-                    <div class="flex flex-wrap items-center gap-4 text-xs text-graytext mt-2 border-t border-white/5 pt-2">
-                        ${details}
-                    </div>
-                `;
-                cardWrap.appendChild(rowItem);
-            });
-            breakdownLayout.appendChild(cardWrap);
-        }
-    });
+    $('rc-vista').innerHTML = sezioni.join('');
+}
+// i numeri salgono e le sezioni compaiono quando entrano nello schermo
+function conta(el, target) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = fmt(target); return; }
+    const t0 = performance.now(), durata = 1400;
+    const passo = (ora) => { const p = Math.min((ora - t0) / durata, 1), e = p * (2 - p); el.textContent = fmt(Math.floor(e * target)); if (p < 1) requestAnimationFrame(passo); else el.textContent = fmt(target); };
+    requestAnimationFrame(passo);
+}
+function avviaRivelazioni() {
+    const io = new IntersectionObserver((voci) => voci.forEach(v => {
+        if (!v.isIntersecting) return; const el = v.target; io.unobserve(el);
+        el.classList.add('in'); el.querySelectorAll('.cnt').forEach(c => conta(c, parseInt(c.dataset.target, 10) || 0));
+    }), { threshold: 0.18 });
+    document.querySelectorAll('.rv-e').forEach(e => io.observe(e));
 }
 
-// ================= TIMING COUNTER INTERSECTION OBSERVER =================
-function initIntersectionCounters() {
-    const targetCounters = document.querySelectorAll('.counter-anim');
-    const config = { root: null, threshold: 0.10 };
+// ---------- nuovo cliente (lo stesso cliente degli altri tool) ----------
+$('form-create-client').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nome = $('client-name-input').value.trim(), utente = utenteInstagram($('client-ig-input').value);
+    const bottone = e.target.querySelector('button[type="submit"]'); bottone.disabled = true; const t0 = bottone.textContent;
+    try {
+        const nuovo = { clientName: nome, slug: createSlug(nome) + '-' + Math.random().toString(36).substring(2, 7), videos: [], piani: [], createdAt: new Date() };
+        let nota = '';
+        if (utente) { nuovo.instagram = `https://www.instagram.com/${utente}/`; bottone.textContent = 'Cerco la foto…'; try { nuovo.avatar = await fotoDaInstagram(utente); } catch (err) { nota = 'Cliente creato, ma non ho trovato la foto: caricala dai Piani editoriali.'; } }
+        await addDoc(collection(db, "pianiEditoriali"), nuovo);
+        closeAuthModal(); $('form-create-client').reset();
+        window.location.href = `?c=${encodeURIComponent(nuovo.slug)}`;
+        if (nota) { try { sessionStorage.setItem('nota_report', nota); } catch (x) {} }
+    } catch (err) { console.error(err); avviso('Il cliente non è stato creato. ' + erroreTesto(err)); bottone.disabled = false; bottone.textContent = t0; }
+});
+try { const nn = sessionStorage.getItem('nota_report'); if (nn) { sessionStorage.removeItem('nota_report'); setTimeout(() => avviso(nn), 1500); } } catch (e) {}
 
-    const runObserver = new IntersectionObserver((entries, self) => {
-        entries.forEach(entry => {
-            if(entry.isIntersecting) {
-                const element = entry.target;
-                const limitValue = parseInt(element.getAttribute('data-target'), 10) || 0;
-                triggerSmoothCount(element, limitValue);
-                self.unobserve(element); 
-            }
-        });
-    }, config);
+// ---------- accesso ----------
+$('form-login').addEventListener('submit', async (e) => {
+    e.preventDefault(); const err = $('auth-error'); err.hidden = true;
+    try { await signInWithEmailAndPassword(auth, $('login-email').value, $('login-pass').value); closeAuthModal(); $('form-login').reset(); }
+    catch (error) { err.hidden = false; err.innerText = 'Dati di accesso errati.'; }
+});
+$('btn-open-login').addEventListener('click', () => openCustomStep('login'));
+onAuthStateChanged(auth, (user) => { initRouter(user); });
 
-    targetCounters.forEach(c => runObserver.observe(c));
+// ---------- finestre ----------
+function openCustomStep(step) {
+    ['modal-step-auth', 'modal-step-new', 'modal-step-importa', 'modal-step-client'].forEach(id => { $(id).hidden = true; });
+    if (!auth.currentUser) $('modal-step-auth').hidden = false; else $('modal-step-' + (step === 'login' ? 'auth' : step)).hidden = false;
+    $('auth-modal').classList.add('on'); $('auth-modal').setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
 }
-
-function triggerSmoothCount(element, target) {
-    const animationDuration = 1400; 
-    const launchTime = performance.now();
-
-    function flow(now) {
-        const dynamicTime = now - launchTime;
-        const timelineProgress = Math.min(dynamicTime / animationDuration, 1);
-        const easeOutEffect = timelineProgress * (2 - timelineProgress);
-        const intermediateVal = Math.floor(easeOutEffect * target);
-        
-        element.innerText = intermediateVal.toLocaleString('it-IT');
-
-        if(timelineProgress < 1) {
-            requestAnimationFrame(flow);
-        } else {
-            element.innerText = target.toLocaleString('it-IT');
-        }
-    }
-    requestAnimationFrame(flow);
-}
-
-// Modals Handlers locali ed export a window scope sicuro
-function openAuthModal() {
-    const modal = document.getElementById('auth-modal');
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-}
-function closeAuthModal() {
-    const modal = document.getElementById('auth-modal');
-    modal.classList.add('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-}
-
-window.openAuthModal = openAuthModal;
+function closeAuthModal() { $('auth-modal').classList.remove('on'); $('auth-modal').setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+$('auth-modal').addEventListener('mousedown', (e) => { if (e.target === $('auth-modal')) closeAuthModal(); });
+document.querySelectorAll('[data-chiudi-mod]').forEach(b => b.addEventListener('click', closeAuthModal));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('auth-modal').classList.contains('on') && !$('conf-modal').classList.contains('on')) closeAuthModal(); });
+window.openAuthModal = openCustomStep;
 window.closeAuthModal = closeAuthModal;
-
-window.openCreateReportModal = () => {
-    const modal = document.getElementById('create-report-modal');
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-};
-window.closeCreateReportModal = () => {
-    const modal = document.getElementById('create-report-modal');
-    modal.classList.add('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-};
-
-window.openAddItemModal = (index = null) => {
-    editingItemIndex = index;
-    const modal = document.getElementById('add-item-modal');
-    const form = document.getElementById('form-report-item');
-    
-    form.reset();
-    if(editingItemIndex !== null) {
-        document.getElementById('add-item-modal-title').innerText = "Modifica Contenuto";
-        getDoc(doc(db, "reportMensili", currentReportDocId)).then(snap => {
-            const item = snap.data().items[editingItemIndex];
-            document.getElementById('item-title').value = item.title;
-            document.getElementById('item-type').value = item.type;
-            document.getElementById('item-link').value = item.link || '';
-            document.getElementById('metric-views').value = item.views || 0;
-            document.getElementById('metric-likes').value = item.likes || 0;
-            document.getElementById('metric-comments').value = item.comments || 0;
-            document.getElementById('metric-shares').value = item.shares || 0;
-            document.getElementById('metric-reposts').value = item.reposts || 0;
-            document.getElementById('metric-saves').value = item.saves || 0;
-        });
-    } else {
-        document.getElementById('add-item-modal-title').innerText = "Aggiungi Contenuto al Report";
-    }
-
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-10', 'translate-y-0');
-};
-
-window.closeAddItemModal = () => {
-    const modal = document.getElementById('add-item-modal');
-    modal.classList.add('opacity-0', 'pointer-events-none');
-    modal.querySelector('.glass-modal').classList.replace('translate-y-0', 'translate-y-10');
-};
-
-document.getElementById('sort-btn-global').addEventListener('click', () => {
-    activeAdminSort = 'global';
-    document.getElementById('sort-btn-global').className = "px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white";
-    document.getElementById('sort-btn-grouped').className = "px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-graytext hover:text-white";
-    getDoc(doc(db, "reportMensili", currentReportDocId)).then(s => renderAdminContentsLayout(s.data().items || []));
-});
-
-document.getElementById('sort-btn-grouped').addEventListener('click', () => {
-    activeAdminSort = 'grouped';
-    document.getElementById('sort-btn-grouped').className = "px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-accent text-white";
-    document.getElementById('sort-btn-global').className = "px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-graytext hover:text-white";
-    getDoc(doc(db, "reportMensili", currentReportDocId)).then(s => renderAdminContentsLayout(s.data().items || []));
-});
-
-document.getElementById('form-admin-login').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    try {
-        await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value);
-        closeAuthModal();
-    } catch(err) { alert("Autenticazione fallita credenziali errate."); }
-});
-
-document.getElementById('form-create-report').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const tVal = document.getElementById('report-client-name').value;
-    const slug = generateSlug(tVal) + "-" + Math.floor(1000 + Math.random() * 9000);
-    
-    await addDoc(collection(db, "reportMensili"), { 
-        title: tVal, slug: slug, items: [], 
-        followersIg: 0, followersTt: 0, followersYt: 0, 
-        clientAvatarUrl: "", kpiReachedCount: 0, kpiViewsCount: 0, kpiViewsPct: "" 
-    });
-    window.closeCreateReportModal();
-    loadAdminCatalogGrid();
-});
-
-document.getElementById('btn-add-item').addEventListener('click', () => openAddItemModal());
-
-document.getElementById('form-report-item').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const itemData = {
-        title: document.getElementById('item-title').value,
-        type: document.getElementById('item-type').value,
-        link: document.getElementById('item-link').value,
-        views: parseInt(document.getElementById('metric-views').value) || 0,
-        likes: parseInt(document.getElementById('metric-likes').value) || 0,
-        comments: parseInt(document.getElementById('metric-comments').value) || 0,
-        shares: parseInt(document.getElementById('metric-shares').value) || 0,
-        reposts: parseInt(document.getElementById('metric-reposts').value) || 0,
-        saves: parseInt(document.getElementById('metric-saves').value) || 0
-    };
-
-    const docRef = doc(db, "reportMensili", currentReportDocId);
-    const snap = await getDoc(docRef);
-    let currentItems = snap.data().items || [];
-
-    if(editingItemIndex !== null) {
-        currentItems[editingItemIndex] = itemData;
-    } else {
-        currentItems.push(itemData);
-    }
-
-    await updateDoc(docRef, { items: currentItems });
-    closeAddItemModal();
-    initReportRouter(auth.currentUser);
-});
-
-document.getElementById('form-report-followers').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await updateDoc(doc(db, "reportMensili", currentReportDocId), {
-        clientAvatarUrl: document.getElementById('client-avatar-url').value.trim(),
-        followersIg: parseInt(document.getElementById('followers-instagram').value) || 0,
-        followersTt: parseInt(document.getElementById('followers-tiktok').value) || 0,
-        followersYt: parseInt(document.getElementById('followers-youtube').value) || 0,
-        kpiReachedCount: parseInt(document.getElementById('kpi-reached-count').value) || 0,
-        kpiViewsCount: parseInt(document.getElementById('kpi-views-count').value) || 0,
-        kpiViewsPct: document.getElementById('kpi-views-pct').value.trim()
-    });
-    alert("Tutte le metriche e configurazioni del report salvate correttamente.");
-    initReportRouter(auth.currentUser);
-});
-
-document.getElementById('btn-clear-all').addEventListener('click', async () => {
-    if(confirm("Sei sicuro di voler cancellare tutti i contenuti video/post inseriti in questo report?")) {
-        await updateDoc(doc(db, "reportMensili", currentReportDocId), { items: [] });
-        initReportRouter(auth.currentUser);
-    }
-});
-
-document.getElementById('btn-copy-link').addEventListener('click', () => {
-    const link = `${window.location.origin}${window.location.pathname}?v=${reportSlug}`;
-    navigator.clipboard.writeText(link).then(() => alert("Link cliente copiato nei appunti."));
-});
-
-document.getElementById('btn-edit-report-title').addEventListener('click', () => {
-    document.getElementById('edit-title-field-container').classList.remove('hidden');
-    document.getElementById('input-report-title').value = document.getElementById('report-title-display').innerText;
-});
-document.getElementById('btn-cancel-report-title').addEventListener('click', () => {
-    document.getElementById('edit-title-field-container').classList.add('hidden');
-});
-document.getElementById('btn-save-report-title').addEventListener('click', async () => {
-    const newVal = document.getElementById('input-report-title').value;
-    await updateDoc(doc(db, "reportMensili", currentReportDocId), { title: newVal });
-    document.getElementById('report-title-display').innerText = newVal;
-    document.getElementById('edit-title-field-container').classList.add('hidden');
-});
-
-onAuthStateChanged(auth, (user) => {
-    initReportRouter(user);
-});
