@@ -120,6 +120,7 @@ async function initRouter(user) {
             renderCliente({ id: snap.docs[0].id, ...snap.docs[0].data() });
             mostra('section-client');
             avviaAnimazione();
+            if (!user && window.RawInstall) window.RawInstall.attiva();     // solo al cliente, e solo se non è già aperto come app
         } else if (user) {
             await caricaAdmin();
             if (editSlug) {
@@ -152,7 +153,7 @@ function renderCliente(d) {
     // l'hub si può salvare sulla Home del telefono: il manifest punta proprio a questo hub
     const m = document.querySelector('link[rel="manifest"]');
     if (m) {
-        const man = { name: 'Hub', short_name: 'Hub', start_url: window.location.href, display: 'standalone', background_color: '#000000', theme_color: '#000000',
+        const man = { id: window.location.href, name: `Hub ${d.clientName}`, short_name: 'Hub', start_url: window.location.href, scope: window.location.origin + '/', display: 'standalone', orientation: 'portrait', background_color: '#000000', theme_color: '#000000',
             icons: [{ src: new URL('../img/icon-192.png', window.location.href).href, sizes: '192x192', type: 'image/png', purpose: 'any' }, { src: new URL('../img/icon-512.png', window.location.href).href, sizes: '512x512', type: 'image/png', purpose: 'any' }] };
         m.href = URL.createObjectURL(new Blob([JSON.stringify(man)], { type: 'application/json' }));
     }
