@@ -356,7 +356,7 @@ function renderCliente(d) {
     const testa = `<div class="cv-testa rv-e"><span class="avatar">${avatar ? `<img src="${esc(avatar)}" alt="">` : `<b>${esc(window.RawUI.iniziali(nome))}</b>`}</span><span class="eti">Consegna video</span><h1>${esc(d.deliveryTitle)}</h1><p>${nome ? esc(nome) + ' · ' : ''}${lista.length} ${lista.length === 1 ? 'video' : 'video'}</p></div>`;
     const schede = lista.map(v => {
         const vert = v.aspectRatio === '9:16';
-        return `<article class="cv-card rv-e"><div class="cv-player ${vert ? 'vert' : ''}"><iframe src="https://www.youtube-nocookie.com/embed/${esc(v.youtubeId)}?rel=0&modestbranding=1" title="${esc(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
+        return `<article class="cv-card rv-e"><div class="cv-player ${vert ? 'vert' : ''}"><button class="cv-poster" type="button" data-yt="${esc(v.youtubeId)}" data-t="${esc(v.title)}" aria-label="Guarda il video: ${esc(v.title)}"><span class="cv-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span><small>Premi per guardare · il video si carica da YouTube</small></button></div>
             <div class="cv-info"><div class="tags"><span class="tag">${esc(v.resolution || '')}</span><span class="tag g">${vert ? 'Verticale' : 'Orizzontale'}</span>${v.driveLink ? '' : '<span class="tag g">Solo anteprima</span>'}</div>
             <h2>${esc(v.title)}</h2>${v.duration ? `<p class="dur">Durata: <b>${esc(v.duration)}</b></p>` : ''}
 ${v.driveLink ? `<p class="cv-nota"><b>Nota:</b> se il file supera i 100 MB, Google Drive chiede una conferma di sicurezza prima di avviare il download.</p>
@@ -364,6 +364,11 @@ ${v.driveLink ? `<p class="cv-nota"><b>Nota:</b> se il file supera i 100 MB, Goo
     }).join('');
     $('cv-vista').innerHTML = testa + (schede || '<p class="cv-vuoto">I tuoi video arriveranno qui.</p>');
 }
+// il lettore di YouTube si collega a Google solo quando premi play
+document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('.cv-poster'); if (!b) return;
+    const box = b.parentElement; box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(b.dataset.yt)}?rel=0&modestbranding=1&autoplay=1&playsinline=1" title="${esc(b.dataset.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+});
 function avviaRivelazioni() {
     const io = new IntersectionObserver((voci) => voci.forEach(v => { if (v.isIntersecting) { v.target.classList.add('in'); io.unobserve(v.target); } }), { threshold: 0.12 });
     document.querySelectorAll('.rv-e').forEach(e => io.observe(e));

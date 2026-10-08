@@ -169,3 +169,7 @@
 .blocco-lock p { margin: 0; color: var(--testo-2); }
 html.adm-pre #btnRaw[hidden], html.adm-pre #btnStrumenti[hidden] { display: inline-flex !important; }
 html.adm-pre #admin-indicator[hidden] { display: inline-block !important; }
+
+.priv-mini { margin: 34px 0 0; text-align: center; font-size: .74rem; }
+.priv-mini a { color: rgba(255,255,255,.45); text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) { .priv-mini a:hover { color: #fff; } }

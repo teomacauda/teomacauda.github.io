@@ -95,7 +95,8 @@ async function initRouter(user) {
             if (user && !anteprima) { await caricaAdmin(); corrente = revisioni.find(x => x.id === d.id) || d; }
             else { corrente = d; if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(revSlug)}`; }
             renderRevisione(vistaCliente); mostra('section-rev');
-            avviaPlayer(corrente.youtubeId, corrente.aspectRatio); ascoltaCommenti(corrente.id);
+            if (vistaCliente) mostraPoster(); else avviaPlayer(corrente.youtubeId, corrente.aspectRatio, false);
+            ascoltaCommenti(corrente.id);
         } else if (user) {
             await caricaAdmin();
             if (clienteSlugUrl) {
@@ -236,11 +237,17 @@ function caricaYTApi() {
     });
     return apiPronta;
 }
-async function avviaPlayer(id, aspetto) {
+function mostraPoster() {   // chi riceve la revisione carica YouTube solo premendo play
+    const box = $('rv-player-box'), b = document.createElement('button'); b.type = 'button'; b.className = 'rv-poster'; b.setAttribute('aria-label', 'Guarda il video');
+    b.innerHTML = '<span class="rv-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span><small>Premi per guardare · il video si carica da YouTube</small>';
+    b.onclick = () => { b.remove(); avviaPlayer(corrente.youtubeId, corrente.aspectRatio, true); };
+    box.appendChild(b);
+}
+async function avviaPlayer(id, aspetto, subito) {
     try { await caricaYTApi(); } catch (e) { avviso('Non riesco a caricare il lettore di YouTube. Ricarica la pagina.'); return; }
     ytPlayer = new window.YT.Player('yt-player', {
         videoId: id, host: 'https://www.youtube-nocookie.com',
-        playerVars: { playsinline: 1, rel: 0, modestbranding: 1 },
+        playerVars: { playsinline: 1, rel: 0, modestbranding: 1, autoplay: subito ? 1 : 0 },
         events: { onStateChange: statoPlayer, onError: () => avviso('Errore nel caricamento del video di YouTube.') }
     });
 }
