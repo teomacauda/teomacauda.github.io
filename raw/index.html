@@ -278,7 +278,11 @@
 
 <script src="raw.js"></script>
 <script src="installa.js"></script>
-<script>RawInstall.attiva();</script>
+<script>
+RawInstall.attiva();
+// quando Raw è aperto come app, segna "questa è l'app di Teo": gli altri tool (l'Hub) mostrano così l'accesso admin invece del messaggio per i clienti
+try { if (navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) localStorage.setItem('raw_app', '1'); } catch (e) {}
+</script>
 <script>
 (function () {
   var root = document.documentElement, riduci = false, visto = false;
