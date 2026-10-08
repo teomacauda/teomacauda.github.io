@@ -221,7 +221,7 @@
 @media (max-width: 899px) { #fab-add.mostra { display: inline-flex; } }
 
 @media (max-width: 899px) {
-  .tool { padding-top: 96px; }
+  .tool { padding-top: calc(96px + env(safe-area-inset-top, 0px)); }
   .rc { flex-wrap: wrap; }
   .intest { align-items: flex-start; }
 }

@@ -132,6 +132,9 @@ async function initRouter(user) {
             // app salvata sulla Home del telefono: riapre da sola l'ultimo hub, senza chiedere l'accesso admin
             const salvato = (() => { try { return localStorage.getItem('lastClientSlug'); } catch (e) { return null; } })();
             if (isStandalone && salvato) { window.location.replace(`?v=${encodeURIComponent(salvato)}`); return; }
+            if (isStandalone) {      // app aperta dalla Home ma senza un hub da mostrare: niente accesso admin, un messaggio chiaro
+                const l = $('section-lock'); l.querySelector('h1').innerHTML = 'Il tuo <em>hub</em>'; l.querySelector('p').textContent = 'Non trovo il tuo hub. Apri il link che ti ho mandato dal browser e aggiungilo di nuovo alla Home.'; $('btn-open-login').hidden = true;
+            }
             mostra('section-lock');
         }
     } catch (error) {

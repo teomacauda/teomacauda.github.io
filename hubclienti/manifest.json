@@ -1,7 +1,6 @@
 {
   "name": "Hub",
   "short_name": "Hub",
-  "start_url": "/hubclienti/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

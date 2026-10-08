@@ -2,7 +2,7 @@
    vetro, pulsanti, chip, campi, finestre (modal), menu a comparsa, calendario e orologio. */
 
 /* ---------- struttura pagina ---------- */
-.tool { width: 100%; max-width: 1180px; margin: 0 auto; padding: 108px 20px 120px; min-height: 100vh; min-height: 100dvh; }
+.tool { width: 100%; max-width: 1180px; margin: 0 auto; padding: calc(108px + env(safe-area-inset-top, 0px)) 20px 120px; min-height: 100vh; min-height: 100dvh; }
 .tool [hidden] { display: none !important; }
 .intest { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 26px; }
 .intest .eyebrow, .eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: var(--arancio-chiaro); }

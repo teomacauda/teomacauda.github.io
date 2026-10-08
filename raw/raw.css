@@ -38,7 +38,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 @keyframes deriva3 { to { transform: translate(-10vmax, 12vmax) scale(.9); } }
 
 /* ---------- barra in alto (comune a tutti i tool) ---------- */
-.os-bar { min-height: 64px; position: fixed; z-index: 40; top: 14px; left: 0; right: 0; margin: 0 auto; width: min(calc(100% - 28px), 1100px); display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: rgba(20,20,20,.5); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 40px -22px rgba(0,0,0,.9); }
+.os-bar { min-height: 64px; position: fixed; z-index: 40; top: calc(14px + env(safe-area-inset-top, 0px)); left: 0; right: 0; margin: 0 auto; width: min(calc(100% - 28px), 1100px); display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: rgba(20,20,20,.5); border: 1px solid var(--vetro-bordo); -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 40px -22px rgba(0,0,0,.9); }
 .os-marchio { display: inline-flex; align-items: center; gap: 12px; margin-right: auto; }
 .os-marchio svg { width: 34px; height: auto; color: var(--arancio); display: block; }
 .os-marchio span { font-family: var(--font-mono); font-size: .72rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.8); }
@@ -93,7 +93,7 @@ body.cmd-aperto { overflow: hidden; }
 .cmd-vuoto { padding: 22px; text-align: center; color: var(--testo-2); cursor: default; }
 .cmd-piede { display: flex; gap: 18px; flex-wrap: wrap; padding: 12px 18px; border-top: 1px solid var(--linea); font-size: .74rem; color: rgba(255,255,255,.5); }
 .cmd-piede kbd { margin-right: 3px; }
-@media (max-width: 640px) { .cmd { padding-top: 70px; } .cmd-piede { display: none; } .cmd-lista .ct small { white-space: normal; } }
+@media (max-width: 640px) { .cmd { padding-top: calc(70px + env(safe-area-inset-top, 0px)); } .cmd-piede { display: none; } .cmd-lista .ct small { white-space: normal; } }
 @media (prefers-reduced-motion: reduce) { .cmd, .cmd-box { transition: none; } }
 
 /* tool: se in questo browser sei già entrato come admin, i tuoi tasti sono visibili fin dal primo istante (niente comparsa a metà caricamento) */
