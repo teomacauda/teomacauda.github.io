@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
+import { addDocLink as addDoc, trovaPerLink, preparaAdmin, mostraUrl } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -102,11 +102,11 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (reportSlug) {
-            const snap = await trovaPerLink("reportMensili", reportSlug);
+            const snap = await trovaPerLink("reportMensili", reportSlug, urlParams.get('p'));
             if (snap.empty) { window.location.href = './'; return; }
             const r = { id: snap.docs[0].id, ...snap.docs[0].data() };
             if (user && !anteprima) { await caricaAdmin(); reportCorrente = reports.find(x => x.id === r.id) || r; renderEditor(); mostra('section-editor'); }
-            else { document.body.classList.add('vista-cliente'); renderCliente(r); mostra('section-client'); avviaRivelazioni(); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(reportSlug)}`; }
+            else { document.body.classList.add('vista-cliente'); if (r.slugCliente && r.slugTitolo) mostraUrl(r.slugCliente, r.slugTitolo); renderCliente(r); mostra('section-client'); avviaRivelazioni(); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(reportSlug)}`; }
         } else if (user) {
             await caricaAdmin();
             if (clienteSlugUrl) {
@@ -197,8 +197,11 @@ $('form-new-report').addEventListener('submit', async (e) => {
 });
 
 // ---------- editor di un report ----------
+let urlLink = '';   // indirizzo corto e leggibile del report, da copiare
+async function aggiornaLink() { try { const u = await preparaAdmin('reportMensili', reportCorrente); if (u) urlLink = u; } catch (e) {} }
 function renderEditor() {
     const r = reportCorrente, c = clienteDi(r);
+    aggiornaLink();
     document.title = `${r.title} · Report`;
     $('ed-titolo').textContent = r.title;
     $('ed-eyebrow').textContent = c ? `Report mensile · ${c.clientName}` : 'Report mensile';
@@ -207,7 +210,7 @@ function renderEditor() {
     $('back-cliente').href = c ? `?c=${encodeURIComponent(c.slug)}` : './';
     $('back-testo').textContent = c ? `Torna a ${c.clientName}` : 'Torna ai clienti';
     $('btn-anteprima').href = `?v=${encodeURIComponent(r.slug)}&anteprima=1`;
-    $('btn-copia-link').onclick = () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(r.slug)}`, $('btn-copia-link').querySelector('span'));
+    $('btn-copia-link').onclick = () => copiaTesto(urlLink || `${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(r.slug)}`, $('btn-copia-link').querySelector('span'));
     $('f-ig').value = num(r.followersIg); $('f-tt').value = num(r.followersTt); $('f-yt').value = num(r.followersYt);
     $('k-reached').value = num(r.kpiReachedCount); $('k-views').value = num(r.kpiViewsCount); $('k-pct').value = r.kpiViewsPct || '';
     aggiornaSuggerimento();
@@ -239,7 +242,7 @@ $('btn-edit-titolo').addEventListener('click', () => { $('ed-titolo-input').valu
 $('btn-annulla-titolo').addEventListener('click', () => { $('ed-titolo-box').hidden = true; });
 $('btn-salva-titolo').addEventListener('click', async () => {
     const t = $('ed-titolo-input').value.trim(); if (!t) { avviso('Il titolo non può essere vuoto.'); return; }
-    try { await updateDoc(doc(db, "reportMensili", reportCorrente.id), { title: t }); reportCorrente.title = t; $('ed-titolo').textContent = t; $('ed-titolo-box').hidden = true; aggiornaSuggerimento(); avviso('Titolo salvato.'); }
+    try { await updateDoc(doc(db, "reportMensili", reportCorrente.id), { title: t }); reportCorrente.title = t; aggiornaLink(); $('ed-titolo').textContent = t; $('ed-titolo-box').hidden = true; aggiornaSuggerimento(); avviso('Titolo salvato.'); }
     catch (err) { avviso('Titolo non salvato. ' + erroreTesto(err)); }
 });
 

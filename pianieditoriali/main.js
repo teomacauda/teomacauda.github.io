@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
+import { addDocLink as addDoc, trovaPerLink, preparaAdmin, mostraUrl, slugTesto } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -176,17 +176,18 @@ function avatarHtml(d, extra) {
 // così i clienti e i link esistenti non cambiano. Gli altri piani stanno nel campo nuovo `piani` [{ id, nome, videos }].
 // Nel link il piano si chiama come il cliente e il titolo del piano (es. &p=ally-agosto-26), non con un codice: lo scegli tu col nome che dai al piano.
 // Il vecchio codice (main, pXXXX) funziona ancora, così i link già mandati restano validi; se rinomini un piano, anche il suo vecchio indirizzo continua ad aprirlo.
-function slugDiPiano(cliente, nome) { const b = createSlug(nome || 'piano') || 'piano', c = createSlug(cliente || ''); return !c || b.startsWith(c) ? b : `${c}-${b}`; }
+function slugDiPiano(cliente, nome) { return slugTesto(nome || 'piano', 48) || 'piano'; }   // il cliente è già nell'indirizzo (?v=ally&p=ottobre-26)
+const senzaCliente = (data, s) => { const c = slugTesto((data && data.clientName) || '', 40); return c && String(s || '').startsWith(c + '-') && s.length > c.length + 1 ? s.slice(c.length + 1) : s; };
 function slugUnico(base, usati) { let s = base, n = 2; while (usati.has(s)) s = `${base}-${n++}`; return s; }
 function getPiani(data) {
     const d = data || {}, out = [];
-    if ((d.videos && d.videos.length) || d.pianoNome) out.push({ id: 'main', nome: d.pianoNome || 'Piano principale', videos: d.videos || [], slug: d.pianoSlug || '', vecchi: d.pianoSlugVecchi || [] });
-    (d.piani || []).forEach(p => out.push({ id: p.id, nome: p.nome || 'Piano', videos: p.videos || [], slug: p.slug || '', vecchi: p.slugVecchi || [] }));
+    if ((d.videos && d.videos.length) || d.pianoNome) out.push({ id: 'main', nome: d.pianoNome || 'Piano principale', videos: d.videos || [], slug: senzaCliente(d, d.pianoSlug || ''), vecchi: d.pianoSlugVecchi || [] });
+    (d.piani || []).forEach(p => out.push({ id: p.id, nome: p.nome || 'Piano', videos: p.videos || [], slug: senzaCliente(d, p.slug || ''), vecchi: p.slugVecchi || [] }));
     const usati = new Set(out.map(p => p.slug).filter(Boolean));
     out.forEach(p => { if (!p.slug) { p.slug = slugUnico(slugDiPiano(d.clientName, p.nome), usati); usati.add(p.slug); p.derivato = true; } });
     return out;
 }
-const trovaPiano = (piani, chiave) => !chiave ? null : (piani.find(x => x.id === chiave || x.slug === chiave || x.vecchi.includes(chiave)) || null);
+const trovaPiano = (piani, chiave) => { if (!chiave) return null; const k = senzaCliente(currentClientData, chiave); return piani.find(x => x.id === chiave || x.slug === chiave || x.slug === k || x.vecchi.includes(chiave) || x.vecchi.includes(k)) || null; };
 // scrive nel documento gli indirizzi dei piani che ancora non ce l'hanno (solo da admin), così non cambiano più se in seguito rinomini il cliente
 async function fissaSlugPiani() {
     try {
@@ -363,7 +364,8 @@ async function initRouter(user) {
                 currentClientData = clientData;
                 $('main-loader').hidden = true;
                 renderVista(user !== null);
-                if (user) fissaSlugPiani();
+                if (user) { fissaSlugPiani(); const x = { id: currentClientDocId }; preparaAdmin('pianiEditoriali', x).then(() => { if (x.slugBreve) currentClientData.slugBreve = x.slugBreve; }); }   // da admin: assegna e mostra l'indirizzo corto del cliente
+                else if (clientData.slugBreve) mostraUrl(clientData.slugBreve);
             } else {
                 window.location.href = './';
             }
@@ -465,7 +467,7 @@ $('cat-piani').addEventListener('click', (e) => {
     const del = e.target.closest('.btn-del-piano');
     if (del) { eliminaPiano(del.dataset.id); return; }
     const cp = e.target.closest('.btn-copia-piano');
-    if (cp) { const pl = getPiani(currentClientData).find(x => x.id === cp.dataset.id); copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}&p=${encodeURIComponent(pl ? pl.slug : cp.dataset.id)}`, cp.querySelector('span')); return; }
+    if (cp) { const pl = getPiani(currentClientData).find(x => x.id === cp.dataset.id); copiaTesto(`${window.location.origin}${window.location.pathname}?v=${(currentClientData && currentClientData.slugBreve) || clientSlug}&p=${encodeURIComponent(pl ? pl.slug : cp.dataset.id)}`, cp.querySelector('span')); return; }
     if (e.target.closest('#btn-new-plan')) apriFormPiano();
     const card = e.target.closest('.cliente');                      // toccare la scheda apre il piano
     if (card && !e.target.closest('button')) { const b = card.querySelector('.btn-apri-piano'); if (b) vaiAPiano(b.dataset.id); }
@@ -1185,7 +1187,7 @@ function copiaTesto(testo, spanEl) {
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(testo).then(fatto, () => avviso(testo));
     else avviso(testo);
 }
-$('btn-copy-link').addEventListener('click', () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}`, $('copy-link-t')));
+$('btn-copy-link').addEventListener('click', () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${(currentClientData && currentClientData.slugBreve) || clientSlug}`, $('copy-link-t')));
 
 // ---------- titolo del piano ----------
 let fotoManuale = null;   // foto caricata a mano (miniatura già pronta)
@@ -1344,7 +1346,7 @@ $('form-plan').addEventListener('submit', async (e) => {
         avviso("Salvataggio del piano non riuscito. " + erroreTesto(error));
     }
 });
-$('btn-copy-plan-link').addEventListener('click', () => { const pl = pianoAttivo(); copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}&p=${encodeURIComponent(pl ? pl.slug : currentPlanId)}`, $('copy-plan-link-t')); });
+$('btn-copy-plan-link').addEventListener('click', () => { const pl = pianoAttivo(); copiaTesto(`${window.location.origin}${window.location.pathname}?v=${(currentClientData && currentClientData.slugBreve) || clientSlug}&p=${encodeURIComponent(pl ? pl.slug : currentPlanId)}`, $('copy-plan-link-t')); });
 
 function openAddVideoFresh(giorno) {
     editingVideoIndex = null;

@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
+import { addDocLink as addDoc, trovaPerLink, preparaAdmin, mostraUrl } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -119,11 +119,11 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (consegnaSlug) {
-            const snap = await trovaPerLink("consegneVideo", consegnaSlug);
+            const snap = await trovaPerLink("consegneVideo", consegnaSlug, urlParams.get('p'));
             if (snap.empty) { window.location.href = './'; return; }
             const d = { id: snap.docs[0].id, ...snap.docs[0].data() };
             if (user && !anteprima) { await caricaAdmin(); corrente = consegne.find(x => x.id === d.id) || d; renderEditor(); mostra('section-editor'); }
-            else { document.body.classList.add('vista-cliente'); renderCliente(d); mostra('section-client'); avviaRivelazioni(); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(consegnaSlug)}`; }
+            else { document.body.classList.add('vista-cliente'); if (d.slugCliente && d.slugTitolo) mostraUrl(d.slugCliente, d.slugTitolo); renderCliente(d); mostra('section-client'); avviaRivelazioni(); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(consegnaSlug)}`; }
         } else if (user) {
             await caricaAdmin();
             if (clienteSlugUrl) {
@@ -204,8 +204,11 @@ $('form-new-consegna').addEventListener('submit', async (e) => {
 });
 
 // ---------- editor di una consegna ----------
+let urlLink = '';   // indirizzo corto e leggibile della consegna, da copiare
+async function aggiornaLink() { try { const u = await preparaAdmin('consegneVideo', corrente); if (u) urlLink = u; } catch (e) {} }
 function renderEditor() {
     const d = corrente, cl = clienteDi(d);
+    aggiornaLink();
     document.title = `${d.deliveryTitle} · Consegna video`;
     $('ed-titolo').textContent = d.deliveryTitle;
     $('ed-eyebrow').textContent = `Consegna · ${cl ? cl.clientName : (d.clientName || 'senza cliente')}`;
@@ -214,7 +217,7 @@ function renderEditor() {
     $('back-cliente').href = cl ? `?c=${encodeURIComponent(cl.slug)}` : './';
     $('back-testo').textContent = cl ? `Torna a ${cl.clientName}` : 'Torna ai clienti';
     $('btn-anteprima').href = `?v=${encodeURIComponent(d.slug)}&anteprima=1`;
-    $('btn-copia-link').onclick = () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(d.slug)}`, $('btn-copia-link').querySelector('span'));
+    $('btn-copia-link').onclick = () => copiaTesto(urlLink || `${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(d.slug)}`, $('btn-copia-link').querySelector('span'));
     $('ed-cliente').innerHTML = `<option value="">Nessun cliente</option>` + clienti.map(c => `<option value="${esc(c.id)}">${esc(c.clientName)}</option>`).join('');
     $('ed-cliente').value = cl ? cl.id : '';
     video = (d.videos || []).map(v => ({ ...v })); sporco = false; segna(false); renderVideo();
@@ -231,7 +234,7 @@ $('btn-edit-titolo').addEventListener('click', () => { $('ed-titolo-input').valu
 $('btn-annulla-titolo').addEventListener('click', () => { $('ed-titolo-box').hidden = true; });
 $('btn-salva-titolo').addEventListener('click', async () => {
     const t = $('ed-titolo-input').value.trim(); if (!t) { avviso('Il titolo non può essere vuoto.'); return; }
-    try { await updateDoc(doc(db, "consegneVideo", corrente.id), { deliveryTitle: t }); corrente.deliveryTitle = t; $('ed-titolo').textContent = t; $('ed-titolo-box').hidden = true; avviso('Titolo salvato.'); }
+    try { await updateDoc(doc(db, "consegneVideo", corrente.id), { deliveryTitle: t }); corrente.deliveryTitle = t; aggiornaLink(); $('ed-titolo').textContent = t; $('ed-titolo-box').hidden = true; avviso('Titolo salvato.'); }
     catch (e) { avviso('Titolo non salvato. ' + erroreTesto(e)); }
 });
 

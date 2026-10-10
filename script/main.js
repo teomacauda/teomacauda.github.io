@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
+import { addDocLink as addDoc, trovaPerLink, preparaAdmin, mostraUrl } from "../raw/link.js";
 
 // Configurazione Firebase coerente
 const firebaseConfig = {
@@ -96,11 +96,13 @@ async function initRouter(user) {
 
     try {
         if (videoSlug) {
-            const snap = await trovaPerLink("scripts", videoSlug);
+            const snap = await trovaPerLink("scripts", videoSlug, urlParams.get('p'));
             if (snap.empty) { window.location.href = './'; return; }
             const d = snap.docs[0];
             currentScriptId = d.id; currentScriptData = d.data();
             if (user) await caricaTutto();
+            if (user) { const x = { id: d.id, ...currentScriptData }; preparaAdmin('scripts', x).then(() => { Object.assign(currentScriptData, { slugCliente: x.slugCliente, slugTitolo: x.slugTitolo }); }); }   // da admin: assegna e mostra l'indirizzo leggibile
+            else if (currentScriptData.slugCliente && currentScriptData.slugTitolo) mostraUrl(currentScriptData.slugCliente, currentScriptData.slugTitolo);
             renderDettaglio(!!user);
             mostra('section-detail');
         } else if (user) {

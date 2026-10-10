@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
+import { addDocLink as addDoc, trovaPerLink, preparaAdmin, mostraUrl } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -90,11 +90,11 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (revSlug) {
-            const snap = await trovaPerLink("revisions", revSlug);
+            const snap = await trovaPerLink("revisions", revSlug, urlParams.get('p'));
             if (snap.empty) { window.location.href = './'; return; }
             const d = { id: snap.docs[0].id, ...snap.docs[0].data() };
             if (user && !anteprima) { await caricaAdmin(); corrente = revisioni.find(x => x.id === d.id) || d; }
-            else { corrente = d; if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(revSlug)}`; }
+            else { corrente = d; if (d.slugCliente && d.slugTitolo) mostraUrl(d.slugCliente, d.slugTitolo); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(revSlug)}`; }
             renderRevisione(vistaCliente); mostra('section-rev');
             if (vistaCliente) mostraPoster(); else avviaPlayer(corrente.youtubeId, corrente.aspectRatio, false);
             ascoltaCommenti(corrente.id);
@@ -182,7 +182,10 @@ $('form-new-rev').addEventListener('submit', async (e) => {
 });
 
 // ---------- la revisione (admin e cliente) ----------
+let urlLink = '';   // indirizzo corto e leggibile della revisione, da copiare
+async function aggiornaLink() { try { const u = await preparaAdmin('revisions', corrente); if (u) urlLink = u; } catch (e) {} }
 function renderRevisione(vistaCliente) {
+    if (isAdmin && !vistaCliente) aggiornaLink();
     const d = corrente, cl = clienteDi(d), nome = nomeCliente(d);
     document.title = vistaCliente ? `${d.title} | Revisione video` : `${d.title} · Revisioni`;
     $('rv-titolo').textContent = d.title;
@@ -194,7 +197,7 @@ function renderRevisione(vistaCliente) {
         $('back-cliente').href = cl ? `?c=${encodeURIComponent(cl.slug)}` : './';
         $('back-testo').textContent = cl ? `Torna a ${cl.clientName}` : 'Torna ai clienti';
         $('btn-anteprima').href = `?v=${encodeURIComponent(d.slug)}&anteprima=1`;
-        $('btn-copia-link').onclick = () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(d.slug)}`, $('btn-copia-link').querySelector('span'));
+        $('btn-copia-link').onclick = () => copiaTesto(urlLink || `${window.location.origin}${window.location.pathname}?v=${encodeURIComponent(d.slug)}`, $('btn-copia-link').querySelector('span'));
         $('rv-cliente').innerHTML = `<option value="">Nessun cliente</option>` + clienti.map(c => `<option value="${esc(c.id)}">${esc(c.clientName)}</option>`).join('');
         $('rv-cliente').value = cl ? cl.id : '';
     }
@@ -211,7 +214,7 @@ $('btn-edit-titolo').addEventListener('click', () => { $('rv-titolo-input').valu
 $('btn-annulla-titolo').addEventListener('click', () => { $('rv-titolo-box').hidden = true; });
 $('btn-salva-titolo').addEventListener('click', async () => {
     const t = $('rv-titolo-input').value.trim(); if (!t) { avviso('Il titolo non può essere vuoto.'); return; }
-    try { await updateDoc(doc(db, "revisions", corrente.id), { title: t }); corrente.title = t; $('rv-titolo').textContent = t; $('rv-titolo-box').hidden = true; avviso('Titolo salvato.'); }
+    try { await updateDoc(doc(db, "revisions", corrente.id), { title: t }); corrente.title = t; aggiornaLink(); $('rv-titolo').textContent = t; $('rv-titolo-box').hidden = true; avviso('Titolo salvato.'); }
     catch (e) { avviso('Titolo non salvato. ' + erroreTesto(e)); }
 });
 $('btn-elimina').addEventListener('click', async () => {
