@@ -342,10 +342,14 @@ const BASE = 'https://teomacauda.it/';
 const SORGENTI = {
     ped: { nome: 'piani editoriali', carica: async () => {
         const s = await getDocs(collection(db, "pianiEditoriali")); const out = [];
+        // stesso indirizzo leggibile dei Piani editoriali: cliente + titolo del piano (es. ally-agosto-26)
+        const sl = (cl, nome) => { const b = createSlug(nome || 'piano') || 'piano', c = createSlug(cl || ''); return !c || b.startsWith(c) ? b : `${c}-${b}`; };
         s.forEach(d => { const x = d.data(); if (x.isHub === true || !x.slug) return;
-            const piani = []; if ((x.videos && x.videos.length) || x.pianoNome) piani.push({ id: 'main', nome: x.pianoNome || 'Piano principale' }); (x.piani || []).forEach(p => piani.push({ id: p.id, nome: p.nome || 'Piano' }));
-            out.push({ gruppo: x.clientName, t: 'Tutti i piani di ' + x.clientName, s: piani.length + (piani.length === 1 ? ' piano' : ' piani'), url: `${BASE}pianieditoriali/?v=${x.slug}`, titolo: 'Piano editoriale' });
-            if (piani.length > 1) piani.forEach(p => out.push({ gruppo: x.clientName, t: `${x.clientName} · ${p.nome}`, s: 'Solo questo piano', url: `${BASE}pianieditoriali/?v=${x.slug}&p=${encodeURIComponent(p.id)}`, titolo: 'Piano editoriale' })); });
+            const piani = []; if ((x.videos && x.videos.length) || x.pianoNome) piani.push({ nome: x.pianoNome || 'Piano principale', slug: x.pianoSlug || '' }); (x.piani || []).forEach(p => piani.push({ nome: p.nome || 'Piano', slug: p.slug || '' }));
+            const usati = new Set(piani.map(p => p.slug).filter(Boolean));
+            piani.forEach(p => { if (!p.slug) { let b = sl(x.clientName, p.nome), t = b, n = 2; while (usati.has(t)) t = `${b}-${n++}`; p.slug = t; usati.add(t); } });
+            piani.forEach(p => out.push({ gruppo: x.clientName, t: `${x.clientName} · ${p.nome}`, s: 'Solo questo piano', url: `${BASE}pianieditoriali/?v=${x.slug}&p=${encodeURIComponent(p.slug)}`, titolo: 'Piano editoriale' }));
+            if (!piani.length) out.push({ gruppo: x.clientName, t: x.clientName, s: 'Ancora nessun piano', url: `${BASE}pianieditoriali/?v=${x.slug}`, titolo: 'Piano editoriale' }); });
         return out; } },
     report: { nome: 'report', carica: async () => { const s = await getDocs(collection(db, "reportMensili")); const o = []; s.forEach(d => { const x = d.data(); if (x.slug) o.push({ gruppo: x.title || '', t: x.title || x.slug, s: 'Report mensile', url: `${BASE}report/?v=${x.slug}`, titolo: 'Report' }); }); return o; } },
     consegna: { nome: 'consegne video', carica: async () => { const s = await getDocs(collection(db, "consegneVideo")); const o = []; s.forEach(d => { const x = d.data(); if (x.slug) o.push({ gruppo: x.clientName || '', t: x.deliveryTitle || x.slug, s: x.clientName || '', url: `${BASE}consegnavideo/?v=${x.slug}`, titolo: 'Consegna video' }); }); return o; } },

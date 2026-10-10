@@ -174,11 +174,31 @@ function avatarHtml(d, extra) {
 // ---------- piani del cliente ----------
 // Un cliente = un documento. Il piano "principale" resta dov'è sempre stato (campo `videos`, nome in `pianoNome`),
 // così i clienti e i link esistenti non cambiano. Gli altri piani stanno nel campo nuovo `piani` [{ id, nome, videos }].
+// Nel link il piano si chiama come il cliente e il titolo del piano (es. &p=ally-agosto-26), non con un codice: lo scegli tu col nome che dai al piano.
+// Il vecchio codice (main, pXXXX) funziona ancora, così i link già mandati restano validi; se rinomini un piano, anche il suo vecchio indirizzo continua ad aprirlo.
+function slugDiPiano(cliente, nome) { const b = createSlug(nome || 'piano') || 'piano', c = createSlug(cliente || ''); return !c || b.startsWith(c) ? b : `${c}-${b}`; }
+function slugUnico(base, usati) { let s = base, n = 2; while (usati.has(s)) s = `${base}-${n++}`; return s; }
 function getPiani(data) {
     const d = data || {}, out = [];
-    if ((d.videos && d.videos.length) || d.pianoNome) out.push({ id: 'main', nome: d.pianoNome || 'Piano principale', videos: d.videos || [] });
-    (d.piani || []).forEach(p => out.push({ id: p.id, nome: p.nome || 'Piano', videos: p.videos || [] }));
+    if ((d.videos && d.videos.length) || d.pianoNome) out.push({ id: 'main', nome: d.pianoNome || 'Piano principale', videos: d.videos || [], slug: d.pianoSlug || '', vecchi: d.pianoSlugVecchi || [] });
+    (d.piani || []).forEach(p => out.push({ id: p.id, nome: p.nome || 'Piano', videos: p.videos || [], slug: p.slug || '', vecchi: p.slugVecchi || [] }));
+    const usati = new Set(out.map(p => p.slug).filter(Boolean));
+    out.forEach(p => { if (!p.slug) { p.slug = slugUnico(slugDiPiano(d.clientName, p.nome), usati); usati.add(p.slug); p.derivato = true; } });
     return out;
+}
+const trovaPiano = (piani, chiave) => !chiave ? null : (piani.find(x => x.id === chiave || x.slug === chiave || x.vecchi.includes(chiave)) || null);
+// scrive nel documento gli indirizzi dei piani che ancora non ce l'hanno (solo da admin), così non cambiano più se in seguito rinomini il cliente
+async function fissaSlugPiani() {
+    try {
+        const docRef = doc(db, "pianiEditoriali", currentClientDocId), snap = await getDoc(docRef), data = snap.data() || {}, piani = getPiani(data);
+        if (!piani.some(p => p.derivato)) return;
+        const patch = {}, main = piani.find(p => p.id === 'main');
+        if (main && main.derivato) patch.pianoSlug = main.slug;
+        const extra = piani.filter(p => p.id !== 'main');
+        if (extra.some(p => p.derivato)) patch.piani = (data.piani || []).map(p => { const x = extra.find(e => e.id === p.id); return x && x.derivato ? { ...p, slug: x.slug } : p; });
+        await updateDoc(docRef, patch);
+        Object.assign(currentClientData, patch);
+    } catch (e) { console.error('indirizzi dei piani:', e); }
 }
 function tuttiIVideo(data) { return getPiani(data).reduce((a, p) => a.concat(p.videos), []); }
 function pianoAttivo() { return getPiani(currentClientData).find(p => p.id === currentPlanId) || null; }
@@ -343,6 +363,7 @@ async function initRouter(user) {
                 currentClientData = clientData;
                 $('main-loader').hidden = true;
                 renderVista(user !== null);
+                if (user) fissaSlugPiani();
             } else {
                 window.location.href = './';
             }
@@ -365,7 +386,8 @@ async function initRouter(user) {
 function pianoDaUrl() { return new URLSearchParams(window.location.search).get('p'); }
 function vaiAPiano(id) {
     const u = new URL(window.location.href);
-    if (id) u.searchParams.set('p', id); else u.searchParams.delete('p');
+    const pl = id ? getPiani(currentClientData).find(x => x.id === id) : null;
+    if (pl) u.searchParams.set('p', pl.slug); else u.searchParams.delete('p');
     history.pushState(null, '', u);
     renderVista(!!auth.currentUser);
     window.scrollTo(0, 0);
@@ -375,9 +397,10 @@ window.addEventListener('popstate', () => { if (currentClientData) renderVista(!
 function renderVista(admin) {
     const piani = getPiani(currentClientData);
     const p = pianoDaUrl();
-    let inPiano = !!p && piani.some(x => x.id === p);
-    if (inPiano) currentPlanId = p;
-    else if (!admin && piani.length === 1) { inPiano = true; currentPlanId = piani[0].id; }   // un solo piano: il cliente lo vede subito
+    const trovato = trovaPiano(piani, p);
+    let inPiano = !!trovato;
+    if (inPiano) { currentPlanId = trovato.id; if (p !== trovato.slug) { const u = new URL(window.location.href); u.searchParams.set('p', trovato.slug); history.replaceState(null, '', u); } }   // l'indirizzo mostra sempre il nome leggibile del piano
+    else if (!admin && piani.length >= 1) { inPiano = true; currentPlanId = piani[0].id; }   // il cliente non vede mai l'elenco dei piani: apre il piano principale (o quello del suo link specifico, con &p=)
     $('section-client').hidden = inPiano;
     $('section-client-plan').hidden = !inPiano;
     $('fab-add').classList.remove('mostra');
@@ -442,7 +465,7 @@ $('cat-piani').addEventListener('click', (e) => {
     const del = e.target.closest('.btn-del-piano');
     if (del) { eliminaPiano(del.dataset.id); return; }
     const cp = e.target.closest('.btn-copia-piano');
-    if (cp) { copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}&p=${encodeURIComponent(cp.dataset.id)}`, cp.querySelector('span')); return; }
+    if (cp) { const pl = getPiani(currentClientData).find(x => x.id === cp.dataset.id); copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}&p=${encodeURIComponent(pl ? pl.slug : cp.dataset.id)}`, cp.querySelector('span')); return; }
     if (e.target.closest('#btn-new-plan')) apriFormPiano();
     const card = e.target.closest('.cliente');                      // toccare la scheda apre il piano
     if (card && !e.target.closest('button')) { const b = card.querySelector('.btn-apri-piano'); if (b) vaiAPiano(b.dataset.id); }
@@ -1297,15 +1320,20 @@ $('form-plan').addEventListener('submit', async (e) => {
     try {
         const docRef = doc(db, "pianiEditoriali", currentClientDocId);
         const snap = await getDoc(docRef), data = snap.data() || {};
+        const tutti = getPiani(data);
         if (pianoInModifica) {
-            if (pianoInModifica === 'main') await updateDoc(docRef, { pianoNome: nome });
-            else await updateDoc(docRef, { piani: (data.piani || []).map(p => p.id === pianoInModifica ? { ...p, nome: nome } : p) });
-        } else if (!getPiani(data).length) {
-            await updateDoc(docRef, { pianoNome: nome, videos: data.videos || [] });       // il primo piano è quello principale
+            const cur = tutti.find(x => x.id === pianoInModifica), usati = new Set(tutti.filter(x => x.id !== pianoInModifica).map(x => x.slug));
+            const nuovoSlug = slugUnico(slugDiPiano(data.clientName, nome), usati);
+            const vecchi = Array.from(new Set((cur ? cur.vecchi : []).concat(cur && cur.slug && cur.slug !== nuovoSlug ? [cur.slug] : []))).filter(x => x !== nuovoSlug);
+            if (pianoInModifica === 'main') await updateDoc(docRef, { pianoNome: nome, pianoSlug: nuovoSlug, pianoSlugVecchi: vecchi });
+            else await updateDoc(docRef, { piani: (data.piani || []).map(p => p.id === pianoInModifica ? { ...p, nome: nome, slug: nuovoSlug, slugVecchi: vecchi } : p) });
+        } else if (!tutti.length) {
+            await updateDoc(docRef, { pianoNome: nome, pianoSlug: slugDiPiano(data.clientName, nome), videos: data.videos || [] });       // il primo piano è quello principale
             currentPlanId = 'main';
         } else {
             const id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-            await updateDoc(docRef, { piani: (data.piani || []).concat([{ id: id, nome: nome, videos: [] }]) });
+            const nuovoSlug = slugUnico(slugDiPiano(data.clientName, nome), new Set(tutti.map(x => x.slug)));
+            await updateDoc(docRef, { piani: (data.piani || []).concat([{ id: id, nome: nome, slug: nuovoSlug, videos: [] }]) });
             currentPlanId = id;
         }
         pianoVisualizzato = null;
@@ -1316,7 +1344,7 @@ $('form-plan').addEventListener('submit', async (e) => {
         avviso("Salvataggio del piano non riuscito. " + erroreTesto(error));
     }
 });
-$('btn-copy-plan-link').addEventListener('click', () => copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}&p=${encodeURIComponent(currentPlanId)}`, $('copy-plan-link-t')));
+$('btn-copy-plan-link').addEventListener('click', () => { const pl = pianoAttivo(); copiaTesto(`${window.location.origin}${window.location.pathname}?v=${clientSlug}&p=${encodeURIComponent(pl ? pl.slug : currentPlanId)}`, $('copy-plan-link-t')); });
 
 function openAddVideoFresh(giorno) {
     editingVideoIndex = null;
