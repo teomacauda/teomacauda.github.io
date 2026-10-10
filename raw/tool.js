@@ -1,3 +1,4 @@
+try { if (window.top !== window.self) { void window.top.location.href; } } catch (e) { document.documentElement.innerHTML = ''; }   // la pagina non si mostra dentro un altro sito
 /* RAW OS · funzioni comuni dei tool (si carica prima del programma del tool)
    conferma e avvisi dentro la pagina, foto profilo da Instagram, copia negli appunti, piccole utilità. */
 (function () {

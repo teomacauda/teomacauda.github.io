@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 // Configurazione Firebase coerente
 const firebaseConfig = {
@@ -95,7 +96,7 @@ async function initRouter(user) {
 
     try {
         if (videoSlug) {
-            const snap = await getDocs(query(collection(db, "scripts"), where("slug", "==", videoSlug)));
+            const snap = await trovaPerLink("scripts", videoSlug);
             if (snap.empty) { window.location.href = './'; return; }
             const d = snap.docs[0];
             currentScriptId = d.id; currentScriptData = d.data();

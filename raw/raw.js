@@ -69,12 +69,21 @@
       if (on && li.scrollIntoView) li.scrollIntoView({ block: 'nearest' });
     });
   }
+  var AZIONI = [
+    { id: 'backup', azione: 'eseguiBackup', nome: 'Scarica il backup dei dati', desc: 'Salva sul Mac tutti i dati in un file. Non crea copie su Firebase.', cerca: 'backup salva copia dati sicurezza', n: '', ico: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 11 12 15.5 16.5 11"/><path d="M5 19.5h14"/></svg>' },
+    { id: 'indice', azione: 'eseguiSincronizza', nome: 'Controlla i link dei clienti', desc: 'Aggiunge all\'indice i link che mancano. Non modifica nessun documento.', cerca: 'link indice controlla prepara sicurezza', n: '', ico: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.700l1-1"/></svg>' }
+  ];
   function filtra() {
     var q = inp.value.trim().toLowerCase();
     trovati = TOOLS.filter(function (t) { return !q || (t.nome + ' ' + t.sub + ' ' + t.desc + ' ' + t.fase).toLowerCase().indexOf(q) > -1; });
+    if (q) trovati = trovati.concat(AZIONI.filter(function (a) { return a.cerca.indexOf(q) > -1 || (a.nome + ' ' + a.desc).toLowerCase().indexOf(q) > -1; }));
     sel = 0; disegna();
   }
-  function vai(t) { if (!t) return; try { localStorage.setItem('raw_ultimo', t.id); } catch (e) {} location.href = t.href; }
+  function vai(t) {
+    if (!t) return;
+    if (t.azione) { chiudi(); import('/raw/link.js').then(function (m) { m[t.azione](); }).catch(function (e) { console.error(e); }); return; }
+    try { localStorage.setItem('raw_ultimo', t.id); } catch (e) {} location.href = t.href;
+  }
   function apri() {
     if (!vel) costruisci();
     prima = document.activeElement; inp.value = ''; trovati = TOOLS.slice();
@@ -100,6 +109,9 @@
     else if (/^[1-8]$/.test(e.key) && !inp.value) { e.preventDefault(); vai(TOOLS[+e.key - 1]); }
   });
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-raw-strumenti]'); if (b) { e.preventDefault(); apri(); } });
+
+  // rete di sicurezza: aggiunge in silenzio all'indice i link che mancano (una volta ogni 12 ore, solo da loggato)
+  try { if (localStorage.getItem('ped_admin') === '1') import('/raw/link.js').then(function (m) { m.sincronizzaSeServe(); }).catch(function () {}); } catch (e) {}
 
   window.RawOS = { tools: TOOLS, arrow: ARROW, apri: apri, chiudi: chiudi, corrente: qui, ultimo: ultimo, vai: vai };
 })();

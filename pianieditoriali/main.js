@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -330,8 +331,7 @@ async function initRouter(user) {
 
     if (clientSlug) {
         try {
-            const q = query(collection(db, "pianiEditoriali"), where("slug", "==", clientSlug));
-            const querySnapshot = await getDocs(q);
+            const querySnapshot = await trovaPerLink("pianiEditoriali", clientSlug);
 
             if (!querySnapshot.empty) {
                 const clientDoc = querySnapshot.docs[0];

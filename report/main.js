@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -101,7 +102,7 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (reportSlug) {
-            const snap = await getDocs(query(collection(db, "reportMensili"), where("slug", "==", reportSlug)));
+            const snap = await trovaPerLink("reportMensili", reportSlug);
             if (snap.empty) { window.location.href = './'; return; }
             const r = { id: snap.docs[0].id, ...snap.docs[0].data() };
             if (user && !anteprima) { await caricaAdmin(); reportCorrente = reports.find(x => x.id === r.id) || r; renderEditor(); mostra('section-editor'); }

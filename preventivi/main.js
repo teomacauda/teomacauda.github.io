@@ -22,9 +22,9 @@ const db = getFirestore(app);
 // Dati: collezione "preventivi" { clientName, clientCf, clientVat, clientStreet, clientCityZip, expiryDate, packageType, servizi[{descrizione, prezzo}],
 //   totale, durataMesi, durataPeriodo, durata, mensile, createdAt }.
 
-// pdf-lib si carica solo quando serve (al clic su "Scarica"), così la pagina non dipende da quel servizio
+// pdf-lib (versione 1.17.1, la stessa di prima) è salvata nel sito e si carica solo quando serve, al clic su "Scarica": nessun servizio esterno
 let PDFDocument, StandardFonts, rgb;
-async function caricaPdfLib() { if (!PDFDocument) ({ PDFDocument, StandardFonts, rgb } = await import("https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm")); }
+async function caricaPdfLib() { if (!PDFDocument) ({ PDFDocument, StandardFonts, rgb } = await import("./pdf-lib.esm.min.js")); }
 function showLoader() { document.getElementById('pdf-attesa').hidden = false; }
 function hideLoader() { document.getElementById('pdf-attesa').hidden = true; }
 
@@ -106,6 +106,8 @@ const MESI = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ot
 const dataBreve = (iso) => { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${parseInt(m[3], 10)} ${MESI[parseInt(m[2], 10) - 1]} ${m[1]}` : '—'; };
 const oggiStr = () => new Date().toLocaleDateString('sv-SE');     // data locale: non scade prima del tempo per il fuso UTC
 const scaduto = (p) => !!p.expiryDate && oggiStr() > p.expiryDate;
+const GIORNI_RIATTIVAZIONE = 30;
+const daEliminare = (p) => { if (!p.expiryDate) return false; const lim = new Date(); lim.setDate(lim.getDate() - GIORNI_RIATTIVAZIONE); return lim.toLocaleDateString('sv-SE') > p.expiryDate; };
 const creatoIl = (p) => { const t = Date.parse(p.createdAt && p.createdAt.toDate ? p.createdAt.toDate().toISOString() : p.createdAt); return isNaN(t) ? 0 : t; };
 const linkCliente = (id) => `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(id)}`;
 
@@ -137,7 +139,15 @@ async function initRouter(user) {
             } else { corrente = d; renderEditor(); mostra('section-editor'); }
         } else if (user) {
             if (nuovo) { corrente = null; renderEditor(); mostra('section-editor'); }
-            else { await caricaTutti(); renderHome(); mostra('section-home'); }
+            else {
+                await caricaTutti();
+                // come prima, i preventivi scaduti spariscono da soli: li elimina il tuo accesso quando apri l'elenco, 30 giorni dopo la scadenza
+                // (fino ad allora puoi riattivarli cambiando la data; il cliente non ha più il permesso di cancellare)
+                const scad = preventivi.filter(daEliminare); let tolti = 0;
+                for (const p of scad) { try { await deleteDoc(doc(db, "preventivi", p.id)); tolti++; } catch (e) { console.error(e); } }
+                if (tolti) { preventivi = preventivi.filter(p => !daEliminare(p)); avviso(tolti === 1 ? '1 preventivo scaduto da più di 30 giorni è stato eliminato.' : `${tolti} preventivi scaduti da più di 30 giorni sono stati eliminati.`); }
+                renderHome(); mostra('section-home');
+            }
         } else mostra('section-lock');
     } catch (error) {
         console.error(error);
@@ -272,9 +282,8 @@ async function caricaVistaCliente(dataDoc, docRef, admin) {
     const contentArea = $('client-content-area');
     document.title = `Proposta per ${dataDoc.clientName || ''} | Teo Macauda`;
     if (scaduto(dataDoc)) {
-        if (!admin) { try { await deleteDoc(docRef); } catch (e) { console.error(e); } }   // come prima: un link scaduto, aperto dal cliente, viene rimosso
         $('client-view-title').textContent = 'Proposta scaduta'; $('client-view-date').textContent = '';
-        contentArea.innerHTML = admin ? '<p class="pv-scaduto">Questo preventivo è scaduto: il cliente non lo vede più. (Dall\'anteprima non lo rimuovo.)</p>' : '<p class="pv-scaduto">Questo link di proposta commerciale è scaduto ed è stato rimosso.</p>';
+        contentArea.innerHTML = admin ? '<p class="pv-scaduto">Questo preventivo è scaduto: il cliente non lo vede più. (Dall\'anteprima non lo rimuovo.)</p>' : '<p class="pv-scaduto">Questo link di proposta commerciale è scaduto.</p>';
         $('btn-download-pdf').hidden = true; mostra('section-client'); avviaRivelazioni(); return;
     }
     datiPreventivoCorrente = dataDoc;

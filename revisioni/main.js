@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -89,7 +90,7 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (revSlug) {
-            const snap = await getDocs(query(collection(db, "revisions"), where("slug", "==", revSlug)));
+            const snap = await trovaPerLink("revisions", revSlug);
             if (snap.empty) { window.location.href = './'; return; }
             const d = { id: snap.docs[0].id, ...snap.docs[0].data() };
             if (user && !anteprima) { await caricaAdmin(); corrente = revisioni.find(x => x.id === d.id) || d; }

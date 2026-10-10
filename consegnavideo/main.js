@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -118,7 +119,7 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (consegnaSlug) {
-            const snap = await getDocs(query(collection(db, "consegneVideo"), where("slug", "==", consegnaSlug)));
+            const snap = await trovaPerLink("consegneVideo", consegnaSlug);
             if (snap.empty) { window.location.href = './'; return; }
             const d = { id: snap.docs[0].id, ...snap.docs[0].data() };
             if (user && !anteprima) { await caricaAdmin(); corrente = consegne.find(x => x.id === d.id) || d; renderEditor(); mostra('section-editor'); }
@@ -360,7 +361,7 @@ function renderCliente(d) {
             <div class="cv-info"><div class="tags"><span class="tag">${esc(v.resolution || '')}</span><span class="tag g">${vert ? 'Verticale' : 'Orizzontale'}</span>${v.driveLink ? '' : '<span class="tag g">Solo anteprima</span>'}</div>
             <h2>${esc(v.title)}</h2>${v.duration ? `<p class="dur">Durata: <b>${esc(v.duration)}</b></p>` : ''}
 ${v.driveLink ? `<p class="cv-nota"><b>Nota:</b> se il file supera i 100 MB, Google Drive chiede una conferma di sicurezza prima di avviare il download.</p>
-            <a class="cv-scarica" href="${esc(v.driveLink)}" target="_blank" rel="noopener">${ico}Scarica</a>` : `<p class="cv-nota solo"><b>Anteprima:</b> il file per il download sarà disponibile appena la consegna è pronta.</p>`}</div></article>`;
+            <a class="cv-scarica" href="${esc(linkSicuro(v.driveLink))}" target="_blank" rel="noopener">${ico}Scarica</a>` : `<p class="cv-nota solo"><b>Anteprima:</b> il file per il download sarà disponibile appena la consegna è pronta.</p>`}</div></article>`;
     }).join('');
     $('cv-vista').innerHTML = testa + (schede || '<p class="cv-vuoto">I tuoi video arriveranno qui.</p>');
 }
@@ -369,6 +370,8 @@ document.addEventListener('click', (e) => {
     const b = e.target.closest && e.target.closest('.cv-poster'); if (!b) return;
     const box = b.parentElement; box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(b.dataset.yt)}?rel=0&modestbranding=1&autoplay=1&playsinline=1" title="${esc(b.dataset.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
 });
+// un link è accettato solo se è http, https, mailto, tel o un indirizzo interno: niente javascript: e simili
+function linkSicuro(u) { const s = String(u || '').trim(); return !s ? '#' : (/^[a-z][a-z0-9+.\-]*:/i.test(s) ? (/^https?:/i.test(s) ? s : '#') : s); }
 function avviaRivelazioni() {
     const io = new IntersectionObserver((voci) => voci.forEach(v => { if (v.isIntersecting) { v.target.classList.add('in'); io.unobserve(v.target); } }), { threshold: 0.12 });
     document.querySelectorAll('.rv-e').forEach(e => io.observe(e));

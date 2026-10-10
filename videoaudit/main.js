@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDObANtROtJZiReey0mKzwN4m0oKoCrcOY",
@@ -67,8 +68,8 @@ const motiviDi = (a) => Array.isArray(a.motivi) && a.motivi.length ? a.motivi : 
 const SEZIONI = ['section-lock', 'section-home', 'section-editor', 'section-client'];
 function mostra(sez) { SEZIONI.forEach(id => { $(id).hidden = id !== sez; }); $('main-loader').hidden = true; }
 async function caricaTutti() { const s = await getDocs(collection(db, "videoAudits")); audit = []; s.forEach(d => audit.push({ id: d.id, ...d.data() })); }
-async function trovaPerLink(v) {   // prima l'indirizzo vero, poi il vecchio modo (nome della persona)
-    let snap = await getDocs(query(collection(db, "videoAudits"), where("slug", "==", String(v).toLowerCase())));
+async function trovaAudit(v) {   // prima l'indirizzo vero, poi il vecchio modo (nome della persona)
+    let snap = await trovaPerLink("videoAudits", String(v).toLowerCase());
     if (snap.empty) snap = await getDocs(query(collection(db, "videoAudits"), where("clientName", "==", v)));
     return snap.empty ? null : { id: snap.docs[0].id, ...snap.docs[0].data() };
 }
@@ -84,7 +85,7 @@ async function initRouter(user) {
     if (user) caricaRaw();
     try {
         if (auditSlug) {
-            const d = await trovaPerLink(auditSlug);
+            const d = await trovaAudit(auditSlug);
             if (!d) { window.location.href = './'; return; }
             if (user && !anteprima) { corrente = d; renderEditor(); mostra('section-editor'); }
             else { renderCliente(d); mostra('section-client'); avviaRivelazioni(); if (user) $('anteprima-torna').href = `?v=${encodeURIComponent(d.slug || auditSlug)}`; else segnaApertura(d); }

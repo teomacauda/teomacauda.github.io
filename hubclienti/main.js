@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { addDocLink as addDoc, trovaPerLink } from "../raw/link.js";
 
 // Configurazione Firebase condivisa
 const firebaseConfig = {
@@ -77,6 +78,8 @@ function fixAvatars(root) {
     root.querySelectorAll('img[data-nome]').forEach(img => img.addEventListener('error', () => { img.replaceWith(Object.assign(document.createElement('b'), { textContent: window.RawUI.iniziali(img.dataset.nome) })); }, { once: true }));
 }
 // ai link dei nostri tool si aggiunge ?hub=: da lì si può tornare all'hub
+// un link è accettato solo se è http, https, mailto, tel o un indirizzo interno: niente javascript: e simili
+function linkSicuro(u) { const s = String(u || '').trim(); return !s ? '#' : (/^[a-z][a-z0-9+.\-]*:/i.test(s) ? (/^(https?:|mailto:|tel:)/i.test(s) ? s : '#') : s); }
 function conHub(url, slug) {
     try {
         const u = new URL(url, window.location.href);
@@ -115,7 +118,7 @@ async function initRouter(user) {
 
     try {
         if (clientSlug) {
-            const snap = await getDocs(query(collection(db, "hubClienti"), where("slug", "==", clientSlug)));
+            const snap = await trovaPerLink("hubClienti", clientSlug);
             if (snap.empty) { window.location.href = './'; return; }
             renderCliente({ id: snap.docs[0].id, ...snap.docs[0].data() });
             mostra('section-client');
@@ -152,7 +155,7 @@ function renderCliente(d) {
     $('cl-saluto').innerHTML = `Ciao <em>${esc(d.clientName)}</em>!`;
     $('cl-risorse').innerHTML = risorseDi(d).map((r, i) => {
         const t = TIPI[r.tipo] || TIPI.link;
-        return `<a class="risorsa" style="--n:${i}" href="${esc(conHub(r.url, d.slug))}" target="_self" rel="noopener"><span class="ic">${svg(r.tipo)}</span><span class="tx"><b>${esc(r.titolo || t.nome)}</b><span>${esc(t.sub)}</span></span><span class="fr">${FRECCIA}</span></a>`;
+        return `<a class="risorsa" style="--n:${i}" href="${esc(linkSicuro(conHub(r.url, d.slug)))}" target="_self" rel="noopener"><span class="ic">${svg(r.tipo)}</span><span class="tx"><b>${esc(r.titolo || t.nome)}</b><span>${esc(t.sub)}</span></span><span class="fr">${FRECCIA}</span></a>`;
     }).join('') || '<p style="text-align:center;color:var(--testo-2)">Le tue risorse arriveranno qui.</p>';
     // l'hub si può salvare sulla Home del telefono: il manifest punta proprio a questo hub
     const m = document.querySelector('link[rel="manifest"]');
