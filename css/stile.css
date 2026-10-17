@@ -735,7 +735,7 @@ html.sc .lv-tt.rv.in, html.sc .lv-caso.rv.in { opacity: 1; transform: none; }
   .lv-caso:not(.fatto) .lv-big .num { filter: none; }
   .lv-caso.conta::before { animation: none; }   /* si sovrappone ai tasti dell'hero: i tocchi devono passare */
   html.sc .hero .hero-griglia { opacity: var(--ho, 1); }
-  html.sc .metodo-sticky { opacity: var(--mo, 1); }
+  html.sc .metodo-sticky { opacity: var(--mo, 0); }   /* prima del primo calcolo (durante il logo iniziale) resta nascosto */
 }
 
 /* =====================================================================
