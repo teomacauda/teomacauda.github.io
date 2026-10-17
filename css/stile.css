@@ -728,7 +728,7 @@ html.sc .lv-tt.rv.in, html.sc .lv-caso.rv.in { opacity: 1; transform: none; }
 /* mobile: meno vuoto tra "Attenzione" e "Metodo"; le sezioni si dissolvono una nell'altra */
 @media (max-width: 899px) {
   .hero { padding-bottom: 28px; }
-  html.sc .metodo-scroll { margin-top: -20svh; height: 210vh; }
+  html.sc .metodo-scroll { margin-top: -20svh; height: 210vh; pointer-events: none; }   /* si sovrappone ai tasti dell'hero: i tocchi devono passare */
   html.sc .hero .hero-griglia { opacity: var(--ho, 1); }
   html.sc .metodo-sticky { opacity: var(--mo, 1); }
 }
