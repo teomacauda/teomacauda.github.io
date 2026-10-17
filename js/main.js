@@ -176,7 +176,7 @@
       var mp = clamp(-r.top / (r.height - vh), 0, 1);
       metodo.style.setProperty('--mp', mp.toFixed(4));
       // il metodo compare dissolvendosi in entrata e sparisce dissolvendosi in uscita
-      var entra = clamp((vh * .62 - r.top) / (vh * .5), 0, 1), esce = clamp((r.bottom - vh * .3) / (vh * .7), 0, 1);
+      var entra = clamp((vh * (window.innerWidth < 900 ? .35 : .62) - r.top) / (vh * .5), 0, 1), esce = clamp((r.bottom - vh * .3) / (vh * .7), 0, 1);
       metodo.style.setProperty('--mo', Math.min(entra, esce).toFixed(4));
       var n = parole.length, soglia = clamp((mp - .06) / .78, 0, 1) * n;
       for (var i = 0; i < n; i++) parole[i].classList.toggle('on', i < soglia);

@@ -98,11 +98,12 @@
   function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }   // punto ogni tre cifre, anche per 1.500
   function conta(num, durata, ritardo) {
     var fin = parseInt(num.dataset.count, 10), pre = num.dataset.pre || '', suf = num.dataset.suf || '';
-    var t0 = null;
+    var t0 = null, ult = -1;
     function passo(t) {
       if (t0 === null) t0 = t;
       var p = Math.min(1, (t - t0) / durata), e = 1 - Math.pow(1 - p, 4);       // rallenta in arrivo
-      num.textContent = pre + fmt(Math.round(fin * e)) + suf;
+      var v = Math.round(fin * e);
+      if (v !== ult) { ult = v; num.textContent = pre + fmt(v) + suf; }          // riscrive il testo solo se il numero è cambiato: meno lavoro sul telefono
       if (p < 1) requestAnimationFrame(passo); else num.textContent = pre + fmt(fin) + suf;
     }
     num.textContent = pre + '0' + suf;

@@ -728,7 +728,12 @@ html.sc .lv-tt.rv.in, html.sc .lv-caso.rv.in { opacity: 1; transform: none; }
 /* mobile: meno vuoto tra "Attenzione" e "Metodo"; le sezioni si dissolvono una nell'altra */
 @media (max-width: 899px) {
   .hero { padding-bottom: 28px; }
-  html.sc .metodo-scroll { margin-top: -20svh; height: 210vh; pointer-events: none; }   /* si sovrappone ai tasti dell'hero: i tocchi devono passare */
+  html.sc .metodo-scroll { margin-top: -20svh; height: 210vh; pointer-events: none; border-top-color: transparent; }   /* niente linea che taglia il testo dell'hero */
+  /* Lavori: i numeri che salgono non devono toccare il resto della pagina né appesantire lo scorrimento */
+  .lv-caso { overflow-anchor: none; }
+  .lv-big, .lv-sm { contain: layout style; }
+  .lv-caso:not(.fatto) .lv-big .num { filter: none; }
+  .lv-caso.conta::before { animation: none; }   /* si sovrappone ai tasti dell'hero: i tocchi devono passare */
   html.sc .hero .hero-griglia { opacity: var(--ho, 1); }
   html.sc .metodo-sticky { opacity: var(--mo, 1); }
 }
