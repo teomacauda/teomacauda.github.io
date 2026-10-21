@@ -97,11 +97,24 @@
         <h3 class="ed-t">Quadro economico</h3>
         <div class="ed-griglia quattro">
           <div><label class="etich" for="package-type">Tipo di offerta</label><select class="campo" id="package-type"><option value="custom">Su misura</option><option value="start">Pacchetto START</option><option value="pro">Pacchetto PRO</option><option value="elite">Pacchetto ELITE</option></select></div>
-          <div><label class="etich" for="agreement-months">Quantità di mesi</label><input class="campo" type="text" id="agreement-months" required placeholder="Es. 6 mesi"></div>
-          <div><label class="etich" for="agreement-period">Mesi attivi</label><input class="campo" type="text" id="agreement-period" required placeholder="Es. da settembre a novembre 2026"></div>
+          <div class="dur-campo"><label class="etich" for="agreement-months">Quantità di mesi</label><input class="campo" type="text" id="agreement-months" required placeholder="Es. 6 mesi"></div>
+          <div class="dur-campo"><label class="etich" for="agreement-period">Mesi attivi</label><input class="campo" type="text" id="agreement-period" required placeholder="Es. da settembre a novembre 2026"></div>
           <div><label class="etich" for="monthly-price">Prezzo mensile (IVA incl.)</label><input class="campo" type="text" id="monthly-price" required placeholder="Es. 500"></div>
         </div>
+        <label class="interr" for="durata-attiva"><input type="checkbox" id="durata-attiva" checked><span class="int-bar" aria-hidden="true"></span><span class="int-testo"><b>Durata fissa</b><small>Spegni se l'accordo non ha un numero di mesi stabilito: nel PDF comparirà «Senza vincolo».</small></span></label>
         <div class="pk-anteprima" id="pk-anteprima" hidden></div>
+      </div>
+
+      <div class="ed-box vetro" id="sconto-box">
+        <label class="interr" for="sconto-attivo"><input type="checkbox" id="sconto-attivo"><span class="int-bar" aria-hidden="true"></span><span class="int-testo"><b>Mostra uno sconto</b><small>Il cliente lo vede nell'anteprima, con il prezzo di partenza barrato. Nel PDF compare solo il prezzo finale, senza la parola sconto.</small></span></label>
+        <div id="sconto-campi" hidden>
+          <div class="ed-griglia">
+            <div><span class="etich">Tipo di sconto</span><div class="seg" role="group" aria-label="Tipo di sconto"><button type="button" class="on" data-tipo="percent">% Percentuale</button><button type="button" data-tipo="euro">€ Importo fisso</button></div></div>
+            <div><label class="etich" for="sconto-valore" id="sconto-valore-et">Sconto in %</label><input class="campo" type="number" step="0.01" min="0" inputmode="decimal" id="sconto-valore" placeholder="Es. 20"></div>
+            <div><label class="etich" for="sconto-etichetta">Nome dello sconto (facoltativo)</label><input class="campo" type="text" id="sconto-etichetta" maxlength="40" placeholder="Es. Sconto di lancio"></div>
+          </div>
+          <div class="sconto-riep" id="sconto-riep"></div>
+        </div>
       </div>
 
       <div class="ed-box vetro" id="custom-services-section">

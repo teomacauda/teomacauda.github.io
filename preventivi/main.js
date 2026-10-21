@@ -91,6 +91,22 @@ function formattaPrezzo(val) {
 
 const { $, esc, avviso, conferma, erroreTesto, copiaTesto } = window.RawUI;
 
+// ---------- sconto ----------
+// dati.sconto = { tipo: 'percent' | 'euro', valore, etichetta } oppure null. "mensile" resta il prezzo di partenza.
+const scontoValido = (s) => !!s && (s.tipo === 'percent' || s.tipo === 'euro') && Number(s.valore) > 0;
+function calcolaSconto(mensile, s) {
+    if (!scontoValido(s)) return null;
+    const parti = String(mensile == null ? '' : mensile).replace(/[\s€]/g, '').split(/[-—]/).filter(x => x !== '');
+    const nums = parti.map(x => parseFloat(x.replace(',', '.')));
+    if (!nums.length || nums.some(isNaN)) return null;
+    const v = Number(s.valore);
+    const fin = nums.map(n => Math.max(0, Math.round((s.tipo === 'percent' ? n * (1 - Math.min(v, 100) / 100) : n - v) * 100) / 100));
+    return { finale: fin.map(n => n.toFixed(2)).join('-'), risparmio: nums.length === 1 ? Math.round((nums[0] - fin[0]) * 100) / 100 : null };
+}
+// prezzo che il cliente paga davvero (con lo sconto, se c'è): è quello che finisce nel PDF
+function prezzoFinale(d) { const c = calcolaSconto(d.mensile, d.sconto); return c ? c.finale : d.mensile; }
+const testoSconto = (s) => s.tipo === 'percent' ? `−${String(Number(s.valore)).replace('.', ',')}%` : `−${formattaPrezzo(s.valore)}`;
+
 const urlParams = new URLSearchParams(window.location.search);
 const preventivoId = urlParams.get('id');
 const nuovo = urlParams.get('nuovo') === '1';
@@ -167,7 +183,7 @@ function renderHome() {
     const grid = $('pv-griglia'); grid.innerHTML = '';
     lista.forEach(p => {
         const sc = scaduto(p), el = document.createElement('a'); el.className = 'au-card vetro' + (modoSel ? ' sel-modo' : '') + (selezione.has(p.id) ? ' sel' : ''); el.href = `?id=${encodeURIComponent(p.id)}`; el.dataset.id = p.id;
-        el.innerHTML = `${modoSel ? `<span class="pv-spunta">${SPUNTA}</span>` : ''}<span class="stato-tag ${sc ? 's-scaduto' : 's-risposto'}">${sc ? 'Scaduto' : 'Valido'}</span><h3>${esc(p.clientName || 'Senza nome')}</h3><p class="chi">${esc(NOMI_PACCHETTO[p.packageType] || p.packageType || '')} · scade il ${esc(dataBreve(p.expiryDate))}</p><div class="cifre">${p.mensile ? `<span class="prezzo"><b>${esc(formattaPrezzo(p.mensile))}</b> al mese</span>` : ''}${p.durataMesi ? `<span>${esc(p.durataMesi)}</span>` : ''}</div>`;
+        el.innerHTML = `${modoSel ? `<span class="pv-spunta">${SPUNTA}</span>` : ''}<span class="stato-tag ${sc ? 's-scaduto' : 's-risposto'}">${sc ? 'Scaduto' : 'Valido'}</span><h3>${esc(p.clientName || 'Senza nome')}</h3><p class="chi">${esc(NOMI_PACCHETTO[p.packageType] || p.packageType || '')} · scade il ${esc(dataBreve(p.expiryDate))}</p><div class="cifre">${p.mensile ? `<span class="prezzo"><b>${esc(formattaPrezzo(prezzoFinale(p)))}</b> al mese</span>` : ''}${scontoValido(p.sconto) ? `<span>Sconto ${esc(testoSconto(p.sconto))}</span>` : ''}${p.durataMesi ? `<span>${esc(p.durataMesi)}</span>` : ''}</div>`;
         grid.appendChild(el);
     });
     $('pv-vuoti').hidden = lista.length > 0;
@@ -213,6 +229,22 @@ function aggiornaTipo() {
     const pk = pacchettiPredefiniti[v]; $('pk-anteprima').hidden = custom || !pk;
     if (pk && !custom) $('pk-anteprima').innerHTML = `<b>${esc(pk.titolo)} — ${esc(pk.sottotitolo)}</b><p>Nel PDF e nella pagina del cliente compaiono queste voci:</p><ul>${pk.voci.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
 }
+function aggiornaDurata() {
+    const on = $('durata-attiva').checked;
+    document.querySelectorAll('.dur-campo').forEach(c => { c.hidden = !on; c.querySelector('input').required = on; });
+}
+function tipoSconto() { const b = document.querySelector('#sconto-box .seg .on'); return b ? b.dataset.tipo : 'percent'; }
+function impostaTipoSconto(t) { document.querySelectorAll('#sconto-box .seg button').forEach(b => b.classList.toggle('on', b.dataset.tipo === t)); }
+function aggiornaSconto() {
+    const on = $('sconto-attivo').checked, euro = tipoSconto() === 'euro';
+    $('sconto-campi').hidden = !on; $('sconto-valore').required = on;
+    $('sconto-valore-et').textContent = euro ? 'Sconto in euro' : 'Sconto in %';
+    $('sconto-valore').placeholder = euro ? 'Es. 50' : 'Es. 20';
+    if (!on) return;
+    const s = { tipo: tipoSconto(), valore: parseFloat($('sconto-valore').value) }, c = calcolaSconto($('monthly-price').value, s), riep = $('sconto-riep');
+    if (!c) { riep.textContent = $('sconto-valore').value ? 'Scrivi il prezzo mensile per vedere il risultato.' : 'Scrivi il valore dello sconto per vedere il risultato.'; return; }
+    riep.innerHTML = `Il cliente vede <s>${esc(formattaPrezzo($('monthly-price').value))}</s> <b>${esc(formattaPrezzo(c.finale))}</b> al mese${c.risparmio ? ` · risparmia ${esc(formattaPrezzo(c.risparmio))} al mese` : ''}.`;
+}
 function renderEditor() {
     const p = corrente;
     document.title = p ? `${p.clientName} · Preventivi` : 'Nuovo preventivo · Preventivi';
@@ -229,8 +261,15 @@ function renderEditor() {
     $('services-container').innerHTML = '';
     const sv = p && Array.isArray(p.servizi) ? p.servizi : [];
     if (sv.length) sv.forEach(s => rigaServizio(s.descrizione, s.prezzo)); else rigaServizio('', '');
+    $('durata-attiva').checked = !p || !!(p.durataMesi || p.durataPeriodo); aggiornaDurata();
+    const sc = p && scontoValido(p.sconto) ? p.sconto : null;
+    $('sconto-attivo').checked = !!sc; $('sconto-valore').value = sc ? sc.valore : ''; $('sconto-etichetta').value = sc && sc.etichetta ? sc.etichetta : ''; impostaTipoSconto(sc ? sc.tipo : 'percent'); aggiornaSconto();
     aggiornaTipo(); segna(false);
 }
+$('durata-attiva').addEventListener('change', aggiornaDurata);
+$('sconto-attivo').addEventListener('change', () => { aggiornaSconto(); if ($('sconto-attivo').checked) $('sconto-valore').focus(); });
+['sconto-valore', 'monthly-price'].forEach(id => $(id).addEventListener('input', aggiornaSconto));
+document.querySelectorAll('#sconto-box .seg button').forEach(b => b.addEventListener('click', () => { impostaTipoSconto(b.dataset.tipo); aggiornaSconto(); segna(true); }));
 $('package-type').addEventListener('change', () => { aggiornaTipo(); segna(true); });
 $('btn-add-service').addEventListener('click', () => { rigaServizio('', ''); segna(true); const i = $('services-container').querySelectorAll('.service-desc'); i[i.length - 1].focus(); });
 $('preventivo-form').addEventListener('input', () => segna(true));
@@ -248,10 +287,20 @@ $('preventivo-form').addEventListener('submit', async (e) => {
         if (manca) { avviso('Una voce ha il prezzo ma non la descrizione.'); return; }
         if (!listaServizi.length) { avviso('Aggiungi almeno un\'attività.'); return; }
     }
+    const durata = $('durata-attiva').checked, mesi = durata ? v('agreement-months').trim() : '', periodo = durata ? v('agreement-period').trim() : '';
+    let sconto = null;
+    if ($('sconto-attivo').checked) {
+        sconto = { tipo: tipoSconto(), valore: parseFloat($('sconto-valore').value), etichetta: $('sconto-etichetta').value.trim() };
+        const c = calcolaSconto(v('monthly-price'), sconto);
+        if (!(sconto.valore > 0)) { avviso('Scrivi il valore dello sconto, oppure spegni lo sconto.'); return; }
+        if (sconto.tipo === 'percent' && sconto.valore >= 100) { avviso('Lo sconto in percentuale deve essere sotto il 100%.'); return; }
+        if (!c) { avviso('Per applicare lo sconto scrivi il prezzo mensile come numero (es. 500).'); return; }
+        if (sconto.tipo === 'euro' && parseFloat(c.finale.split('-')[0]) <= 0) { avviso('Lo sconto in euro è pari o più alto del prezzo.'); return; }
+    }
     const dati = {
         clientName: v('client-name'), clientCf: v('client-cf'), clientVat: v('client-vat'), clientStreet: v('client-street'), clientCityZip: v('client-city-zip'),
         expiryDate: v('expiry-date'), packageType, servizi: listaServizi, totale: v('monthly-price'),
-        durataMesi: v('agreement-months'), durataPeriodo: v('agreement-period'), durata: `${v('agreement-months')} / ${v('agreement-period')}`, mensile: v('monthly-price')
+        durataMesi: mesi, durataPeriodo: periodo, durata: [mesi, periodo].filter(Boolean).join(' / '), mensile: v('monthly-price'), sconto
     };
     const b = $('btn-salva'); b.disabled = true; $('stato').textContent = 'Salvo…';
     try {
@@ -291,16 +340,21 @@ async function caricaVistaCliente(dataDoc, docRef, admin) {
     const dataFormattata = new Date(dataDoc.expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
     $('client-view-date').textContent = `Termini validi fino al ${dataFormattata}`;
     const d = dataDoc, up = (s) => esc(String(s || '').toUpperCase());
-    let html = `<div class="pv-anag"><div><span class="e">Fornitore</span><b>Matteo Maria Macauda</b><small>C.F.: MCDMTM04H18I754Q</small><small>P.IVA: 02153520891</small><small>Via teofane 2, 96100, Siracusa (SR)</small></div>
-        <div><span class="e">Cliente</span><b>${up(d.clientName)}</b>${d.clientCf ? `<small>C.F.: ${up(d.clientCf)}</small>` : ''}${d.clientVat ? `<small>P.IVA: ${up(d.clientVat)}</small>` : ''}${d.clientStreet ? `<small>${up(d.clientStreet)}</small>` : ''}${d.clientCityZip ? `<small>${up(d.clientCityZip)}</small>` : ''}</div></div>`;
+    let html = `<div class="pv-anag">
+        <details class="pv-pers"><summary><span class="e">Fornitore</span><b>Matteo Maria Macauda</b><i class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></i></summary><div class="dett"><small>C.F.: MCDMTM04H18I754Q</small><small>P.IVA: 02153520891</small><small>Via teofane 2, 96100, Siracusa (SR)</small></div></details>
+        <details class="pv-pers"><summary><span class="e">Cliente</span><b>${up(d.clientName)}</b><i class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></i></summary><div class="dett">${d.clientCf ? `<small>C.F.: ${up(d.clientCf)}</small>` : ''}${d.clientVat ? `<small>P.IVA: ${up(d.clientVat)}</small>` : ''}${d.clientStreet ? `<small>${up(d.clientStreet)}</small>` : ''}${d.clientCityZip ? `<small>${up(d.clientCityZip)}</small>` : ''}</div></details></div>`;
     if (d.packageType === 'custom') {
         html += `<div class="pv-tab"><div class="t"><span>Descrizione attività</span><span>Importo</span></div>` + (d.servizi || []).map(s => `<div class="r"><span>${esc(s.descrizione)}</span><span>${(s.prezzo !== undefined && s.prezzo !== null) ? esc(formattaPrezzo(s.prezzo)) : '—'}</span></div>`).join('') + `</div>`;
     } else {
         const pkg = pacchettiPredefiniti[d.packageType];
         if (pkg) html += `<div class="pv-pacchetto"><h2>${esc(pkg.titolo)} — <em>${esc(pkg.sottotitolo)}</em></h2><p>"${esc(pkg.descrizione)}"</p><ul>${pkg.voci.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
     }
-    const durataInfo = `${(d.durataMesi || '').toUpperCase()} / ${(d.durataPeriodo || '').toUpperCase()}`;
-    html += `<div class="pv-riepilogo"><div><small>Durata accordo</small><strong>${esc(durataInfo)}</strong></div><div><small>Prezzo mensile (IVA incl.)</small><strong>${esc(formattaPrezzo(d.mensile))}</strong></div></div>`;
+    const durataInfo = [d.durataMesi, d.durataPeriodo].filter(x => x && String(x).trim()).map(x => String(x).toUpperCase()).join(' / ') || 'Senza vincolo di durata';
+    const sc = calcolaSconto(d.mensile, d.sconto);
+    const prezzoHtml = sc
+        ? `<span class="pv-vecchio">${esc(formattaPrezzo(d.mensile))}</span><strong>${esc(formattaPrezzo(sc.finale))}</strong><span class="pv-risp">${d.sconto.etichetta ? `${esc(d.sconto.etichetta)} · ` : ''}${sc.risparmio ? `Risparmi <b>${esc(formattaPrezzo(sc.risparmio))}</b> al mese` : `Sconto <b>${esc(testoSconto(d.sconto))}</b>`}</span>`
+        : `<strong>${esc(formattaPrezzo(d.mensile))}</strong>`;
+    html += `<div class="pv-riepilogo"><div><small>Durata accordo</small><strong>${esc(durataInfo)}</strong></div><div><small>Prezzo mensile (IVA incl.)</small>${prezzoHtml}</div></div>`;
     contentArea.innerHTML = html;
     $('btn-download-pdf').hidden = false;
     $('btn-download-pdf').onclick = async () => {
@@ -336,7 +390,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('auth-
 window.openAuthModal = openCustomStep;
 window.closeAuthModal = closeAuthModal;
 
-// ===================== da qui in poi: identico alla versione precedente =====================
+// ===================== da qui in poi: come la versione precedente (cambiano solo prezzo con sconto e durata vuota) =====================
 
 async function generaFlatPDF() {
     if (!datiPreventivoCorrente) return;
@@ -394,7 +448,8 @@ async function generaFlatPDF() {
         const rigaSpazio = 26; 
 
         // Il totale nel PDF corrisponde allo stesso valore del prezzo mensile
-        const prezzoMensileVal = formattaPrezzo(datiPreventivoCorrente.mensile);
+        // con uno sconto attivo il PDF riporta solo il prezzo finale, senza la parola sconto
+        const prezzoMensileVal = formattaPrezzo(prezzoFinale(datiPreventivoCorrente));
         const totaleValStr = prezzoMensileVal;
 
         if (datiPreventivoCorrente.packageType === 'custom') {
@@ -429,7 +484,8 @@ async function generaFlatPDF() {
         // 4. Iniezione Campi Economici di Chiusura
         // Durata complessiva dell'accordo (Centrata orizzontalmente su due righe per evitare overflow)
         // Larghezza box: ~195 pt (da x=55 a x=250), Centro = 152.5
-        const durataMesiText = (datiPreventivoCorrente.durataMesi || "").toUpperCase();
+        const senzaDurata = !(datiPreventivoCorrente.durataMesi || "").trim() && !(datiPreventivoCorrente.durataPeriodo || "").trim();
+        const durataMesiText = senzaDurata ? "SENZA VINCOLO" : (datiPreventivoCorrente.durataMesi || "").toUpperCase();
         const widthMesi = fontBold.widthOfTextAtSize(durataMesiText, 11);
         const xCentratoMesi = 152.5 - (widthMesi / 2);
         firstPage.drawText(durataMesiText, { x: xCentratoMesi, y: 115, size: 11, font: fontBold, color: rgb(1.0, 0.48, 0.0) });
